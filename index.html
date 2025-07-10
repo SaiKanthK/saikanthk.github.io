@@ -65,7 +65,9 @@
             border-radius: 1rem; /* Rounded corners */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Soft shadow */
             padding: 3rem 2rem;
-            text-align: center;
+            display: flex; /* Use flexbox for horizontal alignment */
+            align-items: center; /* Vertically center items */
+            gap: 2rem; /* Space between image and text */
             margin-bottom: 2rem;
             animation: fadeIn 1s ease-out forwards; /* Fade in the hero section */
         }
@@ -76,8 +78,13 @@
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #e0e0e0; /* Light gray border around image */
-            margin: 0 auto 1.5rem auto;
+            flex-shrink: 0; /* Prevent image from shrinking */
             animation: pulse 2s infinite alternate; /* Gentle pulse animation */
+        }
+
+        .hero-content {
+            flex-grow: 1; /* Allow text content to take remaining space */
+            text-align: left; /* Align text within its container to the left */
         }
 
         .hero-title {
@@ -93,6 +100,10 @@
             color: #555;
             margin-top: 0.5rem;
             animation: slideInUp 1s ease-out forwards;
+        }
+
+        .hero-description {
+            text-align: justify; /* Justify the main description text */
         }
 
         /* Navigation Bar */
@@ -130,7 +141,6 @@
             margin-bottom: 2rem;
             animation: slideInUp 0.8s ease-out forwards; /* Apply slide-in animation to sections */
             opacity: 0; /* Start invisible for animation */
-            text-align: justify;
         }
 
         .section-title {
@@ -257,6 +267,16 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
+            .hero-section {
+                flex-direction: column; /* Stack image and text vertically on small screens */
+                text-align: center; /* Center text when stacked */
+            }
+            .hero-content {
+                text-align: center; /* Center text within its container when stacked */
+            }
+            .hero-description {
+                text-align: left; /* Keep description justified, but within centered container */
+            }
             .hero-title {
                 font-size: 2.5rem;
             }
@@ -288,13 +308,15 @@
                  onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/555555?text=SK';"
                  alt="Sai Kanth K. Profile"
                  class="profile-pic">
-            <h1 class="hero-title">Sai Kanth Kondi</h1>
-            <p class="hero-subtitle">.NET Developer & Tech Alchemist</p>
-            <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
-                A results-driven .NET Developer with 10 years of experience, actively pursuing a Senior Developer/Tech Lead role.
-                Proven expertise in designing and implementing microservices architecture, optimizing cloud solutions, and enhancing database performance.
-                Committed to driving significant contributions and achieving impactful outcomes.
-            </p>
+            <div class="hero-content">
+                <h1 class="hero-title">Sai Kanth Kondi</h1>
+                <p class="hero-subtitle">.NET Developer & Tech Alchemist</p>
+                <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto hero-description">
+                    A results-driven .NET Developer with 10 years of experience, actively pursuing a Senior Developer/Tech Lead role.
+                    Proven expertise in designing and implementing microservices architecture, optimizing cloud solutions, and enhancing database performance.
+                    Committed to driving significant contributions and achieving impactful outcomes.
+                </p>
+            </div>
         </header>
 
         <!-- Navigation Bar -->
@@ -310,7 +332,7 @@
         <!-- About Me Section (Concise, as objective is in hero) -->
         <section id="about" class="section-card">
             <h2 class="section-title">Who I Am</h2>
-            <p class="text-lg text-gray-700">
+            <p class="text-lg text-gray-700 text-justify">
                 I am a passionate Senior Developer/Tech Lead with a decade of experience in crafting high-quality, scalable, and reusable code. My expertise lies in designing robust microservices architectures, optimizing cloud solutions on AWS and Azure, and significantly enhancing database performance. I am dedicated to enforcing best practices, mentoring colleagues, and delivering impactful products that are both powerful and user-friendly. My commitment to continuous improvement is reflected in my proactive approach to code reviews, unit testing, and leveraging modern tools like GitHub Copilot for accelerated development.
             </p>
         </section>
@@ -511,13 +533,20 @@
         <section id="contact" class="section-card">
             <h2 class="section-title">Let's Connect!</h2>
             <div class="text-center text-lg text-gray-700">
-                <p class="mb-2"><strong>Name:</strong> Sai Kanth Kondi</p>
-                <p class="mb-2"><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-blue-600 hover:underline">kondisaikanth@gmail.com</a></p>
-                <p class="mb-2"><strong>Mobile:</strong> +91 8143036676</p>
-                <p class="mb-2"><strong>Languages Known:</strong> English, Hindi, Telugu</p>
-                <p><strong>Hobbies:</strong> LAN Gaming, Table Tennis</p>
+                <p class="mb-6">I'm always open to new opportunities, collaborations, or just a friendly chat about technology! Feel free to reach out through any of the channels below.</p>
 
-                <div class="social-icons mt-8">
+                <div class="bg-blue-50 bg-opacity-70 rounded-lg p-6 mb-8 shadow-inner">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                        <p><strong>Name:</strong> Sai Kanth Kondi</p>
+                        <p><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-blue-600 hover:underline">kondisaikanth@gmail.com</a></p>
+                        <p><strong>Mobile:</strong> +91 8143036676</p>
+                        <p><strong>Languages:</strong> English, Hindi, Telugu</p>
+                        <p class="md:col-span-2"><strong>Hobbies:</strong> LAN Gaming, Table Tennis</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Connect with Me:</h3>
+                <div class="social-icons flex justify-center gap-6 mt-4">
                     <a href="mailto:kondisaikanth@outlook.com" target="_blank" aria-label="Email">
                         <i class="fas fa-envelope"></i>
                     </a>
@@ -574,7 +603,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.hero-title').style.animation = 'slideInUp 0.8s ease-out forwards';
             document.querySelector('.hero-subtitle').style.animation = 'slideInUp 1s ease-out forwards';
-            document.querySelector('.hero-section p.text-lg').style.animation = 'slideInUp 1.2s ease-out forwards';
+            document.querySelector('.hero-description').style.animation = 'slideInUp 1.2s ease-out forwards';
             document.querySelector('.profile-pic').style.animation = 'pulse 2s infinite alternate';
         });
     </script>
