@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN for utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons (Mail, LinkedIn, GitHub) -->
+    <!-- Font Awesome for icons (Mail, LinkedIn, GitHub, Download) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Keyframe animations */
@@ -70,6 +70,7 @@
             gap: 2rem; /* Space between image and text */
             margin-bottom: 2rem;
             animation: fadeIn 1s ease-out forwards; /* Fade in the hero section */
+            position: relative; /* Needed for absolute positioning of download icon */
         }
 
         .profile-pic {
@@ -105,6 +106,36 @@
         .hero-description {
             text-align: justify; /* Justify the main description text */
         }
+
+        /* Resume Download Button Styling */
+        .resume-download-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: #3498db; /* Bright blue color */
+            color: white;
+            border-radius: 9999px; /* Fully rounded for a pill shape */
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .resume-download-btn:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        .resume-download-btn i {
+            font-size: 1.2rem; /* Icon size within the button */
+        }
+
 
         /* Navigation Bar */
         .navbar {
@@ -169,6 +200,27 @@
             background-color: #cce7f0;
             transform: translateY(-3px);
         }
+
+        /* Skill Category Container */
+        .skill-category-box {
+            background-color: #fcfcfc; /* Slightly different background for skill boxes */
+            border: 1px solid #e0e0e0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            height: 100%; /* Ensure uniform height within the grid */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .skill-category-box h3 {
+            margin-bottom: 1rem; /* More space below category title */
+        }
+
+        .skill-category-box .flex-wrap {
+            flex-grow: 1; /* Allow badges to take up space */
+            align-content: flex-start; /* Align badges to the top */
+        }
+
 
         /* Experience/Project Cards */
         .experience-card {
@@ -296,6 +348,15 @@
             .section-card {
                 padding: 1.5rem;
             }
+            .resume-download-btn {
+                top: 1rem; /* Adjust position for smaller screens */
+                right: 1rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .resume-download-btn i {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -317,6 +378,11 @@
                     Committed to driving significant contributions and achieving impactful outcomes.
                 </p>
             </div>
+            <!-- Resume Download Button -->
+            <a href="SaiKanth_Resume_Jun_2025_latest.pdf" download="SaiKanth_Resume_Jun_2025_latest.pdf" class="resume-download-btn" aria-label="Download Resume">
+                <i class="fas fa-file-download"></i>
+                <span>Download Resume</span>
+            </a>
         </header>
 
         <!-- Navigation Bar -->
@@ -341,8 +407,8 @@
         <section id="skills" class="section-card">
             <h2 class="section-title">My Skill Arsenal</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Languages & Frameworks</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Languages & Frameworks</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">C#</span>
                         <span class="skill-badge">SQL</span>
@@ -354,16 +420,16 @@
                         <span class="skill-badge">.NET Core</span>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Databases</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Databases</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">SQL Server 2014+</span>
                         <span class="skill-badge">Postgres</span>
                         <span class="skill-badge">MySQL</span>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Cloud Services</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Cloud Services</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">AWS SQS</span>
                         <span class="skill-badge">AWS SNS</span>
@@ -373,8 +439,8 @@
                         <span class="skill-badge">Azure Service Bus</span>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Tools & IDEs</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Tools & IDEs</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">Microsoft VS 2015+</span>
                         <span class="skill-badge">VS Code</span>
@@ -391,16 +457,16 @@
                         <span class="skill-badge">GitHub Copilot</span>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Core Concepts & Patterns</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Core Concepts & Patterns</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">DSA</span>
                         <span class="skill-badge">SOLID Principles</span>
                         <span class="skill-badge">CQRS Pattern</span>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Version Control & Certs</h3>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">Version Control & Certs</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">GIT</span>
                         <span class="skill-badge">TFS</span>
