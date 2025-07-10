@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,141 +8,318 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN for utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons (Mail, LinkedIn, GitHub) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         /* Custom styles to enhance Tailwind defaults and add specific UI elements */
         body {
-            font-family: 'Inter', sans-serif; /* Apply Inter font to the entire body */
-            background-color: #f3f4f6; /* Light gray background for a clean look */
-            color: #374151; /* Dark gray text for readability */
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8; /* Very light gray, almost white, for the background */
+            color: #333; /* Darker text for readability */
+            line-height: 1.6;
         }
-        /* Styling for section titles to give them a distinct, classic feel */
+
+        /* Main container for content */
+        .main-content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header/Hero Section Styling */
+        .hero-section {
+            background-color: #ffffff; /* White background for hero */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Soft shadow */
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out forwards; /* Fade in the hero section */
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e0e0e0; /* Light gray border around image */
+            margin: 0 auto 1.5rem auto;
+            animation: pulse 2s infinite alternate; /* Gentle pulse animation */
+        }
+
+        .hero-title {
+            font-size: 3.5rem; /* Larger font for name */
+            font-weight: 700;
+            color: #2c3e50; /* Dark blue-gray for name */
+            animation: slideInUp 0.8s ease-out forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #555;
+            margin-top: 0.5rem;
+            animation: slideInUp 1s ease-out forwards;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: #2c3e50; /* Dark blue-gray for navbar */
+            padding: 1rem 0;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+
+        .nav-link {
+            color: #ecf0f1; /* Light gray for links */
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background-color: #34495e; /* Slightly darker on hover */
+            color: #ffffff;
+        }
+
+        /* Section Styling */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            animation: slideInUp 0.8s ease-out forwards; /* Apply slide-in animation to sections */
+            opacity: 0; /* Start invisible for animation */
+        }
+
         .section-title {
-            color: #1d4ed8; /* Darker blue for prominent titles */
-            border-bottom: 2px solid #3b82f6; /* Medium blue underline for emphasis */
-            padding-bottom: 0.5rem; /* Spacing below the title and underline */
-            margin-bottom: 1.5rem; /* Spacing before the content starts */
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #3498db; /* Bright blue for titles */
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
         }
-        /* Card styling for sections, adding depth and visual separation */
-        .card {
-            background-color: #ffffff; /* White background for content cards */
-            border-radius: 0.75rem; /* Rounded corners for a modern, soft look */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
-            padding: 1.5rem; /* Internal padding */
-            margin-bottom: 2rem; /* Spacing between cards */
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover effects */
-        }
-        /* Hover effect for cards: slight lift and increased shadow */
-        .card:hover {
-            transform: translateY(-5px); /* Lifts the card slightly */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* More pronounced shadow */
-        }
-        /* Primary button styling for navigation and calls to action */
-        .btn-primary {
-            background-color: #3b82f6; /* Medium blue background */
-            color: white; /* White text for contrast */
-            padding: 0.75rem 1.5rem; /* Generous padding */
-            border-radius: 0.5rem; /* Rounded corners */
-            transition: background-color 0.3s ease-in-out; /* Smooth color transition on hover */
-            text-decoration: none; /* Remove underline from links */
-            display: inline-block; /* Allows padding and margin to work correctly */
-        }
-        /* Hover effect for primary buttons: darker blue */
-        .btn-primary:hover {
-            background-color: #2563eb; /* Darker blue on hover */
-        }
-        /* Styling for skill badges, making them look like tags */
+
+        /* Skill Badges */
         .skill-badge {
-            background-color: #bfdbfe; /* Light blue background */
-            color: #1e40af; /* Dark blue text */
-            padding: 0.5rem 1rem; /* Padding within the badge */
-            border-radius: 9999px; /* Fully rounded corners for a pill shape */
-            font-weight: 500; /* Medium font weight */
-            margin: 0.25rem; /* Spacing between badges */
-            display: inline-block; /* Allows them to sit side-by-side */
-            transition: background-color 0.2s ease-in-out; /* Smooth transition on hover */
+            background-color: #e0f2f7; /* Light blue */
+            color: #2980b9; /* Darker blue text */
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px; /* Pill shape */
+            font-weight: 500;
+            margin: 0.4rem;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-        /* Hover effect for skill badges: slightly darker light blue */
+
         .skill-badge:hover {
-            background-color: #93c5fd; /* Slightly darker light blue on hover */
+            background-color: #cce7f0;
+            transform: translateY(-3px);
         }
-        /* Styling for the summary element within <details> tags (for collapsible sections) */
-        details summary {
-            cursor: pointer; /* Indicates it's clickable */
-            list-style: none; /* Removes the default browser arrow/marker */
-            position: relative; /* Needed for positioning the custom arrow */
-            padding-left: 1.5rem; /* Space for the custom arrow */
+
+        /* Experience/Project Cards */
+        .experience-card {
+            border: 1px solid #eee;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: box-shadow 0.3s ease;
         }
-        /* Hides the default marker in WebKit browsers */
-        details summary::-webkit-details-marker {
-            display: none;
+
+        .experience-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
-        /* Custom plus/minus icon for collapsible sections */
-        details summary::before {
-            content: '+'; /* Plus sign when closed */
+
+        .job-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-duration {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .contribution-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .contribution-list li::before {
+            content: '•';
+            color: #3498db;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
             position: absolute;
             left: 0;
-            font-weight: bold;
-            color: #3b82f6; /* Blue color for the icon */
-            transition: transform 0.2s ease-in-out; /* Smooth transition for rotation */
         }
-        /* Changes the icon to a minus sign when the details are open */
-        details[open] summary::before {
-            content: '-'; /* Minus sign when open */
-            transform: rotate(0deg); /* No rotation needed for minus, but keeps transition smooth */
+
+        /* Table Styling (for Education) */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
         }
-        /* Styling for individual project cards within the experience section */
-        .project-card {
-            border: 1px solid #e5e7eb; /* Light gray border */
-            border-radius: 0.5rem; /* Rounded corners */
-            padding: 1.25rem; /* Internal padding */
-            margin-bottom: 1rem; /* Spacing between project cards */
+
+        .styled-table th, .styled-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
         }
-        /* Styling for achievement items, giving them a distinct highlight */
-        .achievement-item {
-            background-color: #e0f2fe; /* Very light blue background */
-            border-left: 4px solid #3b82f6; /* Blue left border for emphasis */
-            padding: 1rem; /* Internal padding */
-            border-radius: 0.5rem; /* Rounded corners */
-            margin-bottom: 1rem; /* Spacing between achievement items */
+
+        .styled-table th {
+            background-color: #f2f2f2;
+            color: #555;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .styled-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .styled-table tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Social Icons */
+        .social-icons a {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin: 0 1rem;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .social-icons a:hover {
+            color: #3498db;
+            transform: translateY(-5px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.4rem;
+            }
+            .navbar {
+                border-radius: 0; /* No rounded corners on small screens */
+            }
+            .nav-link {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .section-card {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <div class="max-w-4xl mx-auto">
-        <!-- Header Section: Your Name and Role with a playful tagline -->
-        <header class="text-center mb-12 p-8 bg-blue-700 text-white rounded-xl shadow-lg">
-            <h1 class="text-5xl font-extrabold mb-2">Sai Kanth K.</h1>
-            <p class="text-2xl font-light opacity-90">.NET Developer & Tech Alchemist</p>
-            <p class="mt-4 text-lg italic">"Turning lines of code into impactful solutions, with a touch of magic!"</p>
-        </header>
-
-        <!-- Navigation Bar: Sticky and responsive for easy access to sections -->
-        <nav class="sticky top-0 bg-white p-4 rounded-xl shadow-md mb-8 z-10 flex flex-wrap justify-center gap-4">
-            <a href="#about" class="btn-primary">About Me</a>
-            <a href="#skills" class="btn-primary">Skill Arsenal</a>
-            <a href="#experience" class="btn-primary">Code Chronicles</a>
-            <a href="#achievements" class="btn-primary">Unlocked Achievements</a>
-            <a href="#education" class="btn-primary">Knowledge Scrolls</a>
-            <a href="#contact" class="btn-primary">Connect</a>
-        </nav>
-
-        <!-- About Me / Career Objective Section -->
-        <section id="about" class="card">
-            <h2 class="text-3xl font-bold section-title">My Mission Statement (aka Career Objective)</h2>
-            <p class="text-lg leading-relaxed">
+    <div class="main-content-wrapper">
+        <!-- Header/Hero Section -->
+        <header class="hero-section">
+            <img src="Picsart_22-08-21_16-35-18-742.jpg-df416356-e237-4564-853f-441f97a7047f"
+                 onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/555555?text=SK';"
+                 alt="Sai Kanth K. Profile"
+                 class="profile-pic">
+            <h1 class="hero-title">Sai Kanth Kondi</h1>
+            <p class="hero-subtitle">.NET Developer & Tech Alchemist</p>
+            <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
                 A results-driven .NET Developer with 10 years of experience, actively pursuing a Senior Developer/Tech Lead role.
                 Proven expertise in designing and implementing microservices architecture, optimizing cloud solutions, and enhancing database performance.
                 Committed to driving significant contributions and achieving impactful outcomes.
             </p>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar flex justify-center flex-wrap gap-2 md:gap-4">
+            <a href="#about" class="nav-link">About</a>
+            <a href="#skills" class="nav-link">Skills</a>
+            <a href="#experience" class="nav-link">Experience</a>
+            <a href="#achievements" class="nav-link">Achievements</a>
+            <a href="#education" class="nav-link">Education</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </nav>
+
+        <!-- About Me Section (Concise, as objective is in hero) -->
+        <section id="about" class="section-card">
+            <h2 class="section-title">Who I Am</h2>
+            <p class="text-lg text-gray-700">
+                I am a passionate Senior Developer/Tech Lead with a decade of experience in crafting high-quality, scalable, and reusable code. My expertise lies in designing robust microservices architectures, optimizing cloud solutions on AWS and Azure, and significantly enhancing database performance. I am dedicated to enforcing best practices, mentoring colleagues, and delivering impactful products that are both powerful and user-friendly. My commitment to continuous improvement is reflected in my proactive approach to code reviews, unit testing, and leveraging modern tools like GitHub Copilot for accelerated development.
+            </p>
         </section>
 
-        <!-- Technical Skills Section: Organized into categories with interactive badges -->
-        <section id="skills" class="card">
-            <h2 class="text-3xl font-bold section-title">My Skill Arsenal (Tools & Powers)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Technical Skills Section -->
+        <section id="skills" class="section-card">
+            <h2 class="section-title">My Skill Arsenal</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Programming Languages & Frameworks</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Languages & Frameworks</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">C#</span>
                         <span class="skill-badge">SQL</span>
@@ -155,33 +332,7 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Core Concepts</h3>
-                    <div class="flex flex-wrap">
-                        <span class="skill-badge">Data Structures and Algorithms (DSA)</span>
-                        <span class="skill-badge">SOLID Principles</span>
-                        <span class="skill-badge">CQRS Pattern</span>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Tools & IDEs</h3>
-                    <div class="flex flex-wrap">
-                        <span class="skill-badge">Microsoft VS 2015+</span>
-                        <span class="skill-badge">VS Code</span>
-                        <span class="skill-badge">SonarQube</span>
-                        <span class="skill-badge">Datadog</span>
-                        <span class="skill-badge">Kafka</span>
-                        <span class="skill-badge">Eclipse</span>
-                        <span class="skill-badge">Android Development Toolkit</span>
-                        <span class="skill-badge">Team City</span>
-                        <span class="skill-badge">Fiddler</span>
-                        <span class="skill-badge">Kibana</span>
-                        <span class="skill-badge">Postman</span>
-                        <span class="skill-badge">Azure DevOps</span>
-                        <span class="skill-badge">GitHub</span>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Databases</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Databases</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">SQL Server 2014+</span>
                         <span class="skill-badge">Postgres</span>
@@ -189,159 +340,166 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Cloud Services</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Cloud Services</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">AWS-SQS</span>
-                        <span class="skill-badge">AWS-SNS</span>
-                        <span class="skill-badge">AWS-S3</span>
-                        <span class="skill-badge">AWS-CRON job</span>
+                        <span class="skill-badge">AWS SQS</span>
+                        <span class="skill-badge">AWS SNS</span>
+                        <span class="skill-badge">AWS S3</span>
+                        <span class="skill-badge">AWS CRON job</span>
                         <span class="skill-badge">AWS Lambda</span>
-                        <span class="skill-badge">Azure - Service Bus</span>
+                        <span class="skill-badge">Azure Service Bus</span>
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Version Control & Certifications</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Tools & IDEs</h3>
+                    <div class="flex flex-wrap">
+                        <span class="skill-badge">Microsoft VS 2015+</span>
+                        <span class="skill-badge">VS Code</span>
+                        <span class="skill-badge">SonarQube</span>
+                        <span class="skill-badge">Datadog</span>
+                        <span class="skill-badge">Kafka</span>
+                        <span class="skill-badge">Eclipse</span>
+                        <span class="skill-badge">Team City</span>
+                        <span class="skill-badge">Fiddler</span>
+                        <span class="skill-badge">Kibana</span>
+                        <span class="skill-badge">Postman</span>
+                        <span class="skill-badge">Azure DevOps</span>
+                        <span class="skill-badge">GitHub</span>
+                        <span class="skill-badge">GitHub Copilot</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Core Concepts & Patterns</h3>
+                    <div class="flex flex-wrap">
+                        <span class="skill-badge">DSA</span>
+                        <span class="skill-badge">SOLID Principles</span>
+                        <span class="skill-badge">CQRS Pattern</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Version Control & Certs</h3>
                     <div class="flex flex-wrap">
                         <span class="skill-badge">GIT</span>
                         <span class="skill-badge">TFS</span>
                         <span class="skill-badge">SVN</span>
-                        <span class="skill-badge">Azure - AZ900 (Certified!)</span>
-                        <span class="skill-badge">AWS Associate Developer (Certified!)</span>
+                        <span class="skill-badge">Azure AZ900</span>
+                        <span class="skill-badge">AWS Associate Developer</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Professional Experience Section: Each experience is a collapsible card -->
-        <section id="experience" class="card">
-            <h2 class="text-3xl font-bold section-title">Code Chronicles (My Professional Journey)</h2>
+        <!-- Professional Experience Section -->
+        <section id="experience" class="section-card">
+            <h2 class="section-title">Code Chronicles (Professional Experience)</h2>
             <div class="space-y-8">
-                <!-- Cognizant Experience -->
-                <details class="project-card">
-                    <summary class="text-2xl font-semibold text-blue-700">Cognizant <span class="text-base font-normal text-gray-500">- Sr. Associate Projects (Senior Developer/Tech Lead)</span></summary>
-                    <div class="mt-4 text-gray-700">
-                        <p class="mb-2"><strong>Duration:</strong> Jun 2022 - Till Date</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Spearheaded the design and optimization of PostgreSQL databases, potentially leveraging Azure services, with a focus on achieving up to a 60% improvement in database query performance.</li>
-                            <li>Implemented and managed SonarQube integration within DevOps pipelines to ensure adherence to stringent code quality and security standards across development teams.</li>
-                            <li>Architected and developed highly efficient, serverless backend solutions utilizing AWS Lambda and RESTful APIs to meet scalability and performance requirements.</li>
-                            <li>Designed and implemented robust data storage and processing solutions leveraging AWS S3, potentially incorporating AWS Lambda for efficient pipeline orchestration.</li>
-                            <li>Conducted interviews for full-stack engineers for both internal team expansion and external hiring initiatives.</li>
-                            <li>Led the development of a reusable library for the automated masking of Personally Identifiable Information (PII), employing hashing to ensure secure anonymization across relevant applications, resulting in the delivery of a critical masking project three weeks ahead of schedule.</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- UAL-TRC Experience -->
-                <details class="project-card">
-                    <summary class="text-2xl font-semibold text-blue-700">UAL-TRC <span class="text-base font-normal text-gray-500">- Sr. Developer (BodyShopping)</span></summary>
-                    <div class="mt-4 text-gray-700">
-                        <p class="mb-2"><strong>Duration:</strong> Oct 2020 - Jun 2022</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Coordinated daily with the onshore development team on status calls.</li>
-                            <li>Developed C# microservices using .NET Core for the new JET portal.</li>
-                            <li>Conducted API testing and debugging using Fiddler.</li>
-                            <li>Created NUnit test cases with mocking for developed code and performed code coverage analysis using SonarQube.</li>
-                            <li>Engineered and developed the auto-approval process for the Apple Health Card (Vaccine Card).</li>
-                            <li>Analyzed and resolved issues using the Datadog tool.</li>
-                            <li>Developed data visualizations using Kibana to extract insights from complex data for consultants and customers.</li>
-                            <li>Created an application to handle AWS SQS and SNS operations, created AWS CRON jobs, and possess basic knowledge of ephemeral containers; led peer code reviews, followed SOLID principles and the CQRS pattern; proposed and optimized critical code resulting in approximately 92% memory usage reduction and approximately 94% response time decrease (measured with BenchmarkDotnet).</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- Wheels - Migration Experience -->
-                <details class="project-card">
-                    <summary class="text-2xl font-semibold text-blue-700">Wheels - Migration <span class="text-base font-normal text-gray-500">- Developer/Team Lead</span></summary>
-                    <div class="mt-4 text-gray-700">
-                        <p class="mb-2"><strong>Duration:</strong> Nov 2018 - Oct 2020</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Coordinated new business requirements and solution changes across business units.</li>
-                            <li>Ensured adherence to documentation practices, including data validation signoffs.</li>
-                            <li>Provided technical training to managers and business partners.</li>
-                            <li>Innovated multiple mundane tasks, resulting in a 60% decrease in turnaround time.</li>
-                            <li>Conducted peer code reviews.</li>
-                            <li>Managed releases as part of the product delivery process.</li>
-                            <li>Created automation that reduced costs by 50% for multiple modules planned over a year, leading to a 2-week early delivery.</li>
-                        </ul>
-                    </div>
-                </details>
-
-                <!-- Dowjones Experience -->
-                <details class="project-card">
-                    <summary class="text-2xl font-semibold text-blue-700">Dowjones <span class="text-base font-normal text-gray-500">- Developer</span></summary>
-                    <div class="mt-4 text-gray-700">
-                        <p class="mb-2"><strong>Duration:</strong> Jan 2015 - Oct 2018</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Contributed to application enhancements using C#.</li>
-                            <li>Supervised junior developers throughout the migration project lifecycle.</li>
-                            <li>Liaised with the production team to analyze and resolve bugs.</li>
-                            <li>Worked with SQL Server databases, designing and developing stored procedures.</li>
-                            <li>Contributed to fixing front-end application vulnerability issues.</li>
-                        </ul>
-                    </div>
-                </details>
+                <!-- Cognizant -->
+                <div class="experience-card">
+                    <h3 class="job-title">Sr. Associate Projects (Senior Developer/Tech Lead)</h3>
+                    <p class="company-duration">Cognizant | Jun 2022 - Present</p>
+                    <ul class="contribution-list">
+                        <li>Spearheaded design and optimization of PostgreSQL databases, achieving up to 60% query performance improvement.</li>
+                        <li>Implemented and managed SonarQube integration within DevOps pipelines for stringent code quality and security.</li>
+                        <li>Architected and developed highly efficient, serverless backend solutions using AWS Lambda and RESTful APIs.</li>
+                        <li>Designed and implemented robust data storage and processing solutions leveraging AWS S3 and Lambda.</li>
+                        <li>Conducted interviews for full-stack engineers and led development of a reusable PII masking library, delivered 3 weeks early.</li>
+                    </ul>
+                </div>
+                <!-- UAL-TRC -->
+                <div class="experience-card">
+                    <h3 class="job-title">Sr. Developer (BodyShopping)</h3>
+                    <p class="company-duration">UAL-TRC | Oct 2020 - Jun 2022</p>
+                    <ul class="contribution-list">
+                        <li>Developed C# microservices using .NET Core for the new JET portal; conducted API testing and debugging with Fiddler.</li>
+                        <li>Created NUnit test cases with mocking and performed code coverage analysis using SonarQube.</li>
+                        <li>Engineered auto-approval process for Apple Health Card; analyzed and resolved issues using Datadog.</li>
+                        <li>Developed data visualizations with Kibana; created application for AWS SQS/SNS operations and AWS CRON jobs.</li>
+                        <li>Led peer code reviews, followed SOLID principles and CQRS pattern; optimized critical code resulting in 92% memory reduction and 94% response time decrease.</li>
+                    </ul>
+                </div>
+                <!-- Wheels - Migration -->
+                <div class="experience-card">
+                    <h3 class="job-title">Developer/Team Lead</h3>
+                    <p class="company-duration">Wheels Inc. | Nov 2018 - Oct 2020</p>
+                    <ul class="contribution-list">
+                        <li>Coordinated new business requirements and solution changes across business units.</li>
+                        <li>Provided technical training to managers and business partners; innovated mundane tasks for 60% turnaround time decrease.</li>
+                        <li>Conducted peer code reviews and managed releases as part of product delivery.</li>
+                        <li>Created automation reducing costs by 50% for multiple modules, leading to 2-week early delivery.</li>
+                    </ul>
+                </div>
+                <!-- Dowjones -->
+                <div class="experience-card">
+                    <h3 class="job-title">Developer</h3>
+                    <p class="company-duration">Dowjones | Jan 2015 - Oct 2018</p>
+                    <ul class="contribution-list">
+                        <li>Contributed to application enhancements using C# and supervised junior developers.</li>
+                        <li>Liaised with the production team to analyze and resolve bugs.</li>
+                        <li>Worked with SQL Server databases, designing and developing stored procedures.</li>
+                        <li>Contributed to fixing front-end application vulnerability issues.</li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <!-- Achievements Section: Highlighted accomplishments -->
-        <section id="achievements" class="card">
-            <h2 class="text-3xl font-bold section-title">Unlocked Achievements (My Trophies!)</h2>
-            <div class="space-y-4">
-                <div class="achievement-item">
-                    <p class="font-semibold text-lg">"Pat on Back" Award (2016 Q1)</p>
-                    <p>Awarded the prestigious "Pat on Back" award for outstanding contributions.</p>
+        <!-- Achievements Section -->
+        <section id="achievements" class="section-card">
+            <h2 class="section-title">Unlocked Achievements</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="experience-card">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">"Pat on Back" Award (2016 Q1)</h3>
+                    <p class="text-gray-700">Awarded the prestigious "Pat on Back" award for outstanding contributions.</p>
                 </div>
-                <div class="achievement-item">
-                    <p class="font-semibold text-lg">Cost Reduction & Early Delivery</p>
-                    <p>Created automation that significantly reduced costs by 50% for multiple modules, leading to a 2-week early delivery.</p>
+                <div class="experience-card">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Cost Reduction & Early Delivery</h3>
+                    <p class="text-gray-700">Created automation that significantly reduced costs by 50% for multiple modules, leading to a 2-week early delivery.</p>
                 </div>
-                <div class="achievement-item">
-                    <p class="font-semibold text-lg">Memory & Response Time Optimization</p>
-                    <p>Proposed and optimized critical code, resulting in approximately 92% memory usage reduction and approximately 94% response time decrease (measured with BenchmarkDotnet).</p>
+                <div class="experience-card">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Memory & Response Time Optimization</h3>
+                    <p class="text-gray-700">Proposed and optimized critical code, resulting in approximately 92% memory usage reduction and approximately 94% response time decrease (measured with BenchmarkDotnet).</p>
                 </div>
-                <div class="achievement-item">
-                    <p class="font-semibold text-lg">PII Masking Project Success</p>
-                    <p>Led the development of a reusable library for automated Personally Identifiable Information (PII) masking, delivering the critical project three weeks ahead of schedule.</p>
+                <div class="experience-card">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">PII Masking Project Success</h3>
+                    <p class="text-gray-700">Led the development of a reusable library for automated Personally Identifiable Information (PII) masking, delivering the critical project three weeks ahead of schedule.</p>
                 </div>
-                <div class="achievement-item">
-                    <p class="font-semibold text-lg">Database Query Performance Boost</p>
-                    <p>Spearheaded initiatives focused on achieving up to a 60% improvement in PostgreSQL database query performance.</p>
+                <div class="experience-card">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Database Query Performance Boost</h3>
+                    <p class="text-gray-700">Spearheaded initiatives focused on achieving up to a 60% improvement in PostgreSQL database query performance.</p>
                 </div>
             </div>
         </section>
 
         <!-- Academic Qualification Section -->
-        <section id="education" class="card">
-            <h2 class="text-3xl font-bold section-title">Knowledge Scrolls (My Academic Journey)</h2>
+        <section id="education" class="section-card">
+            <h2 class="section-title">Knowledge Scrolls (Academic Qualification)</h2>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-lg shadow-md">
+                <table class="styled-table">
                     <thead>
-                        <tr class="bg-blue-100 text-blue-800 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Degree</th>
-                            <th class="py-3 px-6 text-left">Institute/University</th>
-                            <th class="py-3 px-6 text-left">Year of Passing</th>
-                            <th class="py-3 px-6 text-left">Aggregate (%)</th>
+                        <tr>
+                            <th>Degree</th>
+                            <th>Institute/University</th>
+                            <th>Year of Passing</th>
+                            <th>Aggregate (%)</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-700 text-sm font-light">
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">B.Tech. IT</td>
-                            <td class="py-3 px-6 text-left">CVR College of Engineering, JNTU-Hyderabad</td>
-                            <td class="py-3 px-6 text-left">2014</td>
-                            <td class="py-3 px-6 text-left">66.76</td>
+                    <tbody>
+                        <tr>
+                            <td>B.Tech. IT</td>
+                            <td>CVR College of Engineering, JNTU-Hyderabad</td>
+                            <td>2014</td>
+                            <td>66.76</td>
                         </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">Intermediate MPC</td>
-                            <td class="py-3 px-6 text-left">Narayana Junior College, Board of Intermediate Education, Andhra Pradesh</td>
-                            <td class="py-3 px-6 text-left">2010</td>
-                            <td class="py-3 px-6 text-left">79.97</td>
+                        <tr>
+                            <td>Intermediate MPC</td>
+                            <td>Narayana Junior College, Board of Intermediate Education, Andhra Pradesh</td>
+                            <td>2010</td>
+                            <td>79.97</td>
                         </tr>
-                        <tr class="hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">SSC</td>
-                            <td class="py-3 px-6 text-left">St. Paul's High School, Board of Secondary Education, Andhra Pradesh</td>
-                            <td class="py-3 px-6 text-left">2008</td>
-                            <td class="py-3 px-6 text-left">72.00</td>
+                        <tr>
+                            <td>SSC</td>
+                            <td>St. Paul's High School, Board of Secondary Education, Andhra Pradesh</td>
+                            <td>2008</td>
+                            <td>72.00</td>
                         </tr>
                     </tbody>
                 </table>
@@ -349,37 +507,74 @@
         </section>
 
         <!-- Personal Details / Contact Section -->
-        <section id="contact" class="card">
-            <h2 class="text-3xl font-bold section-title">Let's Connect! (My Personal Data Stream)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
-                <div>
-                    <p><strong>Name:</strong> Sai Kanth Kondi</p>
-                    <p><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-blue-600 hover:underline">kondisaikanth@gmail.com</a></p>
-                    <p><strong>Mobile:</strong> +91 8143036676</p>
-                </div>
-                <div>
-                    <p><strong>Languages Known:</strong> English, Hindi, Telugu</p>
-                    <p><strong>Hobbies:</strong> LAN Gaming, Table Tennis</p>
+        <section id="contact" class="section-card">
+            <h2 class="section-title">Let's Connect!</h2>
+            <div class="text-center text-lg text-gray-700">
+                <p class="mb-2"><strong>Name:</strong> Sai Kanth Kondi</p>
+                <p class="mb-2"><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-blue-600 hover:underline">kondisaikanth@gmail.com</a></p>
+                <p class="mb-2"><strong>Mobile:</strong> +91 8143036676</p>
+                <p class="mb-2"><strong>Languages Known:</strong> English, Hindi, Telugu</p>
+                <p><strong>Hobbies:</strong> LAN Gaming, Table Tennis</p>
+
+                <div class="social-icons mt-8">
+                    <a href="mailto:kondisaikanth@outlook.com" target="_blank" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/sai-kanth-kondi/" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/SaiKanthK" target="_blank" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
                 </div>
             </div>
         </section>
 
         <!-- Footer Section -->
-        <footer class="text-center mt-12 p-6 text-gray-600 text-sm">
+        <footer>
             <p>&copy; 2025 Sai Kanth K. All rights reserved. Built with passion and a dash of code magic.</p>
         </footer>
     </div>
 
     <script>
-        // JavaScript for smooth scrolling when clicking navigation links
+        // Smooth scrolling for navigation links
         document.querySelectorAll('nav a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault(); // Prevent default anchor click behavior
-                // Scroll to the target section smoothly
+                e.preventDefault();
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
                 });
             });
+        });
+
+        // Intersection Observer for fade-in animations on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.animation = `slideInUp 0.8s ease-out forwards`;
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Apply observer to all section cards
+        document.querySelectorAll('.section-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Apply specific animation to header elements on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.hero-title').style.animation = 'slideInUp 0.8s ease-out forwards';
+            document.querySelector('.hero-subtitle').style.animation = 'slideInUp 1s ease-out forwards';
+            document.querySelector('.hero-section p.text-lg').style.animation = 'slideInUp 1.2s ease-out forwards';
+            document.querySelector('.profile-pic').style.animation = 'pulse 2s infinite alternate';
         });
     </script>
 </body>
