@@ -188,12 +188,13 @@
         .skill-badge {
             background-color: #e0f2f7; /* Light blue */
             color: #2980b9; /* Darker blue text */
-            padding: 0.6rem 1.2rem;
+            padding: 0.4rem 0.8rem; /* Further reduced padding */
             border-radius: 9999px; /* Pill shape */
             font-weight: 500;
-            margin: 0.4rem;
+            margin: 0.2rem; /* Further reduced margin */
             display: inline-block;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none; /* Remove underline from skill links */
         }
 
         .skill-badge:hover {
@@ -206,14 +207,14 @@
             background-color: #fcfcfc; /* Slightly different background for skill boxes */
             border: 1px solid #e0e0e0;
             border-radius: 0.75rem;
-            padding: 1.5rem;
+            padding: 1rem; /* Adjusted padding */
             height: 100%; /* Ensure uniform height within the grid */
             display: flex;
             flex-direction: column;
         }
 
         .skill-category-box h3 {
-            margin-bottom: 1rem; /* More space below category title */
+            margin-bottom: 0.75rem; /* Reduced space below category title */
         }
 
         .skill-category-box .flex-wrap {
@@ -349,13 +350,17 @@
                 padding: 1.5rem;
             }
             .resume-download-btn {
-                top: 1rem; /* Adjust position for smaller screens */
-                right: 1rem;
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+                position: static; /* Remove absolute positioning on small screens */
+                margin-top: 1.5rem; /* Add some space below hero content */
+                width: fit-content; /* Adjust width to content */
+                margin-left: auto; /* Center button */
+                margin-right: auto; /* Center button */
             }
             .resume-download-btn i {
                 font-size: 1rem;
+            }
+            .skill-category-box {
+                padding: 1rem; /* Ensure consistent padding on smaller screens too */
             }
         }
     </style>
@@ -410,69 +415,70 @@
                 <div class="skill-category-box">
                     <h3 class="text-xl font-semibold text-gray-800">Languages & Frameworks</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">C#</span>
-                        <span class="skill-badge">SQL</span>
-                        <span class="skill-badge">REST API</span>
-                        <span class="skill-badge">jQuery</span>
-                        <span class="skill-badge">Batch Script</span>
-                        <span class="skill-badge">Entity Framework</span>
-                        <span class="skill-badge">Microservices</span>
-                        <span class="skill-badge">.NET Core</span>
+                        <a href="https://en.wikipedia.org/wiki/C_Sharp_(programming_language)" target="_blank" rel="noopener noreferrer" class="skill-badge">C#</a>
+                        <a href="https://en.wikipedia.org/wiki/SQL" target="_blank" rel="noopener noreferrer" class="skill-badge">SQL</a>
+                        <a href="https://en.wikipedia.org/wiki/REST" target="_blank" rel="noopener noreferrer" class="skill-badge">REST API</a>
+                        <a href="https://en.wikipedia.org/wiki/JQuery" target="_blank" rel="noopener noreferrer" class="skill-badge">jQuery</a>
+                        <a href="https://en.wikipedia.org/wiki/Batch_file" target="_blank" rel="noopener noreferrer" class="skill-badge">Batch Script</a>
+                        <a href="https://en.wikipedia.org/wiki/Entity_Framework" target="_blank" rel="noopener noreferrer" class="skill-badge">Entity Framework</a>
+                        <a href="https://en.wikipedia.org/wiki/Microservices" target="_blank" rel="noopener noreferrer" class="skill-badge">Microservices</a>
+                        <a href="https://en.wikipedia.org/wiki/.NET_Core" target="_blank" rel="noopener noreferrer" class="skill-badge">.NET Core</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
                     <h3 class="text-xl font-semibold text-gray-800">Databases</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">SQL Server 2014+</span>
-                        <span class="skill-badge">Postgres</span>
-                        <span class="skill-badge">MySQL</span>
+                        <a href="https://en.wikipedia.org/wiki/Microsoft_SQL_Server" target="_blank" rel="noopener noreferrer" class="skill-badge">SQL Server 2014+</a>
+                        <a href="https://en.wikipedia.org/wiki/PostgreSQL" target="_blank" rel="noopener noreferrer" class="skill-badge">Postgres</a>
+                        <a href="https://en.wikipedia.org/wiki/MySQL" target="_blank" rel="noopener noreferrer" class="skill-badge">MySQL</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
                     <h3 class="text-xl font-semibold text-gray-800">Cloud Services</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">AWS SQS</span>
-                        <span class="skill-badge">AWS SNS</span>
-                        <span class="skill-badge">AWS S3</span>
-                        <span class="skill-badge">AWS CRON job</span>
-                        <span class="skill-badge">AWS Lambda</span>
-                        <span class="skill-badge">Azure Service Bus</span>
+                        <a href="https://aws.amazon.com/sqs/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS SQS</a>
+                        <a href="https://aws.amazon.com/sns/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS SNS</a>
+                        <a href="https://aws.amazon.com/s3/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS S3</a>
+                        <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS CRON job</a>
+                        <a href="https://aws.amazon.com/lambda/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS Lambda</a>
+                        <a href="https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure Service Bus</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
                     <h3 class="text-xl font-semibold text-gray-800">Tools & IDEs</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">Microsoft VS 2015+</span>
-                        <span class="skill-badge">VS Code</span>
-                        <span class="skill-badge">SonarQube</span>
-                        <span class="skill-badge">Datadog</span>
-                        <span class="skill-badge">Kafka</span>
-                        <span class="skill-badge">Eclipse</span>
-                        <span class="skill-badge">Team City</span>
-                        <span class="skill-badge">Fiddler</span>
-                        <span class="skill-badge">Kibana</span>
-                        <span class="skill-badge">Postman</span>
-                        <span class="skill-badge">Azure DevOps</span>
-                        <span class="skill-badge">GitHub</span>
-                        <span class="skill-badge">GitHub Copilot</span>
+                        <a href="https://en.wikipedia.org/wiki/Microsoft_Visual_Studio" target="_blank" rel="noopener noreferrer" class="skill-badge">Microsoft VS 2015+</a>
+                        <a href="https://en.wikipedia.org/wiki/Visual_Studio_Code" target="_blank" rel="noopener noreferrer" class="skill-badge">VS Code</a>
+                        <a href="https://www.sonarqube.org/" target="_blank" rel="noopener noreferrer" class="skill-badge">SonarQube</a>
+                        <a href="https://www.datadoghq.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Datadog</a>
+                        <a href="https://en.wikipedia.org/wiki/Apache_Kafka" target="_blank" rel="noopener noreferrer" class="skill-badge">Kafka</a>
+                        <a href="https://en.wikipedia.org/wiki/Eclipse_(software)" target="_blank" rel="noopener noreferrer" class="skill-badge">Eclipse</a>
+                        <a href="https://en.wikipedia.org/wiki/Android_software_development" target="_blank" rel="noopener noreferrer" class="skill-badge">Android Development Toolkit</a>
+                        <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener noreferrer" class="skill-badge">Team City</a>
+                        <a href="https://www.telerik.com/fiddler" target="_blank" rel="noopener noreferrer" class="skill-badge">Fiddler</a>
+                        <a href="https://www.elastic.co/kibana/" target="_blank" rel="noopener noreferrer" class="skill-badge">Kibana</a>
+                        <a href="https://www.postman.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Postman</a>
+                        <a href="https://azure.microsoft.com/en-us/products/devops/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure DevOps</a>
+                        <a href="https://en.wikipedia.org/wiki/GitHub" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub</a>
+                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub Copilot</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
                     <h3 class="text-xl font-semibold text-gray-800">Core Concepts & Patterns</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">DSA</span>
-                        <span class="skill-badge">SOLID Principles</span>
-                        <span class="skill-badge">CQRS Pattern</span>
+                        <a href="https://en.wikipedia.org/wiki/Data_structure" target="_blank" rel="noopener noreferrer" class="skill-badge">DSA</a>
+                        <a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)" target="_blank" rel="noopener noreferrer" class="skill-badge">SOLID Principles</a>
+                        <a href="https://en.wikipedia.org/wiki/Command%E2%80%93query_responsibility_segregation" target="_blank" rel="noopener noreferrer" class="skill-badge">CQRS Pattern</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Version Control & Certs</h3>
+                    <h3 class="text-xl font-semibold text-gray-800">Version Control & Certifications</h3>
                     <div class="flex flex-wrap">
-                        <span class="skill-badge">GIT</span>
-                        <span class="skill-badge">TFS</span>
-                        <span class="skill-badge">SVN</span>
-                        <span class="skill-badge">Azure AZ900</span>
-                        <span class="skill-badge">AWS Associate Developer</span>
+                        <a href="https://en.wikipedia.org/wiki/Git" target="_blank" rel="noopener noreferrer" class="skill-badge">GIT</a>
+                        <a href="https://en.wikipedia.org/wiki/Azure_DevOps_Server" target="_blank" rel="noopener noreferrer" class="skill-badge">TFS</a>
+                        <a href="https://en.wikipedia.org/wiki/Apache_Subversion" target="_blank" rel="noopener noreferrer" class="skill-badge">SVN</a>
+                        <a href="https://learn.microsoft.com/en-us/certifications/azure-fundamentals/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure AZ900</a>
+                        <a href="https://aws.amazon.com/certification/certified-developer-associate/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS Associate Developer</a>
                     </div>
                 </div>
             </div>
@@ -512,9 +518,12 @@
                     <p class="company-duration">Wheels Inc. | Nov 2018 - Oct 2020</p>
                     <ul class="contribution-list">
                         <li>Coordinated new business requirements and solution changes across business units.</li>
-                        <li>Provided technical training to managers and business partners; innovated mundane tasks for 60% turnaround time decrease.</li>
-                        <li>Conducted peer code reviews and managed releases as part of product delivery.</li>
-                        <li>Created automation reducing costs by 50% for multiple modules, leading to 2-week early delivery.</li>
+                        <li>Ensured adherence to documentation practices, including data validation signoffs.</li>
+                        <li>Provided technical training to managers and business partners.</li>
+                        <li>Innovated multiple mundane tasks, resulting in a 60% decrease in turnaround time.</li>
+                        <li>Conducted peer code reviews.</li>
+                        <li>Managed releases as part of the product delivery process.</li>
+                        <li>Created automation that reduced costs by 50% for multiple modules planned over a year, leading to a 2-week early delivery.</li>
                     </ul>
                 </div>
                 <!-- Dowjones -->
