@@ -44,6 +44,11 @@
             50% { transform: scale(1.05); }
         }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Custom styles to enhance Tailwind defaults and add specific UI elements */
         body {
             font-family: 'Inter', sans-serif;
@@ -318,6 +323,19 @@
             border-top: 1px solid #eee;
         }
 
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .hero-section {
@@ -397,6 +415,7 @@
             <a href="#experience" class="nav-link">Experience</a>
             <a href="#achievements" class="nav-link">Achievements</a>
             <a href="#education" class="nav-link">Education</a>
+            <a href="#career-compass" class="nav-link">Future Horizons ✨</a>
             <a href="#contact" class="nav-link">Contact</a>
         </nav>
 
@@ -453,14 +472,13 @@
                         <a href="https://www.datadoghq.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Datadog</a>
                         <a href="https://en.wikipedia.org/wiki/Apache_Kafka" target="_blank" rel="noopener noreferrer" class="skill-badge">Kafka</a>
                         <a href="https://en.wikipedia.org/wiki/Eclipse_(software)" target="_blank" rel="noopener noreferrer" class="skill-badge">Eclipse</a>
-                        <a href="https://en.wikipedia.org/wiki/Android_software_development" target="_blank" rel="noopener noreferrer" class="skill-badge">Android Development Toolkit</a>
+                        <a href="https://en.wikipedia.org/wiki/Android_software_development_kit" target="_blank" rel="noopener noreferrer" class="skill-badge">Android Development Toolkit</a>
                         <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener noreferrer" class="skill-badge">Team City</a>
                         <a href="https://www.telerik.com/fiddler" target="_blank" rel="noopener noreferrer" class="skill-badge">Fiddler</a>
                         <a href="https://www.elastic.co/kibana/" target="_blank" rel="noopener noreferrer" class="skill-badge">Kibana</a>
                         <a href="https://www.postman.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Postman</a>
                         <a href="https://azure.microsoft.com/en-us/products/devops/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure DevOps</a>
                         <a href="https://en.wikipedia.org/wiki/GitHub" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub</a>
-                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub Copilot</a>
                     </div>
                 </div>
                 <div class="skill-category-box">
@@ -479,6 +497,14 @@
                         <a href="https://en.wikipedia.org/wiki/Apache_Subversion" target="_blank" rel="noopener noreferrer" class="skill-badge">SVN</a>
                         <a href="https://learn.microsoft.com/en-us/certifications/azure-fundamentals/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure AZ900</a>
                         <a href="https://aws.amazon.com/certification/certified-developer-associate/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS Associate Developer</a>
+                    </div>
+                </div>
+                <div class="skill-category-box">
+                    <h3 class="text-xl font-semibold text-gray-800">AI/ML Tools</h3>
+                    <div class="flex flex-wrap">
+                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub Copilot</a>
+                        <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Google Gemini</a>
+                        <a href="https://firebase.google.com/docs/machine-learning" target="_blank" rel="noopener noreferrer" class="skill-badge">Firebase ML</a>
                     </div>
                 </div>
             </div>
@@ -604,6 +630,30 @@
             </div>
         </section>
 
+        <!-- New Section: Future Horizons (Gemini API Integration) -->
+        <section id="career-compass" class="section-card">
+            <h2 class="section-title">Future Horizons ✨ (Powered by Gemini AI)</h2>
+            <p class="text-lg text-gray-700 text-center mb-6">
+                Curious about where my skills could lead? Click the button below to get AI-powered suggestions for potential career paths based on my profile!
+            </p>
+            <div class="text-center mb-8">
+                <button id="generateCareerPathsBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                    Discover My Future Path ✨
+                </button>
+            </div>
+            <div id="careerPathsResult" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                <p class="text-gray-600 text-center" id="loadingIndicator">
+                    <span class="spinner"></span> Generating insights...
+                </p>
+                <div id="careerPathsContent" class="text-left text-gray-800 leading-relaxed">
+                    <!-- Career paths will be displayed here -->
+                </div>
+            </div>
+            <div id="careerPathsError" class="mt-8 p-4 bg-red-100 text-red-700 rounded-lg border border-red-300 hidden">
+                Oops! Something went wrong while generating career paths. Please try again later.
+            </div>
+        </section>
+
         <!-- Personal Details / Contact Section -->
         <section id="contact" class="section-card">
             <h2 class="section-title">Let's Connect!</h2>
@@ -680,6 +730,83 @@
             document.querySelector('.hero-subtitle').style.animation = 'slideInUp 1s ease-out forwards';
             document.querySelector('.hero-description').style.animation = 'slideInUp 1.2s ease-out forwards';
             document.querySelector('.profile-pic').style.animation = 'pulse 2s infinite alternate';
+        });
+
+        // Gemini API Integration for Career Path Suggestion
+        document.getElementById('generateCareerPathsBtn').addEventListener('click', async () => {
+            const careerPathsResult = document.getElementById('careerPathsResult');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const careerPathsContent = document.getElementById('careerPathsContent');
+            const careerPathsError = document.getElementById('careerPathsError');
+
+            // Show loading indicator, hide previous results/errors
+            careerPathsResult.classList.remove('hidden');
+            loadingIndicator.classList.remove('hidden');
+            careerPathsContent.innerHTML = '';
+            careerPathsError.classList.add('hidden');
+
+            try {
+                // Extract relevant content for the LLM prompt
+                const aboutText = document.querySelector('#about p').innerText;
+                const skillsText = Array.from(document.querySelectorAll('#skills .skill-badge')).map(badge => badge.innerText).join(', ');
+                const experienceDetails = Array.from(document.querySelectorAll('#experience .experience-card')).map(card => {
+                    const title = card.querySelector('.job-title').innerText;
+                    const companyDuration = card.querySelector('.company-duration').innerText;
+                    const contributions = Array.from(card.querySelectorAll('.contribution-list li')).map(li => li.innerText).join('; ');
+                    return `${title} at ${companyDuration}: ${contributions}`;
+                }).join('\n\n');
+
+                const prompt = `Based on the following professional profile, suggest 3-5 potential career paths or advanced roles. For each suggestion, provide a brief (1-2 sentences) explanation of why it's a good fit based on the provided skills and experience.
+
+--- Profile ---
+About Me:
+${aboutText}
+
+Skills:
+${skillsText}
+
+Experience:
+${experienceDetails}
+
+--- End Profile ---
+
+Please format your response as a numbered list.`;
+
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide this in runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    careerPathsContent.innerHTML = text.replace(/\n/g, '<br>'); // Display text, convert newlines to <br>
+                } else {
+                    careerPathsContent.innerHTML = 'No career paths could be generated. The AI might not have found enough relevant information or the response format was unexpected.';
+                }
+
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                careerPathsError.classList.remove('hidden');
+                careerPathsContent.innerHTML = ''; // Clear any partial content
+            } finally {
+                loadingIndicator.classList.add('hidden'); // Hide loading indicator regardless of success or failure
+            }
         });
     </script>
 </body>
