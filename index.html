@@ -3,116 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sai Kanth K. - My Digital Playground</title>
-    <!-- Google Font: Inter for a clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Sai Kanth K. - Backend Sorcerer</title>
+    <!-- Google Font: Fira Mono for code vibes, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN for utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons (Mail, LinkedIn, GitHub, Download) -->
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Keyframe animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Custom styles to enhance Tailwind defaults and add specific UI elements */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f8f8; /* Very light gray, almost white, for the background */
-            color: #333; /* Darker text for readability */
-            line-height: 1.6;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
+            color: #e0e6f0;
+            min-height: 100vh;
         }
-
-        /* Main container for content */
         .main-content-wrapper {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 2rem;
         }
-
-        /* Header/Hero Section Styling */
         .hero-section {
-            background-color: #ffffff; /* White background for hero */
-            border-radius: 1rem; /* Rounded corners */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Soft shadow */
+            background: rgba(30, 34, 54, 0.98);
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.25);
             padding: 3rem 2rem;
-            display: flex; /* Use flexbox for horizontal alignment */
-            align-items: center; /* Vertically center items */
-            gap: 2rem; /* Space between image and text */
-            margin-bottom: 2rem;
-            animation: fadeIn 1s ease-out forwards; /* Fade in the hero section */
-            position: relative; /* Needed for absolute positioning of download icon */
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            border: 2px solid #232946;
         }
-
         .profile-pic {
             width: 150px;
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #e0e0e0; /* Light gray border around image */
-            flex-shrink: 0; /* Prevent image from shrinking */
-            animation: pulse 2s infinite alternate; /* Gentle pulse animation */
+            border: 4px solid #393e5c;
+            box-shadow: 0 2px 16px #23294699;
+            flex-shrink: 0;
+            animation: pulse 2s infinite alternate;
         }
-
         .hero-content {
-            flex-grow: 1; /* Allow text content to take remaining space */
-            text-align: left; /* Align text within its container to the left */
+            flex-grow: 1;
+            text-align: left;
         }
-
         .hero-title {
-            font-size: 3.5rem; /* Larger font for name */
+            font-size: 3rem;
+            font-family: 'Fira Mono', monospace;
             font-weight: 700;
-            color: #2c3e50; /* Dark blue-gray for name */
-            animation: slideInUp 0.8s ease-out forwards;
+            color: #ffb400;
+            margin-bottom: 0.5rem;
         }
-
         .hero-subtitle {
-            font-size: 1.8rem;
-            font-weight: 300;
-            color: #555;
-            margin-top: 0.5rem;
-            animation: slideInUp 1s ease-out forwards;
+            font-size: 1.5rem;
+            font-family: 'Fira Mono', monospace;
+            color: #e0e6f0;
+            margin-bottom: 1rem;
         }
-
         .hero-description {
-            text-align: justify; /* Justify the main description text */
+            font-size: 1.1rem;
+            color: #b8c1ec;
+            margin-bottom: 1.5rem;
+            text-align: justify;
         }
-
-        /* Resume Download Button Styling */
         .resume-download-btn {
             position: absolute;
             top: 1.5rem;
@@ -121,692 +75,447 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1.25rem;
-            background-color: #3498db; /* Bright blue color */
-            color: white;
-            border-radius: 9999px; /* Fully rounded for a pill shape */
+            background: linear-gradient(90deg, #ffb400 60%, #ff6f3c 100%);
+            color: #232946;
+            border-radius: 9999px;
             text-decoration: none;
-            font-weight: 500;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 700;
+            font-family: 'Fira Mono', monospace;
+            box-shadow: 0 4px 16px #ffb40033;
+            transition: background 0.3s, transform 0.2s;
             cursor: pointer;
             z-index: 10;
         }
-
         .resume-download-btn:hover {
-            background-color: #2980b9; /* Darker blue on hover */
-            transform: scale(1.05); /* Slightly enlarge on hover */
+            background: linear-gradient(90deg, #ff6f3c 60%, #ffb400 100%);
+            transform: scale(1.07);
         }
-
-        .resume-download-btn i {
-            font-size: 1.2rem; /* Icon size within the button */
-        }
-
-
-        /* Navigation Bar */
         .navbar {
-            background-color: #2c3e50; /* Dark blue-gray for navbar */
+            background: #232946;
             padding: 1rem 0;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px #181c2f55;
             position: sticky;
             top: 0;
             z-index: 100;
-            animation: fadeIn 1.2s ease-out forwards;
         }
-
         .nav-link {
-            color: #ecf0f1; /* Light gray for links */
+            color: #ffb400;
             padding: 0.75rem 1.25rem;
             border-radius: 0.5rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            font-weight: 500;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 600;
+            transition: background 0.3s, color 0.3s;
         }
-
         .nav-link:hover {
-            background-color: #34495e; /* Slightly darker on hover */
-            color: #ffffff;
+            background: #393e5c;
+            color: #fff;
         }
-
-        /* Section Styling */
         .section-card {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: #232946;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px #181c2f33;
             padding: 2.5rem;
             margin-bottom: 2rem;
-            animation: slideInUp 0.8s ease-out forwards; /* Apply slide-in animation to sections */
-            opacity: 0; /* Start invisible for animation */
+            border: 1.5px solid #393e5c;
         }
-
         .section-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #3498db; /* Bright blue for titles */
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 0.75rem;
+            font-size: 2.2rem;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 700;
+            color: #ffb400;
+            border-bottom: 2px dashed #ffb400;
+            padding-bottom: 0.5rem;
             margin-bottom: 2rem;
             text-align: center;
         }
-
-        /* Skill Badges */
         .skill-badge {
-            background-color: #e0f2f7; /* Light blue */
-            color: #2980b9; /* Darker blue text */
-            padding: 0.4rem 0.8rem; /* Further reduced padding */
-            border-radius: 9999px; /* Pill shape */
-            font-weight: 500;
-            margin: 0.2rem; /* Further reduced margin */
-            display: inline-block;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none; /* Remove underline from skill links */
+            background: #393e5c;
+            color: #ffb400;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 600;
+            margin: 0.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 1rem;
+            border: 1.5px solid #ffb40055;
+            transition: background 0.3s, transform 0.2s;
+            text-decoration: none;
         }
-
         .skill-badge:hover {
-            background-color: #cce7f0;
-            transform: translateY(-3px);
+            background: #ffb400;
+            color: #232946;
+            transform: translateY(-3px) scale(1.08);
         }
-
-        /* Skill Category Container */
+        .skill-badge i {
+            font-size: 1.1em;
+        }
         .skill-category-box {
-            background-color: #fcfcfc; /* Slightly different background for skill boxes */
-            border: 1px solid #e0e0e0;
+            background: #181c2f;
+            border: 1.5px solid #393e5c;
             border-radius: 0.75rem;
-            padding: 1rem; /* Adjusted padding */
-            height: 100%; /* Ensure uniform height within the grid */
+            padding: 1.2rem;
+            height: 100%;
             display: flex;
             flex-direction: column;
         }
-
-        .skill-category-box h3 {
-            margin-bottom: 0.75rem; /* Reduced space below category title */
-        }
-
-        .skill-category-box .flex-wrap {
-            flex-grow: 1; /* Allow badges to take up space */
-            align-content: flex-start; /* Align badges to the top */
-        }
-
-
-        /* Experience/Project Cards */
         .experience-card {
-            border: 1px solid #eee;
+            border: 1.5px solid #393e5c;
             border-radius: 0.75rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            transition: box-shadow 0.3s ease;
+            background: #181c2f;
+            box-shadow: 0 2px 12px #23294633;
+            transition: box-shadow 0.3s;
         }
-
         .experience-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 32px #ffb40033;
         }
-
         .job-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #34495e;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 700;
+            color: #ffb400;
+            margin-bottom: 0.3rem;
         }
-
         .company-duration {
             font-size: 1rem;
-            color: #7f8c8d;
+            color: #b8c1ec;
             margin-bottom: 1rem;
         }
-
         .contribution-list li {
             margin-bottom: 0.5rem;
             padding-left: 1.5rem;
             position: relative;
+            font-size: 1.05rem;
         }
-
         .contribution-list li::before {
-            content: '•';
-            color: #3498db;
-            font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
+            content: '🛠️';
             position: absolute;
             left: 0;
         }
-
-        /* Table Styling (for Education) */
-        .styled-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
+        .project-card {
+            background: #181c2f;
+            border: 1.5px solid #ffb40055;
+            border-radius: 0.75rem;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 8px #ffb40022;
         }
-
-        .styled-table th, .styled-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        .project-title {
+            font-family: 'Fira Mono', monospace;
+            color: #ffb400;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
-
-        .styled-table th {
-            background-color: #f2f2f2;
-            color: #555;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
+        .project-stack {
+            font-size: 0.95rem;
+            color: #b8c1ec;
+            margin-bottom: 0.5rem;
         }
-
-        .styled-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .project-desc {
+            color: #e0e6f0;
         }
-
-        .styled-table tr:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* Social Icons */
         .social-icons a {
-            color: #2c3e50;
+            color: #ffb400;
             font-size: 2rem;
             margin: 0 1rem;
-            transition: color 0.3s ease, transform 0.2s ease;
+            transition: color 0.3s, transform 0.2s;
         }
-
         .social-icons a:hover {
-            color: #3498db;
-            transform: translateY(-5px);
+            color: #fff;
+            transform: translateY(-5px) scale(1.1);
         }
-
-        /* Footer */
         footer {
             text-align: center;
             padding: 2rem;
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            color: #b8c1ec;
+            font-size: 0.95rem;
             margin-top: 3rem;
-            border-top: 1px solid #eee;
+            border-top: 1.5px solid #393e5c;
         }
-
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #3498db;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 0.5rem;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .hero-section {
-                flex-direction: column; /* Stack image and text vertically on small screens */
-                text-align: center; /* Center text when stacked */
+                flex-direction: column;
+                text-align: center;
             }
             .hero-content {
-                text-align: center; /* Center text within its container when stacked */
-            }
-            .hero-description {
-                text-align: left; /* Keep description justified, but within centered container */
-            }
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            .hero-subtitle {
-                font-size: 1.4rem;
+                text-align: center;
             }
             .navbar {
-                border-radius: 0; /* No rounded corners on small screens */
-            }
-            .nav-link {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
+                border-radius: 0;
             }
             .section-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
             .section-card {
-                padding: 1.5rem;
+                padding: 1.2rem;
             }
             .resume-download-btn {
-                position: static; /* Remove absolute positioning on small screens */
-                margin-top: 1.5rem; /* Add some space below hero content */
-                width: fit-content; /* Adjust width to content */
-                margin-left: auto; /* Center button */
-                margin-right: auto; /* Center button */
-            }
-            .resume-download-btn i {
-                font-size: 1rem;
-            }
-            .skill-category-box {
-                padding: 1rem; /* Ensure consistent padding on smaller screens too */
+                position: static;
+                margin-top: 1.5rem;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
             }
         }
     </style>
 </head>
 <body>
-
     <div class="main-content-wrapper">
-        <!-- Header/Hero Section -->
+        <!-- Hero Section -->
         <header class="hero-section">
-            <img src="dp.png"
-                 onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/555555?text=SK';"
-                 alt="Sai Kanth K. Profile"
-                 class="profile-pic">
+            <img src="dp.png" onerror="this.onerror=null;this.src='https://placehold.co/150x150/393e5c/ffb400?text=SK';" alt="Sai Kanth K. Profile" class="profile-pic">
             <div class="hero-content">
                 <h1 class="hero-title">Sai Kanth Kondi</h1>
-                <p class="hero-subtitle">.NET Developer & Tech Alchemist</p>
-                <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto hero-description">
-                    A results-driven .NET Developer with 10 years of experience, actively pursuing a Senior Developer/Tech Lead role.
-                    Proven expertise in designing and implementing microservices architecture, optimizing cloud solutions, and enhancing database performance.
-                    Committed to driving significant contributions and achieving impactful outcomes.
-                </p>
+                <p class="hero-subtitle">Backend Sorcerer <span title=".NET, SQL, Cloud, and more!">🧙‍♂️</span></p>
+                <p class="hero-description">Turning coffee into scalable APIs and database magic for a decade. I architect, optimize, and debug my way through the backend multiverse. If it runs on a server, I probably have an opinion about it. <span title="I speak fluent JSON, SQL, and sarcasm.">#BackendLife</span></p>
             </div>
-            <!-- Resume Download Button -->
-            <a href="SaiKanth_Resume.pdf" download="SaiKanth_Resume.pdf" class="resume-download-btn" aria-label="Download Resume">
-                <i class="fas fa-file-download"></i>
-                <span>Download Resume</span>
-            </a>
+            <a href="SaiKanth_Resume.pdf" download="SaiKanth_Resume.pdf" class="resume-download-btn" aria-label="Download Resume"><i class="fas fa-file-download"></i> <span>Download Resume</span></a>
         </header>
-
         <!-- Navigation Bar -->
         <nav class="navbar flex justify-center flex-wrap gap-2 md:gap-4">
             <a href="#about" class="nav-link">About</a>
             <a href="#skills" class="nav-link">Skills</a>
+            <a href="#projects" class="nav-link">Projects</a>
             <a href="#experience" class="nav-link">Experience</a>
             <a href="#achievements" class="nav-link">Achievements</a>
             <a href="#education" class="nav-link">Education</a>
-            <a href="#career-compass" class="nav-link">Future Horizons ✨</a>
             <a href="#contact" class="nav-link">Contact</a>
         </nav>
-
-        <!-- About Me Section (Concise, as objective is in hero) -->
+        <!-- About Section -->
         <section id="about" class="section-card">
-            <h2 class="section-title">Who I Am</h2>
-            <p class="text-lg text-gray-700 text-justify">
-                I am a passionate Senior Developer/Tech Lead with a decade of experience in crafting high-quality, scalable, and reusable code. My expertise lies in designing robust microservices architectures, optimizing cloud solutions on AWS and Azure, and significantly enhancing database performance. I am dedicated to enforcing best practices, mentoring colleagues, and delivering impactful products that are both powerful and user-friendly. My commitment to continuous improvement is reflected in my proactive approach to code reviews, unit testing, and leveraging modern tools like GitHub Copilot for accelerated development.
-            </p>
+            <h2 class="section-title">Whoami <span title="Linux joke!">$</span></h2>
+            <p class="text-lg text-gray-300 text-justify">I'm a backend developer who believes in <span title="Don't Repeat Yourself">DRY</span> code, <span title="Keep It Simple, Stupid">KISS</span> principles, and the power of a well-tuned query. My toolbox is packed with .NET spells, SQL incantations, and cloud wizardry. I love automating the boring stuff, optimizing the slow stuff, and mentoring the next generation of code wizards. If you need a REST API, a microservice, or a database that's faster than your morning coffee, I'm your guy.</p>
         </section>
-
-        <!-- Technical Skills Section -->
+        <!-- Skills Section -->
         <section id="skills" class="section-card">
-            <h2 class="section-title">My Skill Arsenal</h2>
+            <h2 class="section-title">Tech Stack Arsenal <span title="May contain traces of caffeine">☕</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Languages & Frameworks</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Languages & Frameworks</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://en.wikipedia.org/wiki/C_Sharp_(programming_language)" target="_blank" rel="noopener noreferrer" class="skill-badge">C#</a>
-                        <a href="https://en.wikipedia.org/wiki/SQL" target="_blank" rel="noopener noreferrer" class="skill-badge">SQL</a>
-                        <a href="https://en.wikipedia.org/wiki/REST" target="_blank" rel="noopener noreferrer" class="skill-badge">REST API</a>
-                        <a href="https://en.wikipedia.org/wiki/JQuery" target="_blank" rel="noopener noreferrer" class="skill-badge">jQuery</a>
-                        <a href="https://en.wikipedia.org/wiki/Batch_file" target="_blank" rel="noopener noreferrer" class="skill-badge">Batch Script</a>
-                        <a href="https://en.wikipedia.org/wiki/Entity_Framework" target="_blank" rel="noopener noreferrer" class="skill-badge">Entity Framework</a>
-                        <a href="https://en.wikipedia.org/wiki/Microservices" target="_blank" rel="noopener noreferrer" class="skill-badge">Microservices</a>
-                        <a href="https://en.wikipedia.org/wiki/.NET_Core" target="_blank" rel="noopener noreferrer" class="skill-badge">.NET Core</a>
+                        <span class="skill-badge" title="C# - My main weapon"><i class="fab fa-microsoft"></i> C#</span>
+                        <span class="skill-badge" title="SQL - I dream in queries"><i class="fas fa-database"></i> SQL</span>
+                        <span class="skill-badge" title=".NET Core - Modern backend magic"><i class="fab fa-microsoft"></i> .NET Core</span>
+                        <span class="skill-badge" title="REST API - Speak HTTP fluently"><i class="fas fa-cloud"></i> REST API</span>
+                        <span class="skill-badge" title="Entity Framework - ORM wizardry"><i class="fas fa-project-diagram"></i> Entity Framework</span>
+                        <span class="skill-badge" title="Microservices - Divide and conquer"><i class="fas fa-cubes"></i> Microservices</span>
+                        <span class="skill-badge" title="Batch Script - For when GUIs are too slow"><i class="fas fa-terminal"></i> Batch Script</span>
+                        <span class="skill-badge" title="jQuery - Yes, I can frontend too"><i class="fab fa-js"></i> jQuery</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Databases</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Databases</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://en.wikipedia.org/wiki/Microsoft_SQL_Server" target="_blank" rel="noopener noreferrer" class="skill-badge">SQL Server 2014+</a>
-                        <a href="https://en.wikipedia.org/wiki/PostgreSQL" target="_blank" rel="noopener noreferrer" class="skill-badge">Postgres</a>
-                        <a href="https://en.wikipedia.org/wiki/MySQL" target="_blank" rel="noopener noreferrer" class="skill-badge">MySQL</a>
+                        <span class="skill-badge" title="SQL Server 2014+ - Old reliable"><i class="fas fa-server"></i> SQL Server</span>
+                        <span class="skill-badge" title="Postgres - Open source power"><i class="fas fa-database"></i> Postgres</span>
+                        <span class="skill-badge" title="MySQL - For when you want it everywhere"><i class="fas fa-database"></i> MySQL</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Cloud Services</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Cloud & DevOps</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://aws.amazon.com/sqs/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS SQS</a>
-                        <a href="https://aws.amazon.com/sns/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS SNS</a>
-                        <a href="https://aws.amazon.com/s3/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS S3</a>
-                        <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS CRON job</a>
-                        <a href="https://aws.amazon.com/lambda/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS Lambda</a>
-                        <a href="https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure Service Bus</a>
+                        <span class="skill-badge" title="AWS Lambda - Serverless sorcery"><i class="fab fa-aws"></i> AWS Lambda</span>
+                        <span class="skill-badge" title="AWS S3 - Infinite buckets"><i class="fab fa-aws"></i> AWS S3</span>
+                        <span class="skill-badge" title="AWS SQS/SNS - Messaging spells"><i class="fab fa-aws"></i> AWS SQS/SNS</span>
+                        <span class="skill-badge" title="Azure Service Bus - Enterprise queues"><i class="fab fa-microsoft"></i> Azure Service Bus</span>
+                        <span class="skill-badge" title="Azure DevOps - CI/CD magic"><i class="fab fa-microsoft"></i> Azure DevOps</span>
+                        <span class="skill-badge" title="Team City - Build automation"><i class="fas fa-rocket"></i> Team City</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Tools & IDEs</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Tools & IDEs</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://en.wikipedia.org/wiki/Microsoft_Visual_Studio" target="_blank" rel="noopener noreferrer" class="skill-badge">Microsoft VS 2015+</a>
-                        <a href="https://en.wikipedia.org/wiki/Visual_Studio_Code" target="_blank" rel="noopener noreferrer" class="skill-badge">VS Code</a>
-                        <a href="https://www.sonarqube.org/" target="_blank" rel="noopener noreferrer" class="skill-badge">SonarQube</a>
-                        <a href="https://www.datadoghq.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Datadog</a>
-                        <a href="https://en.wikipedia.org/wiki/Apache_Kafka" target="_blank" rel="noopener noreferrer" class="skill-badge">Kafka</a>
-                        <a href="https://en.wikipedia.org/wiki/Eclipse_(software)" target="_blank" rel="noopener noreferrer" class="skill-badge">Eclipse</a>
-                        <a href="https://en.wikipedia.org/wiki/Android_software_development_kit" target="_blank" rel="noopener noreferrer" class="skill-badge">Android Development Toolkit</a>
-                        <a href="https://www.jetbrains.com/teamcity/" target="_blank" rel="noopener noreferrer" class="skill-badge">Team City</a>
-                        <a href="https://www.telerik.com/fiddler" target="_blank" rel="noopener noreferrer" class="skill-badge">Fiddler</a>
-                        <a href="https://www.elastic.co/kibana/" target="_blank" rel="noopener noreferrer" class="skill-badge">Kibana</a>
-                        <a href="https://www.postman.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Postman</a>
-                        <a href="https://azure.microsoft.com/en-us/products/devops/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure DevOps</a>
-                        <a href="https://en.wikipedia.org/wiki/GitHub" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub</a>
+                        <span class="skill-badge" title="Visual Studio - My code forge"><i class="fas fa-code"></i> Visual Studio</span>
+                        <span class="skill-badge" title="VS Code - For quick hacks"><i class="fas fa-code"></i> VS Code</span>
+                        <span class="skill-badge" title="SonarQube - Code quality police"><i class="fas fa-shield-alt"></i> SonarQube</span>
+                        <span class="skill-badge" title="Datadog - Logs never lie"><i class="fas fa-dog"></i> Datadog</span>
+                        <span class="skill-badge" title="Kafka - Event streaming wizard"><i class="fas fa-stream"></i> Kafka</span>
+                        <span class="skill-badge" title="Fiddler - HTTP traffic whisperer"><i class="fas fa-network-wired"></i> Fiddler</span>
+                        <span class="skill-badge" title="Kibana - Data visualization ninja"><i class="fas fa-chart-bar"></i> Kibana</span>
+                        <span class="skill-badge" title="Postman - API postman, literally"><i class="fas fa-paper-plane"></i> Postman</span>
+                        <span class="skill-badge" title="GitHub - Where my code lives"><i class="fab fa-github"></i> GitHub</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Core Concepts & Patterns</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Core Concepts</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://en.wikipedia.org/wiki/Data_structure" target="_blank" rel="noopener noreferrer" class="skill-badge">DSA</a>
-                        <a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)" target="_blank" rel="noopener noreferrer" class="skill-badge">SOLID Principles</a>
-                        <a href="https://en.wikipedia.org/wiki/Command%E2%80%93query_responsibility_segregation" target="_blank" rel="noopener noreferrer" class="skill-badge">CQRS Pattern</a>
+                        <span class="skill-badge" title="Data Structures & Algorithms - The real magic"><i class="fas fa-sitemap"></i> DSA</span>
+                        <span class="skill-badge" title="SOLID - Not just a principle, a lifestyle"><i class="fas fa-cube"></i> SOLID</span>
+                        <span class="skill-badge" title="CQRS - Commanding and Querying like a boss"><i class="fas fa-random"></i> CQRS</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">Version Control & Certifications</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">Certifications</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://en.wikipedia.org/wiki/Git" target="_blank" rel="noopener noreferrer" class="skill-badge">GIT</a>
-                        <a href="https://en.wikipedia.org/wiki/Azure_DevOps_Server" target="_blank" rel="noopener noreferrer" class="skill-badge">TFS</a>
-                        <a href="https://en.wikipedia.org/wiki/Apache_Subversion" target="_blank" rel="noopener noreferrer" class="skill-badge">SVN</a>
-                        <a href="https://learn.microsoft.com/en-us/certifications/azure-fundamentals/" target="_blank" rel="noopener noreferrer" class="skill-badge">Azure AZ900</a>
-                        <a href="https://aws.amazon.com/certification/certified-developer-associate/" target="_blank" rel="noopener noreferrer" class="skill-badge">AWS Associate Developer</a>
+                        <span class="skill-badge" title="Azure AZ900 - Cloud basics mastered"><i class="fab fa-microsoft"></i> Azure AZ900</span>
+                        <span class="skill-badge" title="AWS Associate Developer - Certified cloud wrangler"><i class="fab fa-aws"></i> AWS Dev</span>
                     </div>
                 </div>
                 <div class="skill-category-box">
-                    <h3 class="text-xl font-semibold text-gray-800">AI/ML Tools</h3>
+                    <h3 class="text-xl font-semibold text-gray-200">AI/ML Tools</h3>
                     <div class="flex flex-wrap">
-                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="skill-badge">GitHub Copilot</a>
-                        <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="skill-badge">Google Gemini</a>
-                        <a href="https://firebase.google.com/docs/machine-learning" target="_blank" rel="noopener noreferrer" class="skill-badge">Firebase ML</a>
+                        <span class="skill-badge" title="GitHub Copilot - My AI pair programmer"><i class="fas fa-robot"></i> Copilot</span>
+                        <span class="skill-badge" title="Google Gemini - AI brainstorming buddy"><i class="fas fa-brain"></i> Gemini</span>
+                        <span class="skill-badge" title="Firebase ML - Mobile ML magic"><i class="fas fa-fire"></i> Firebase ML</span>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Professional Experience Section -->
+        <!-- Projects Section -->
+        <section id="projects" class="section-card">
+            <h2 class="section-title">Side Quests (Projects) <span title="Because every backend hero needs side quests">🗺️</span></h2>
+            <div class="project-card">
+                <div class="project-title">PII Masking Library <span title="Protecting secrets like a backend ninja">🕵️‍♂️</span></div>
+                <div class="project-stack">C#, .NET Core, Regex, Unit Testing</div>
+                <div class="project-desc">A reusable library for automated masking of Personally Identifiable Information (PII) in logs and data streams. Delivered 3 weeks ahead of schedule. <span title="Because privacy matters!">🔒</span></div>
+            </div>
+            <div class="project-card">
+                <div class="project-title">Serverless Data Pipeline <span title="No servers were harmed">☁️</span></div>
+                <div class="project-stack">AWS Lambda, S3, SQS, .NET Core</div>
+                <div class="project-desc">Designed and implemented a highly efficient, serverless backend for data ingestion and processing. Scales faster than you can say 'cold start'.</div>
+            </div>
+            <div class="project-card">
+                <div class="project-title">JET Portal Microservices <span title="Micro but mighty">🧩</span></div>
+                <div class="project-stack">.NET Core, C#, REST API, SonarQube, Fiddler</div>
+                <div class="project-desc">Developed robust microservices for a major enterprise portal, with full test coverage and code quality gates. Debugged with Fiddler, tested with Postman, and monitored with Datadog.</div>
+            </div>
+        </section>
+        <!-- Experience Section -->
         <section id="experience" class="section-card">
-            <h2 class="section-title">Code Chronicles (Professional Experience)</h2>
+            <h2 class="section-title">Code Chronicles (Experience) <span title="My uptime is legendary">🕒</span></h2>
             <div class="space-y-8">
-                <!-- Cognizant -->
                 <div class="experience-card">
                     <h3 class="job-title">Sr. Associate Projects (Senior Developer/Tech Lead)</h3>
                     <p class="company-duration">Cognizant | Jun 2022 - Present</p>
                     <ul class="contribution-list">
-                        <li>Spearheaded design and optimization of PostgreSQL databases, achieving up to 60% query performance improvement.</li>
-                        <li>Implemented and managed SonarQube integration within DevOps pipelines for stringent code quality and security.</li>
-                        <li>Architected and developed highly efficient, serverless backend solutions using AWS Lambda and RESTful APIs.</li>
-                        <li>Designed and implemented robust data storage and processing solutions leveraging AWS S3 and Lambda.</li>
-                        <li>Conducted interviews for full-stack engineers and led development of a reusable PII masking library, delivered 3 weeks early.</li>
+                        <li>Spearheaded PostgreSQL query optimization (up to 60% faster queries – yes, I benchmarked it!).</li>
+                        <li>Integrated SonarQube into DevOps pipelines (because code smells are not cologne).</li>
+                        <li>Architected serverless backends with AWS Lambda (no servers, no cry).</li>
+                        <li>Designed S3/Lambda data flows (cloud storage: where bits go to chill).</li>
+                        <li>Led PII masking library project (privacy FTW, delivered early!).</li>
                     </ul>
                 </div>
-                <!-- UAL-TRC -->
                 <div class="experience-card">
                     <h3 class="job-title">Sr. Developer (BodyShopping)</h3>
                     <p class="company-duration">UAL-TRC | Oct 2020 - Jun 2022</p>
                     <ul class="contribution-list">
-                        <li>Developed C# microservices using .NET Core for the new JET portal; conducted API testing and debugging with Fiddler.</li>
-                        <li>Created NUnit test cases with mocking and performed code coverage analysis using SonarQube.</li>
-                        <li>Engineered auto-approval process for Apple Health Card; analyzed and resolved issues using Datadog.</li>
-                        <li>Developed data visualizations with Kibana; created application for AWS SQS/SNS operations and AWS CRON jobs.</li>
-                        <li>Led peer code reviews, followed SOLID principles and CQRS pattern; optimized critical code resulting in 92% memory reduction and 94% response time decrease.</li>
+                        <li>Built C# microservices for JET portal (API endpoints for days).</li>
+                        <li>Wrote NUnit tests with mocking (because bugs fear coverage).</li>
+                        <li>Automated Apple Health Card approvals (bots > humans for this).</li>
+                        <li>Visualized data with Kibana (pretty graphs, happy PMs).</li>
+                        <li>Optimized code: 92% less memory, 94% faster (measured with BenchmarkDotnet, not wishful thinking).</li>
                     </ul>
                 </div>
-                <!-- Wheels - Migration -->
                 <div class="experience-card">
                     <h3 class="job-title">Developer/Team Lead</h3>
                     <p class="company-duration">Wheels Inc. | Nov 2018 - Oct 2020</p>
                     <ul class="contribution-list">
-                        <li>Coordinated new business requirements and solution changes across business units.</li>
-                        <li>Ensured adherence to documentation practices, including data validation signoffs.</li>
-                        <li>Provided technical training to managers and business partners.</li>
-                        <li>Innovated multiple mundane tasks, resulting in a 60% decrease in turnaround time.</li>
-                        <li>Conducted peer code reviews.</li>
-                        <li>Managed releases as part of the product delivery process.</li>
-                        <li>Created automation that reduced costs by 50% for multiple modules planned over a year, leading to a 2-week early delivery.</li>
+                        <li>Coordinated requirements and solution changes (agile, but with fewer meetings).</li>
+                        <li>Automated boring tasks (60% faster, 100% less boredom).</li>
+                        <li>Trained managers and partners (spread the backend gospel).</li>
+                        <li>Peer code reviews and release management (because production is sacred).</li>
+                        <li>Cut costs by 50% for key modules (finance team approved!).</li>
                     </ul>
                 </div>
-                <!-- Dowjones -->
                 <div class="experience-card">
                     <h3 class="job-title">Developer</h3>
                     <p class="company-duration">Dowjones | Jan 2015 - Oct 2018</p>
                     <ul class="contribution-list">
-                        <li>Contributed to application enhancements using C# and supervised junior developers.</li>
-                        <li>Liaised with the production team to analyze and resolve bugs.</li>
-                        <li>Worked with SQL Server databases, designing and developing stored procedures.</li>
-                        <li>Contributed to fixing front-end application vulnerability issues.</li>
+                        <li>Enhanced C# apps and mentored juniors (spread the code wisdom).</li>
+                        <li>Squashed bugs with the production team (debugging: my cardio).</li>
+                        <li>Designed SQL Server stored procedures (because performance matters).</li>
+                        <li>Fixed front-end vulnerabilities (sometimes I wear a full-stack hat).</li>
                     </ul>
                 </div>
             </div>
         </section>
-
         <!-- Achievements Section -->
         <section id="achievements" class="section-card">
-            <h2 class="section-title">Unlocked Achievements</h2>
+            <h2 class="section-title">Unlocked Achievements <span title="Achievement unlocked!">🏆</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="experience-card">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-2">"Pat on Back" Award (2016 Q1)</h3>
-                    <p class="text-gray-700">Awarded the prestigious "Pat on Back" award for outstanding contributions.</p>
+                    <h3 class="font-semibold text-lg text-gray-200 mb-2">"Pat on Back" Award (2016 Q1)</h3>
+                    <p class="text-gray-300">For outstanding contributions (and not breaking prod).</p>
                 </div>
                 <div class="experience-card">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Cost Reduction & Early Delivery</h3>
-                    <p class="text-gray-700">Created automation that significantly reduced costs by 50% for multiple modules, leading to a 2-week early delivery.</p>
+                    <h3 class="font-semibold text-lg text-gray-200 mb-2">Cost Reduction & Early Delivery</h3>
+                    <p class="text-gray-300">Automated modules, cut costs by 50%, delivered 2 weeks early. <span title="Finance team still sends thank you notes">💸</span></p>
                 </div>
                 <div class="experience-card">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Memory & Response Time Optimization</h3>
-                    <p class="text-gray-700">Proposed and optimized critical code, resulting in approximately 92% memory usage reduction and approximately 94% response time decrease (measured with BenchmarkDotnet).</p>
+                    <h3 class="font-semibold text-lg text-gray-200 mb-2">Memory & Response Time Optimization</h3>
+                    <p class="text-gray-300">Optimized code: 92% less memory, 94% faster. <span title="BenchmarkDotnet FTW">⚡</span></p>
                 </div>
                 <div class="experience-card">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-2">PII Masking Project Success</h3>
-                    <p class="text-gray-700">Led the development of a reusable library for automated Personally Identifiable Information (PII) masking, delivering the critical project three weeks ahead of schedule.</p>
+                    <h3 class="font-semibold text-lg text-gray-200 mb-2">PII Masking Project Success</h3>
+                    <p class="text-gray-300">Led reusable PII masking library project, delivered 3 weeks early. <span title="Privacy is not optional">🔒</span></p>
                 </div>
                 <div class="experience-card">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-2">Database Query Performance Boost</h3>
-                    <p class="text-gray-700">Spearheaded initiatives focused on achieving up to a 60% improvement in PostgreSQL database query performance.</p>
+                    <h3 class="font-semibold text-lg text-gray-200 mb-2">Database Query Performance Boost</h3>
+                    <p class="text-gray-300">Achieved up to 60% improvement in PostgreSQL query performance. <span title="Faster than a SELECT *">🚀</span></p>
                 </div>
             </div>
         </section>
-
-        <!-- Academic Qualification Section -->
+        <!-- Education Section -->
         <section id="education" class="section-card">
-            <h2 class="section-title">Knowledge Scrolls (Academic Qualification)</h2>
+            <h2 class="section-title">Knowledge Scrolls <span title="Because even wizards went to school">📜</span></h2>
             <div class="overflow-x-auto">
-                <table class="styled-table">
+                <table class="styled-table" style="width:100%; color:#e0e6f0;">
                     <thead>
-                        <tr>
+                        <tr style="background:#393e5c; color:#ffb400;">
                             <th>Degree</th>
                             <th>Institute/University</th>
-                            <th>Year of Passing</th>
+                            <th>Year</th>
                             <th>Aggregate (%)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>B.Tech. IT</td>
-                            <td>CVR College of Engineering, JNTU-Hyderabad</td>
-                            <td>2014</td>
-                            <td>66.76</td>
-                        </tr>
-                        <tr>
-                            <td>Intermediate MPC</td>
-                            <td>Narayana Junior College, Board of Intermediate Education, Andhra Pradesh</td>
-                            <td>2010</td>
-                            <td>79.97</td>
-                        </tr>
-                        <tr>
-                            <td>SSC</td>
-                            <td>St. Paul's High School, Board of Secondary Education, Andhra Pradesh</td>
-                            <td>2008</td>
-                            <td>72.00</td>
-                        </tr>
+                        <tr><td>B.Tech. IT</td><td>CVR College of Engineering, JNTU-Hyderabad</td><td>2014</td><td>66.76</td></tr>
+                        <tr><td>Intermediate MPC</td><td>Narayana Junior College, Andhra Pradesh</td><td>2010</td><td>79.97</td></tr>
+                        <tr><td>SSC</td><td>St. Paul's High School, Andhra Pradesh</td><td>2008</td><td>72.00</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
-
-        <!-- New Section: Future Horizons (Gemini API Integration) -->
-        <section id="career-compass" class="section-card">
-            <h2 class="section-title">Future Horizons ✨ (Powered by Gemini AI)</h2>
-            <p class="text-lg text-gray-700 text-center mb-6">
-                Curious about where my skills could lead? Click the button below to get AI-powered suggestions for potential career paths based on my profile!
-            </p>
-            <div class="text-center mb-8">
-                <button id="generateCareerPathsBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-                    Discover My Future Path ✨
-                </button>
-            </div>
-            <div id="careerPathsResult" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
-                <p class="text-gray-600 text-center" id="loadingIndicator">
-                    <span class="spinner"></span> Generating insights...
-                </p>
-                <div id="careerPathsContent" class="text-left text-gray-800 leading-relaxed">
-                    <!-- Career paths will be displayed here -->
-                </div>
-            </div>
-            <div id="careerPathsError" class="mt-8 p-4 bg-red-100 text-red-700 rounded-lg border border-red-300 hidden">
-                Oops! Something went wrong while generating career paths. Please try again later.
-            </div>
-        </section>
-
-        <!-- Personal Details / Contact Section -->
+        <!-- Contact Section -->
         <section id="contact" class="section-card">
-            <h2 class="section-title">Let's Connect!</h2>
-            <div class="text-center text-lg text-gray-700">
-                <p class="mb-6">I'm always open to new opportunities, collaborations, or just a friendly chat about technology! Feel free to reach out through any of the channels below.</p>
-
-                <div class="bg-blue-50 bg-opacity-70 rounded-lg p-6 mb-8 shadow-inner">
+            <h2 class="section-title">Let's Connect <span title="Ping me, don't ping the server">📡</span></h2>
+            <div class="text-center text-lg text-gray-300">
+                <p class="mb-6">Open to new opportunities, collaborations, or a chat about why tabs are better than spaces. Reach out below!</p>
+                <div class="bg-[#393e5c] bg-opacity-70 rounded-lg p-6 mb-8 shadow-inner">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                         <p><strong>Name:</strong> Sai Kanth Kondi</p>
-                        <p><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-blue-600 hover:underline">kondisaikanth@gmail.com</a></p>
+                        <p><strong>Email:</strong> <a href="mailto:kondisaikanth@gmail.com" class="text-yellow-400 hover:underline">kondisaikanth@gmail.com</a></p>
                         <p><strong>Mobile:</strong> +91 8143036676</p>
-                        <p><strong>Languages:</strong> English, Hindi, Telugu</p>
-                        <p class="md:col-span-2"><strong>Hobbies:</strong> LAN Gaming, Table Tennis</p>
+                        <p><strong>Languages:</strong> English, Hindi, Telugu, SQL</p>
+                        <p class="md:col-span-2"><strong>Hobbies:</strong> LAN Gaming, Table Tennis, Refactoring legacy code for fun</p>
                     </div>
                 </div>
-
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Connect with Me:</h3>
+                <h3 class="text-xl font-semibold mb-4 text-gray-200">Connect with Me:</h3>
                 <div class="social-icons flex justify-center gap-6 mt-4">
-                    <a href="mailto:kondisaikanth@outlook.com" target="_blank" aria-label="Email">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                    <a href="https://www.linkedin.com/in/sai-kanth-kondi/" target="_blank" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="https://github.com/SaiKanthK" target="_blank" aria-label="GitHub">
-                        <i class="fab fa-github"></i>
-                    </a>
+                    <a href="mailto:kondisaikanth@outlook.com" target="_blank" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                    <a href="https://www.linkedin.com/in/sai-kanth-kondi/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/SaiKanthK" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </section>
-
-        <!-- Footer Section -->
+        <!-- Footer -->
         <footer>
-            <p>&copy; 2025 Sai Kanth K. All rights reserved. Built with passion and a dash of code magic.</p>
+            <p>&copy; 2025 Sai Kanth K. | Built with <span title="And a lot of caffeine">☕</span> and backend magic. <br> "May your queries be fast and your bugs be shallow."</p>
         </footer>
     </div>
-
     <script>
         // Smooth scrolling for navigation links
         document.querySelectorAll('nav a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
             });
-        });
-
-        // Intersection Observer for fade-in animations on scroll
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.animation = `slideInUp 0.8s ease-out forwards`;
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Apply observer to all section cards
-        document.querySelectorAll('.section-card').forEach(card => {
-            observer.observe(card);
-        });
-
-        // Apply specific animation to header elements on load
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('.hero-title').style.animation = 'slideInUp 0.8s ease-out forwards';
-            document.querySelector('.hero-subtitle').style.animation = 'slideInUp 1s ease-out forwards';
-            document.querySelector('.hero-description').style.animation = 'slideInUp 1.2s ease-out forwards';
-            document.querySelector('.profile-pic').style.animation = 'pulse 2s infinite alternate';
-        });
-
-        // Gemini API Integration for Career Path Suggestion
-        document.getElementById('generateCareerPathsBtn').addEventListener('click', async () => {
-            const careerPathsResult = document.getElementById('careerPathsResult');
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const careerPathsContent = document.getElementById('careerPathsContent');
-            const careerPathsError = document.getElementById('careerPathsError');
-
-            // Show loading indicator, hide previous results/errors
-            careerPathsResult.classList.remove('hidden');
-            loadingIndicator.classList.remove('hidden');
-            careerPathsContent.innerHTML = '';
-            careerPathsError.classList.add('hidden');
-
-            try {
-                // Extract relevant content for the LLM prompt
-                const aboutText = document.querySelector('#about p').innerText;
-                const skillsText = Array.from(document.querySelectorAll('#skills .skill-badge')).map(badge => badge.innerText).join(', ');
-                const experienceDetails = Array.from(document.querySelectorAll('#experience .experience-card')).map(card => {
-                    const title = card.querySelector('.job-title').innerText;
-                    const companyDuration = card.querySelector('.company-duration').innerText;
-                    const contributions = Array.from(card.querySelectorAll('.contribution-list li')).map(li => li.innerText).join('; ');
-                    return `${title} at ${companyDuration}: ${contributions}`;
-                }).join('\n\n');
-
-                const prompt = `Based on the following professional profile, suggest 3-5 potential career paths or advanced roles. For each suggestion, provide a brief (1-2 sentences) explanation of why it's a good fit based on the provided skills and experience.
-
---- Profile ---
-About Me:
-${aboutText}
-
-Skills:
-${skillsText}
-
-Experience:
-${experienceDetails}
-
---- End Profile ---
-
-Please format your response as a numbered list.`;
-
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-                const payload = { contents: chatHistory };
-                const apiKey = ""; // Canvas will automatically provide this in runtime
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    careerPathsContent.innerHTML = text.replace(/\n/g, '<br>'); // Display text, convert newlines to <br>
-                } else {
-                    careerPathsContent.innerHTML = 'No career paths could be generated. The AI might not have found enough relevant information or the response format was unexpected.';
-                }
-
-            } catch (error) {
-                console.error('Error calling Gemini API:', error);
-                careerPathsError.classList.remove('hidden');
-                careerPathsContent.innerHTML = ''; // Clear any partial content
-            } finally {
-                loadingIndicator.classList.add('hidden'); // Hide loading indicator regardless of success or failure
-            }
         });
     </script>
 </body>
