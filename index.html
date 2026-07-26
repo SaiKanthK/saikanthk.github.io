@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Interview Mapping & Room Management</title>
+    <!-- Include SheetJS (xlsx) for Excel Import/Export Support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --warning-bg: #f59e0b;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { margin: 0 0 4px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        
+        #current-date-display {
+            font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;
+        }
+
+        #connection-status {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 13px; font-weight: 600; background: #fef3c7; color: var(--warning);
+            transition: all 0.3s ease;
+        }
+
+        /* View Switcher Navigation Bar */
+        .view-switcher {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: center;
+            background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;
+        }
+        .view-btn {
+            flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 14px;
+            border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .view-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Top Admin & Reception Controls */
+        .controls-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            max-width: 1400px; margin: 0 auto 20px auto;
+        }
+
+        .control-panel {
+            background: var(--card-bg); padding: 18px; border-radius: 10px;
+            border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .control-panel h3 { margin: 0 0 12px 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        
+        .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        input[type="text"], select, button {
+            padding: 10px 14px; font-size: 14px; border-radius: 6px;
+            border: 1px solid var(--border-color); outline: none; transition: border 0.2s;
+        }
+        input[type="text"]:focus, select:focus { border-color: var(--primary); }
+        input[type="text"] { flex: 1; min-width: 150px; }
+
+        button {
+            background-color: var(--primary); color: white; border: none;
+            cursor: pointer; font-weight: 600; transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:active { transform: scale(0.98); }
+
+        .btn-secondary { background-color: #475569; }
+        .btn-secondary:hover { background-color: #334155; }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #15803d; }
+
+        /* Global Action Toolbar (Export / Import) */
+        .global-toolbar {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
+            align-items: center; background: var(--card-bg); padding: 12px 18px;
+            border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;
+        }
+        .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* Mode Bar & Auto-Pilot Toggle */
+        .mode-bar {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
+            align-items: center; background: var(--card-bg); padding: 10px 18px;
+            border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; font-weight: 600;
+        }
+        .toggle-label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); }
+        .toggle-label input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
+
+        /* Main Dashboard Columns */
+        .dashboard {
+            display: grid; grid-template-columns: 420px 1fr; gap: 20px;
+            max-width: 1400px; margin: 0 auto; align-items: start;
+        }
+
+        .column {
+            background: var(--card-bg); border-radius: 10px; padding: 20px;
+            border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .column-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--bg-color); padding-bottom: 12px; margin-bottom: 12px;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .column-header h2 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+
+        /* Filter Bars */
+        .filter-bar {
+            display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: normal;
+        }
+        .filter-bar select { padding: 4px 8px; font-size: 12px; border-radius: 4px; }
+
+        /* Telemetry Analytics Bar */
+        .stats-bar { display: flex; gap: 8px; font-size: 12px; font-weight: 600; }
+        .stat-pill { padding: 4px 8px; border-radius: 6px; background: var(--bg-color); }
+        .stat-avail { color: var(--success); background: #dcfce7; }
+        .stat-busy { color: var(--danger); background: #fee2e2; }
+        .stat-break { color: var(--warning); background: #fef3c7; }
+
+        /* Responsive Grid for Multiple Panelists */
+        #panelistList {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;
+        }
+
+        /* Panelist Portal Specific View */
+        #panelistPortalView {
+            max-width: 900px; margin: 0 auto; display: none;
+        }
+        .portal-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 15px; transition: box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .card-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+        /* Location Badge */
+        .location-badge {
+            background: #f1f5f9; color: #334155; font-size: 12px; font-weight: 600;
+            padding: 3px 8px; border-radius: 4px; border: 1px solid #cbd5e1;
+            display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;
+        }
+
+        /* Skill Badges */
+        .badge {
+            padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-android { background: #dcfce7; color: #15803d; }
+        .badge-backend { background: #fef3c7; color: #b45309; }
+        .badge-frontend { background: #e0f2fe; color: #0369a1; }
+        .badge-devops { background: #f3e8ff; color: #6b21a8; }
+        .badge-datascience { background: #fce7f3; color: #be185d; }
+        .badge-uiux { background: #ffedd5; color: #c2410c; }
+        .badge-general { background: #f1f5f9; color: #475569; }
+
+        /* Status Texts & Timers */
+        .status-available { color: var(--success); font-weight: 700; font-size: 13px; }
+        .status-busy { color: var(--danger); font-weight: 700; font-size: 13px; }
+        .status-break { color: var(--warning); font-weight: 700; font-size: 13px; }
+
+        .timer-box {
+            margin-top: 8px; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .timer-normal { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+        .timer-warning { 
+            background: #fef3c7; color: #b45309; border: 1px solid #f59e0b;
+            animation: pulse 1.5s infinite; 
+        }
+        .timer-overtime { 
+            background: #fee2e2; color: #dc2626; border: 1px solid #ef4444;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .btn-ff {
+            background: transparent; border: 1px solid #cbd5e1; color: #64748b;
+            padding: 2px 6px; border-radius: 4px; font-size: 11px; cursor: pointer;
+        }
+        .btn-ff:hover { background: #e2e8f0; color: #0f172a; }
+
+        /* Manual Assignment Box */
+        .manual-assign-box {
+            margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color);
+            display: flex; gap: 8px; align-items: center;
+        }
+        .manual-assign-box select { flex: 1; font-size: 12px; padding: 6px 8px; border-color: #cbd5e1; }
+        .btn-assign { background-color: var(--primary); padding: 6px 12px; font-size: 12px; border-radius: 4px; }
+
+        /* Card Action Buttons */
+        .action-buttons {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;
+            border-top: 1px solid var(--border-color); padding-top: 12px;
+        }
+        .btn-sm { flex: 1; padding: 6px 10px; font-size: 12px; border-radius: 4px; text-align: center; }
+        .btn-ready { background-color: var(--success); }
+        .btn-ready:hover { background-color: #15803d; }
+        .btn-break { background-color: var(--warning-bg); }
+        .btn-break:hover { background-color: #b45309; }
+        .btn-remove { background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); flex: 0 0 auto; }
+        .btn-remove:hover { background-color: #fee2e2; color: var(--danger); border-color: #fecaca; }
+
+        .empty-state {
+            grid-column: 1 / -1; text-align: center; color: var(--text-muted);
+            padding: 40px 20px; font-style: italic; border: 2px dashed var(--border-color); border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>In-Person Interview Mapping & Room Engine</h1>
+        <div id="current-date-display">📅 Loading live date...</div>
+        <div id="connection-status">🟡 Offline Demo Mode: Runs Instantly Without Server or Cloud Setup</div>
+    </header>
+
+    <!-- View Switcher Navigation Bar -->
+    <div class="view-switcher">
+        <button id="navAdminBtn" class="view-btn active" onclick="switchView('admin')">🏢 Enterprise Admin & Reception View</button>
+        <button id="navPortalBtn" class="view-btn" onclick="switchView('portal')">👨‍💻 Panelist Portal (Self-Service)</button>
+    </div>
+
+    <!-- ================= VIEW 1: ENTERPRISE ADMIN & RECEPTION ================= -->
+    <div id="adminViewContainer">
+        <!-- Global Toolbar for Excel Export / Import & Templates -->
+        <div class="global-toolbar">
+            <div class="toolbar-group">
+                <button class="btn-secondary" onclick="exportToExcel()">📊 Export All Data to Excel</button>
+                <button class="btn-secondary" onclick="downloadSampleExcel()">📥 Download Panelist Sample Template</button>
+            </div>
+            <div class="toolbar-group">
+                <label for="excelUploadInput" class="btn-success" style="padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; color: white; display: inline-block;">
+                    📂 Bulk Import Panelists (Excel)
+                </label>
+                <input type="file" id="excelUploadInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importPanelistsFromExcel(event)" />
+            </div>
+        </div>
+
+        <!-- Admin & Reception Controls -->
+        <div class="controls-grid">
+            <!-- Reception: Check-in Candidates -->
+            <div class="control-panel">
+                <h3>🏢 Reception Desk: Candidate Check-in</h3>
+                <div class="form-row">
+                    <input type="text" id="candidateNameInput" placeholder="Candidate Name (e.g., Alex Smith)" />
+                    <select id="candidateSkill">
+                        <option value="Android">Android</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="DataScience">Data Science</option>
+                        <option value="UIUX">UI/UX</option>
+                        <option value="General">Generalist</option>
+                    </select>
+                    <button id="addCandidateBtn">+ Add to Queue</button>
+                </div>
+            </div>
+
+            <!-- HR: Onboard Panelists -->
+            <div class="control-panel">
+                <h3>👨‍💼 HR Admin: Onboard Interview Panelist & Room</h3>
+                <div class="form-row">
+                    <input type="text" id="panelistNameInput" placeholder="Interviewer Name (e.g., Sarah J.)" style="flex: 1.5;" />
+                    <input type="text" id="panelistLocationInput" placeholder="Room / Desk (e.g., Room 4B)" style="flex: 1;" />
+                    <select id="panelistSkill">
+                        <option value="Android">Android</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="DataScience">Data Science</option>
+                        <option value="UIUX">UI/UX</option>
+                        <option value="General">Generalist</option>
+                    </select>
+                    <button id="addPanelistBtn" style="background-color: #0f172a;">+ Add Panelist</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Bar -->
+        <div class="mode-bar">
+            <label class="toggle-label" title="When ON, candidates are automatically mapped to available interviewers based on skill tags.">
+                <input type="checkbox" id="autoRouteToggle" />
+                <span>⚡ Enable Automatic Skill-Based Routing (Default: Manual Mode)</span>
+            </label>
+            <span style="font-size: 12px; color: var(--text-muted);">⏱️ Default SLA: 45 Mins per Interview</span>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Left: Waiting Room Queue -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>Waiting Room <span class="badge" style="background: var(--primary); font-size: 13px;" id="queueCount">0</span></h2>
+                    
+                    <!-- Skill Filter for Candidates -->
+                    <div class="filter-bar">
+                        <label for="filterCandidateSkill">Filter:</label>
+                        <select id="filterCandidateSkill" onchange="renderQueue()">
+                            <option value="">All Skills</option>
+                            <option value="Android">Android</option>
+                            <option value="Backend">Backend</option>
+                            <option value="Frontend">Frontend</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="DataScience">Data Science</option>
+                            <option value="UIUX">UI/UX</option>
+                            <option value="General">Generalist</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="queueList">
+                    <div class="empty-state">No candidates waiting.</div>
+                </div>
+            </div>
+
+            <!-- Right: Active Interview Rooms Grid -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>Active Interview Rooms</h2>
+                    
+                    <!-- Availability Filter for Panelists -->
+                    <div class="filter-bar">
+                        <label for="filterPanelistStatus">Status:</label>
+                        <select id="filterPanelistStatus" onchange="renderPanelists()">
+                            <option value="">All Statuses</option>
+                            <option value="AVAILABLE">Available Only</option>
+                            <option value="BUSY">Busy Only</option>
+                            <option value="BREAK">On Break Only</option>
+                        </select>
+                    </div>
+
+                    <!-- Telemetry Stats Bar -->
+                    <div class="stats-bar">
+                        <span class="stat-pill stat-avail" id="statAvail">0 Avail</span>
+                        <span class="stat-pill stat-busy" id="statBusy">0 Busy</span>
+                        <span class="stat-pill stat-break" id="statBreak">0 Break</span>
+                    </div>
+                </div>
+                <div id="panelistList">
+                    <div class="empty-state">No interviewers onboarded. Add panelists above!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= VIEW 2: PANELIST SELF-SERVICE PORTAL ================= -->
+    <div id="panelistPortalView">
+        <div class="column" style="margin-bottom: 20px;">
+            <div class="column-header">
+                <h2>👨‍💻 Interviewer Self-Service Dashboard</h2>
+                <span style="font-size: 13px; color: var(--text-muted);">Select your name below to control your live status & track interviews.</span>
+            </div>
+            <div id="panelistPortalCards" class="portal-grid">
+                <div class="empty-state">No interviewers available.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal JavaScript (Works Offline & without Web Servers) -->
+    <script>
+        // Global State Memory
+        let queue = [];
+        let panelists = [];
+        let localIdCounter = 1;
+        const SLA_DURATION_SECONDS = 45 * 60; // 45 Minutes
+
+        // Render Current Date at the Top Header
+        function updateHeaderDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date().toLocaleDateString(undefined, options);
+            document.getElementById('current-date-display').innerText = `📅 Current Date: ${today}`;
+        }
+
+        // Initialize with realistic demo data
+        function initDemoData() {
+            updateHeaderDate();
+            const now = Date.now();
+            panelists = [
+                { id: "p1", name: "Jane Doe", location: "Room 3A", skill: "Android", status: "AVAILABLE", currentCandidate: null, startTime: null, completed: 2 },
+                { id: "p2", name: "Marcus Vance", location: "Desk 12 (Floor 2)", skill: "Backend", status: "AVAILABLE", currentCandidate: null, startTime: null, completed: 1 },
+                { id: "p3", name: "Elena Rostova", location: "Room 4B", skill: "Frontend", status: "BUSY", currentCandidate: "Alex Smith (Frontend)", startTime: now - (41 * 60 * 1000), completed: 3 },
+                { id: "p4", name: "David K.", location: "Pod 6", skill: "DevOps", status: "BREAK", currentCandidate: null, startTime: null, completed: 0 },
+                { id: "p5", name: "Sarah Jenkins", location: "Main Conf Room", skill: "General", status: "BUSY", currentCandidate: "Liam Neeson (Backend)", startTime: now - (12 * 60 * 1000), completed: 4 }
+            ];
+            queue = [
+                { id: "c1", name: "Emma Watson", skill: "DataScience", checkInTime: "10:22 AM", status: "WAITING" },
+                { id: "c2", name: "John Wick", skill: "Android", checkInTime: "10:30 AM", status: "WAITING" },
+                { id: "c3", name: "Tony Stark", skill: "DevOps", checkInTime: "10:35 AM", status: "WAITING" }
+            ];
+            renderAll();
+        }
+
+        // --- VIEW SWITCHER CONTROLLER ---
+        function switchView(viewName) {
+            const adminBtn = document.getElementById('navAdminBtn');
+            const portalBtn = document.getElementById('navPortalBtn');
+            const adminContainer = document.getElementById('adminViewContainer');
+            const portalContainer = document.getElementById('panelistPortalView');
+
+            if (viewName === 'admin') {
+                adminBtn.className = "view-btn active";
+                portalBtn.className = "view-btn";
+                adminContainer.style.display = "block";
+                portalContainer.style.display = "none";
+            } else {
+                adminBtn.className = "view-btn";
+                portalBtn.className = "view-btn active";
+                adminContainer.style.display = "none";
+                portalContainer.style.display = "block";
+                renderPanelistPortal();
+            }
+        }
+
+        // --- HELPER: SORT PANELIST PRIORITY (Available -> Busy -> Break) ---
+        function sortPanelistsByAvailability(list) {
+            const weight = { "AVAILABLE": 1, "BUSY": 2, "BREAK": 3 };
+            return [...list].sort((a, b) => {
+                const wA = weight[a.status] || 4;
+                const wB = weight[b.status] || 4;
+                if (wA !== wB) return wA - wB;
+                return a.name.localeCompare(b.name); // Secondary alphabetical sort
+            });
+        }
+
+        // --- EXCEL EXPORT FEATURE (All Candidates & Panelists Irrespective of Status) ---
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            // Prepare Candidates Sheet Data
+            const candidatesData = queue.map((c, index) => ({
+                "No.": index + 1,
+                "Candidate Name": c.name,
+                "Skill Tag": c.skill,
+                "Check-in Time": c.checkInTime,
+                "Status": c.status
+            }));
+            const wsCandidates = XLSX.utils.json_to_sheet(candidatesData);
+            XLSX.utils.book_append_sheet(wb, wsCandidates, "Waiting Candidates");
+
+            // Prepare Panelists Sheet Data (Irrespective of status)
+            const panelistsData = panelists.map((p, index) => ({
+                "No.": index + 1,
+                "Interviewer Name": p.name,
+                "Room / Location": p.location,
+                "Skill Tag": p.skill,
+                "Live Status": p.status,
+                "Current Candidate": p.currentCandidate || "None",
+                "Completed Today": p.completed
+            }));
+            const wsPanelists = XLSX.utils.json_to_sheet(panelistsData);
+            XLSX.utils.book_append_sheet(wb, wsPanelists, "Interview Panelists");
+
+            // Save File with current date prefix
+            const dateStr = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(wb, `Interview_Mapping_Report_${dateStr}.xlsx`);
+        }
+
+        // --- DOWNLOAD SAMPLE EXCEL TEMPLATE ---
+        function downloadSampleExcel() {
+            const sampleData = [
+                { "Name": "Alice Smith", "Location": "Room 101", "Skill": "Frontend" },
+                { "Name": "Bob Jones", "Location": "Desk 4B", "Skill": "Backend" },
+                { "Name": "Charlie Brown", "Location": "Conf Room B", "Skill": "DevOps" }
+            ];
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            XLSX.utils.book_append_sheet(wb, ws, "PanelistsTemplate");
+            XLSX.writeFile(wb, "Panelist_Import_Template.xlsx");
+        }
+
+        // --- BULK IMPORT PANELISTS USING EXCEL ---
+        function importPanelistsFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet);
+
+                    let importedCount = 0;
+                    jsonRows.forEach(row => {
+                        const name = row["Name"] || row["Interviewer Name"] || row["name"];
+                        const location = row["Location"] || row["Room / Location"] || row["location"] || "Main Office";
+                        const skill = row["Skill"] || row["Skill Tag"] || row["skill"] || "General";
+
+                        if (name) {
+                            panelists.push({
+                                id: `imported_p_${localIdCounter++}`,
+                                name: String(name).trim(),
+                                location: String(location).trim(),
+                                skill: String(skill).trim(),
+                                status: "AVAILABLE",
+                                currentCandidate: null,
+                                startTime: null,
+                                completed: 0
+                            });
+                            importedCount++;
+                        }
+                    });
+
+                    alert(`Successfully imported ${importedCount} panelists from Excel!`);
+                    document.getElementById('excelUploadInput').value = ""; // Reset file input
+                    checkRoutingMode();
+                    renderAll();
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to parse Excel file. Please ensure it matches the sample template columns.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // --- ACTIONS: CANDIDATE CHECK-IN ---
+        function addCandidate() {
+            const nameInput = document.getElementById('candidateNameInput');
+            const name = nameInput.value.trim() || "Anonymous Candidate";
+            const skill = document.getElementById('candidateSkill').value;
+            const checkInTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            queue.push({ id: `local_c_${localIdCounter++}`, name, skill, checkInTime, status: "WAITING" });
+            nameInput.value = "";
+            checkRoutingMode();
+            renderAll();
+        }
+
+        // --- ACTIONS: ONBOARD NEW PANELIST ---
+        function addPanelist() {
+            const nameInput = document.getElementById('panelistNameInput');
+            const locationInput = document.getElementById('panelistLocationInput');
+            const name = nameInput.value.trim();
+            const location = locationInput.value.trim() || "Main Office Desk";
+            const skill = document.getElementById('panelistSkill').value;
+            
+            if (!name) { alert("Please enter an interviewer name first."); return; }
+
+            const newPanelist = {
+                id: `local_p_${localIdCounter++}`,
+                name, location, skill, status: "AVAILABLE", currentCandidate: null, startTime: null, completed: 0
+            };
+
+            panelists.push(newPanelist);
+            nameInput.value = "";
+            locationInput.value = "";
+            checkRoutingMode();
+            renderAll();
+        }
+
+        // Attach Button Listeners
+        document.getElementById('addCandidateBtn').addEventListener('click', addCandidate);
+        document.getElementById('addPanelistBtn').addEventListener('click', addPanelist);
+
+        // Support pressing Enter key inside text input boxes
+        document.getElementById('candidateNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addCandidate();
+        });
+        document.getElementById('panelistNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addPanelist();
+        });
+        document.getElementById('panelistLocationInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addPanelist();
+        });
+
+        // --- ACTIONS: CHANGE PANELIST STATE ---
+        function changePanelistStatus(panelistId, newStatus, completedCount) {
+            let updatedCompletedCount = completedCount;
+            const panelist = panelists.find(p => p.id === panelistId);
+            
+            if (panelist) {
+                if (panelist.status === "BUSY" && (newStatus === "AVAILABLE" || newStatus === "BREAK")) {
+                    updatedCompletedCount++;
+                }
+                panelist.status = newStatus;
+                panelist.currentCandidate = null;
+                panelist.startTime = null;
+                panelist.completed = updatedCompletedCount;
+                checkRoutingMode();
+                renderAll();
+            }
+        }
+
+        // --- ACTIONS: MANUAL ASSIGNMENT BY ADMIN ---
+        function assignManually(candidateId) {
+            const selectEl = document.getElementById(`select_assign_${candidateId}`);
+            const panelistId = selectEl ? selectEl.value : null;
+            
+            if (!panelistId) { alert("Please select an available interviewer from the dropdown first."); return; }
+
+            const candidate = queue.find(c => c.id === candidateId);
+            const panelist = panelists.find(p => p.id === panelistId);
+
+            if (candidate && panelist) {
+                const formattedCandidateString = `${candidate.name} (${candidate.skill})`;
+                panelist.status = "BUSY";
+                panelist.currentCandidate = formattedCandidateString;
+                panelist.startTime = Date.now();
+                queue = queue.filter(c => c.id !== candidateId);
+                renderAll();
+            }
+        }
+
+        // --- ACTIONS: TEST SLA TIMER (+10 Mins Fast-Forward) ---
+        function fastForwardTimer(panelistId) {
+            const p = panelists.find(x => x.id === panelistId);
+            if (p && p.startTime) {
+                p.startTime -= (10 * 60 * 1000); // Subtract 10 minutes
+                updateTimersDOM();
+            }
+        }
+
+        // --- ACTIONS: REMOVE PANELIST ---
+        function removePanelist(panelistId) {
+            if (!confirm("Remove this interviewer from the active room pool?")) return;
+            panelists = panelists.filter(p => p.id !== panelistId);
+            renderAll();
+        }
+
+        // --- ROUTING MODE CONTROLLER ---
+        document.getElementById('autoRouteToggle').addEventListener('change', () => {
+            checkRoutingMode();
+            renderAll();
+        });
+
+        function checkRoutingMode() {
+            const isAuto = document.getElementById('autoRouteToggle').checked;
+            if (isAuto) attemptAutoRouting();
+        }
+
+        // --- CORE ALGORITHM: AUTOMATIC SKILL-WEIGHTED ROUTING ---
+        function attemptAutoRouting() {
+            let availablePanelists = panelists
+                .filter(p => p.status === 'AVAILABLE')
+                .sort((a, b) => a.completed - b.completed);
+
+            for (let panelist of availablePanelists) {
+                let candidateIndex = queue.findIndex(c => c.skill === panelist.skill || panelist.skill === 'General');
+                
+                if (candidateIndex !== -1) {
+                    let candidate = queue[candidateIndex];
+                    const formattedString = `${candidate.name} (${candidate.skill})`;
+                    
+                    panelist.status = "BUSY";
+                    panelist.currentCandidate = formattedString;
+                    panelist.startTime = Date.now();
+                    queue.splice(candidateIndex, 1);
+                    renderAll();
+                    break;
+                }
+            }
+        }
+
+        // --- TIMER ENGINE: UPDATES DOM EVERY SECOND ---
+        setInterval(updateTimersDOM, 1000);
+
+        function updateTimersDOM() {
+            panelists.forEach(p => {
+                if (p.status === 'BUSY' && p.startTime) {
+                    const el = document.getElementById(`timer_val_${p.id}`);
+                    const boxEl = document.getElementById(`timer_box_${p.id}`);
+                    if (el && boxEl) {
+                        const elapsedSeconds = Math.floor((Date.now() - p.startTime) / 1000);
+                        const remainingSeconds = SLA_DURATION_SECONDS - elapsedSeconds;
+                        
+                        if (remainingSeconds > 300) {
+                            const mins = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                            const secs = (remainingSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `⏱️ ${mins}:${secs} left`;
+                            boxEl.className = "timer-box timer-normal";
+                        } else if (remainingSeconds >= 0) {
+                            const mins = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                            const secs = (remainingSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `⚠️ ${mins}:${secs} left (Expiring Soon)`;
+                            boxEl.className = "timer-box timer-warning";
+                        } else {
+                            const overSeconds = Math.abs(remainingSeconds);
+                            const mins = Math.floor(overSeconds / 60).toString().padStart(2, '0');
+                            const secs = (overSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `🚨 +${mins}:${secs} OVERTIME`;
+                            boxEl.className = "timer-box timer-overtime";
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- UI RENDERING ENGINE ---
+        function renderAll() {
+            renderQueue();
+            renderPanelists();
+            renderTelemetryStats();
+            renderPanelistPortal();
+            updateTimersDOM();
+        }
+
+        function renderQueue() {
+            const skillFilter = document.getElementById('filterCandidateSkill').value;
+            const filteredQueue = queue.filter(c => !skillFilter || c.skill === skillFilter);
+            
+            document.getElementById('queueCount').innerText = `${filteredQueue.length} ${skillFilter ? `(${skillFilter})` : ''}`;
+            const list = document.getElementById('queueList');
+            const isAuto = document.getElementById('autoRouteToggle').checked;
+            
+            if (filteredQueue.length === 0) {
+                list.innerHTML = `<div class="empty-state">No candidates matching filter "${skillFilter || 'All'}".</div>`;
+                return;
+            }
+
+            const availablePanelists = panelists.filter(p => p.status === 'AVAILABLE');
+            
+            list.innerHTML = filteredQueue.map(c => {
+                const sortedOptions = [...availablePanelists].sort((a, b) => {
+                    const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
+                    const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
+                    return aMatch - bMatch;
+                });
+
+                const dropdownOptions = sortedOptions.map(p => {
+                    const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
+                    return `<option value="${p.id}">${matchStar}${p.name} [${p.skill}] - ${p.location}</option>`;
+                }).join('');
+
+                const dropdownHtml = availablePanelists.length > 0
+                    ? `<select id="select_assign_${c.id}">
+                         <option value="">-- Assign to Interviewer --</option>
+                         ${dropdownOptions}
+                       </select>
+                       <button class="btn-assign" onclick="assignManually('${c.id}')">Assign ➔</button>`
+                    : `<span style="font-size: 12px; color: var(--danger); font-style: italic;">No interviewers currently available</span>`;
+
+                return `
+                <div class="card" style="margin-bottom: 12px;">
+                    <div class="card-top" style="margin-bottom: 0; align-items: flex-start;">
+                        <div>
+                            <div class="card-title">👤 ${c.name}</div>
+                            <div class="card-subtitle">Checked in: ${c.checkInTime}</div>
+                        </div>
+                        <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                    </div>
+                    ${!isAuto ? `<div class="manual-assign-box">${dropdownHtml}</div>` : ''}
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderPanelists() {
+            const statusFilter = document.getElementById('filterPanelistStatus').value;
+            let filteredPanelists = panelists.filter(p => !statusFilter || p.status === statusFilter);
+            
+            // Apply Availability Sorting (Available -> Busy -> Break)
+            filteredPanelists = sortPanelistsByAvailability(filteredPanelists);
+
+            const list = document.getElementById('panelistList');
+            
+            if (filteredPanelists.length === 0) {
+                list.innerHTML = `<div class="empty-state">No interviewers matching status "${statusFilter || 'All'}".</div>`;
+                return;
+            }
+
+            list.innerHTML = filteredPanelists.map(p => {
+                let borderLeftColor = 'var(--success)'; 
+                if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
+                if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
+
+                return `
+                <div class="card" style="border-left: 5px solid ${borderLeftColor};">
+                    <div>
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title">${p.name}</div>
+                                <div class="location-badge">📍 ${p.location}</div>
+                            </div>
+                            <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                        </div>
+                        
+                        <div style="margin: 14px 0 6px 0; font-size: 13px;">
+                            <div style="margin-bottom: 4px; color: var(--text-muted); font-size: 12px;">
+                                Completed Today: <strong>${p.completed}</strong>
+                            </div>
+                            ${p.status === 'BUSY' ? `
+                                <div class="status-busy">🎙️ Interviewing: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                                <div id="timer_box_${p.id}" class="timer-box timer-normal">
+                                    <span id="timer_val_${p.id}">⏱️ Calculating...</span>
+                                    <button class="btn-ff" onclick="fastForwardTimer('${p.id}')" title="Test: Fast-forward 10 mins">⏩ +10m</button>
+                                </div>
+                            ` : ''}
+                            ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
+                            ${p.status === 'BREAK' ? `<div class="status-break">☕ Temporarily On Break</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        ${p.status === 'BUSY' ? `
+                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish & Ready</button>
+                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Break</button>
+                        ` : ''}
+                        ${p.status === 'AVAILABLE' ? `
+                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>
+                        ` : ''}
+                        ${p.status === 'BREAK' ? `
+                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>
+                        ` : ''}
+                        <button class="btn-sm btn-remove" title="Remove interviewer from room" onclick="removePanelist('${p.id}')">✕</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- RENDER PANELISTS PORTAL VIEW ---
+        function renderPanelistPortal() {
+            const portalList = document.getElementById('panelistPortalCards');
+            if (panelists.length === 0) {
+                portalList.innerHTML = `<div class="empty-state">No interviewers registered in the system yet. Ask an HR Admin to onboard panelists first.</div>`;
+                return;
+            }
+
+            // Apply Availability Sorting for the Portal view as well
+            const sortedPanelists = sortPanelistsByAvailability(panelists);
+
+            portalList.innerHTML = sortedPanelists.map(p => {
+                let borderLeftColor = 'var(--success)'; 
+                if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
+                if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
+
+                return `
+                <div class="card" style="border-left: 5px solid ${borderLeftColor}; background: #fafafa;">
+                    <div>
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title" style="font-size: 18px;">${p.name}</div>
+                                <div class="location-badge">📍 Room / Desk: ${p.location}</div>
+                            </div>
+                            <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                        </div>
+                        
+                        <div style="margin: 14px 0 10px 0; font-size: 14px;">
+                            <div style="margin-bottom: 6px; color: var(--text-muted);">
+                                Total Interviews Completed Today: <strong>${p.completed}</strong>
+                            </div>
+                            ${p.status === 'BUSY' ? `
+                                <div class="status-busy" style="font-size: 14px;">🎙️ Active Interview: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                            ` : ''}
+                            ${p.status === 'AVAILABLE' ? `<div class="status-available" style="font-size: 14px;">✅ Status: Ready to receive candidates</div>` : ''}
+                            ${p.status === 'BREAK' ? `<div class="status-break" style="font-size: 14px;">☕ Status: On Break</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons" style="margin-top: 15px;">
+                        ${p.status === 'BUSY' ? `
+                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Set Ready</button>
+                            <button class="btn-sm btn-break" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Take Break</button>
+                        ` : ''}
+                        ${p.status === 'AVAILABLE' ? `
+                            <button class="btn-sm btn-break" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">☕ Take a Break</button>
+                        ` : ''}
+                        ${p.status === 'BREAK' ? `
+                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">✅ I'm Back & Ready</button>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderTelemetryStats() {
+            const avail = panelists.filter(p => p.status === 'AVAILABLE').length;
+            const busy = panelists.filter(p => p.status === 'BUSY').length;
+            const breakCount = panelists.filter(p => p.status === 'BREAK').length;
+            
+            document.getElementById('statAvail').innerText = `${avail} Avail`;
+            document.getElementById('statBusy').innerText = `${busy} Busy`;
+            document.getElementById('statBreak').innerText = `${breakCount} On Break`;
+        }
+
+        // Run the initialization on startup
+        initDemoData();
+    </script>
+</body>
+</html>
