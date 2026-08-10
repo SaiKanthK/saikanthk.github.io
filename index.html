@@ -19,6 +19,7 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
+            --purple: #7c3aed;
         }
 
         * { box-sizing: border-box; }
@@ -130,6 +131,8 @@
         .btn-secondary:hover { background-color: #334155; }
         .btn-success { background-color: var(--success); }
         .btn-success:hover { background-color: #15803d; }
+        .btn-purple { background-color: var(--purple); }
+        .btn-purple:hover { background-color: #6d28d9; }
 
         /* Global Action Toolbar (Export / Import) */
         .global-toolbar {
@@ -180,16 +183,32 @@
         .stat-break { color: var(--warning); background: #fef3c7; }
 
         /* Responsive Grid for Multiple Panelists */
-        #panelistList {
+        #panelistList, #recruiterPanelistList {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;
         }
 
         /* Panelist Portal Specific View */
-        #panelistPortalView {
-            max-width: 900px; margin: 0 auto; display: none;
+        #panelistPortalView, #recruiterViewContainer {
+            max-width: 1400px; margin: 0 auto; display: none;
         }
         .portal-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;
+        }
+
+        /* Recruiter Track Selection Box */
+        .recruiter-config-panel {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .skill-chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .skill-chip {
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            border: 1px solid var(--border-color); cursor: pointer; user-select: none;
+            background: #f8fafc; color: var(--text-muted); transition: all 0.2s;
+        }
+        .skill-chip.active {
+            background: var(--purple); color: #ffffff; border-color: var(--purple);
+            box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
         }
 
         /* Cards */
@@ -353,6 +372,7 @@
     <!-- View Switcher Navigation Bar -->
     <div class="view-switcher">
         <button id="navAdminBtn" class="view-btn active" onclick="switchView('admin')">🏢 Enterprise Admin & Reception View</button>
+        <button id="navRecruiterBtn" class="view-btn" onclick="switchView('recruiter')">🎯 Recruiter View (Track Coordinator)</button>
         <button id="navPortalBtn" class="view-btn" onclick="switchView('portal')">👨‍💻 Panelist Portal (Self-Service)</button>
     </div>
 
@@ -479,7 +499,61 @@
         </div>
     </div>
 
-    <!-- ================= VIEW 2: PANELIST SELF-SERVICE PORTAL ================= -->
+    <!-- ================= VIEW 2: RECRUITER TRACK DASHBOARD ================= -->
+    <div id="recruiterViewContainer">
+        <!-- Recruiter Domain Config Panel -->
+        <div class="recruiter-config-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--purple);">🎯 Recruiter Control Dashboard</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-muted);">
+                        Select skill tracks to isolate and manage candidates and panelists specific to your hiring domain.
+                    </p>
+                </div>
+                <div class="stats-bar">
+                    <span class="stat-pill" style="background: #f3e8ff; color: var(--purple);" id="recruiterTrackSummary">0 Tracks Active</span>
+                </div>
+            </div>
+
+            <!-- Skill Track Multi-Select Chips -->
+            <div style="margin-top: 12px;">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Active Assigned Tracks:</label>
+                <div class="skill-chip-group" id="recruiterSkillChips">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recruiter Dual Column Layout -->
+        <div class="dashboard">
+            <!-- Left: Candidates in Managed Tracks -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>Track Candidates <span class="badge" style="background: var(--purple); font-size: 13px;" id="recruiterQueueCount">0</span></h2>
+                    <span style="font-size: 12px; color: var(--text-muted);">Scoped to active tracks</span>
+                </div>
+                <div id="recruiterQueueList">
+                    <div class="empty-state">No candidates matching assigned tracks.</div>
+                </div>
+            </div>
+
+            <!-- Right: Panelists Managed by Recruiter -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>Track Panelists & Room Controls</h2>
+                    <div class="stats-bar">
+                        <span class="stat-pill stat-avail" id="recruiterStatAvail">0 Avail</span>
+                        <span class="stat-pill stat-busy" id="recruiterStatBusy">0 Busy</span>
+                    </div>
+                </div>
+                <div id="recruiterPanelistList">
+                    <div class="empty-state">No interviewers mapped to selected skill tracks.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= VIEW 3: PANELIST SELF-SERVICE PORTAL ================= -->
     <div id="panelistPortalView">
         <div class="column" style="margin-bottom: 20px;">
             <div class="column-header">
@@ -573,6 +647,10 @@
         let panelists = [];
         let localIdCounter = 1;
         
+        // Recruiter View Specific Managed State
+        const ALL_SKILL_DOMAINS = ["Android", "Backend", "Frontend", "DevOps", "DataScience", "UIUX", "General"];
+        let recruiterAssignedSkills = ["Android", "Backend"]; // Default active tracks for recruiter
+
         const SLA_DURATION_SECONDS = 45 * 60; // 45 Minutes Interview Duration
         const BREAK_BUFFER_SECONDS = 10 * 60; // 10 Minutes Buffer Between Interviews
 
@@ -618,19 +696,30 @@
         // --- VIEW SWITCHER CONTROLLER ---
         function switchView(viewName) {
             const adminBtn = document.getElementById('navAdminBtn');
+            const recruiterBtn = document.getElementById('navRecruiterBtn');
             const portalBtn = document.getElementById('navPortalBtn');
+            
             const adminContainer = document.getElementById('adminViewContainer');
+            const recruiterContainer = document.getElementById('recruiterViewContainer');
             const portalContainer = document.getElementById('panelistPortalView');
+
+            adminBtn.className = "view-btn";
+            recruiterBtn.className = "view-btn";
+            portalBtn.className = "view-btn";
+
+            adminContainer.style.display = "none";
+            recruiterContainer.style.display = "none";
+            portalContainer.style.display = "none";
 
             if (viewName === 'admin') {
                 adminBtn.className = "view-btn active";
-                portalBtn.className = "view-btn";
                 adminContainer.style.display = "block";
-                portalContainer.style.display = "none";
+            } else if (viewName === 'recruiter') {
+                recruiterBtn.className = "view-btn active";
+                recruiterContainer.style.display = "block";
+                renderRecruiterView();
             } else {
-                adminBtn.className = "view-btn";
                 portalBtn.className = "view-btn active";
-                adminContainer.style.display = "none";
                 portalContainer.style.display = "block";
                 renderPanelistPortal();
             }
@@ -1180,12 +1269,201 @@
             });
         }
 
+        // --- RECRUITER VIEW SPECIFIC CONTROLLERS & RENDERING ---
+        function toggleRecruiterSkill(skillName) {
+            if (recruiterAssignedSkills.includes(skillName)) {
+                if (recruiterAssignedSkills.length === 1) {
+                    alert("Please keep at least one skill track active.");
+                    return;
+                }
+                recruiterAssignedSkills = recruiterAssignedSkills.filter(s => s !== skillName);
+            } else {
+                recruiterAssignedSkills.push(skillName);
+            }
+            renderRecruiterView();
+        }
+
+        function renderRecruiterView() {
+            // 1. Render Track Selector Chips
+            const chipContainer = document.getElementById('recruiterSkillChips');
+            chipContainer.innerHTML = ALL_SKILL_DOMAINS.map(skill => {
+                const isActive = recruiterAssignedSkills.includes(skill);
+                return `<div class="skill-chip ${isActive ? 'active' : ''}" onclick="toggleRecruiterSkill('${skill}')">${isActive ? '✓ ' : '+ '}${skill}</div>`;
+            }).join('');
+
+            document.getElementById('recruiterTrackSummary').innerText = `${recruiterAssignedSkills.length} Tracks Active (${recruiterAssignedSkills.join(', ')})`;
+
+            // 2. Filter Queue candidates for active recruiter tracks
+            const trackQueue = queue.filter(c => c.status === 'WAITING' && recruiterAssignedSkills.includes(c.skill));
+            document.getElementById('recruiterQueueCount').innerText = trackQueue.length;
+
+            const recruiterQueueEl = document.getElementById('recruiterQueueList');
+            if (trackQueue.length === 0) {
+                recruiterQueueEl.innerHTML = `<div class="empty-state">No candidates waiting in active tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
+            } else {
+                // Filter available panelists for assignment in this recruiter's track
+                const matchedPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
+
+                recruiterQueueEl.innerHTML = trackQueue.map(c => {
+                    const sortedOptions = [...matchedPanelists].sort((a, b) => {
+                        const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
+                        const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
+                        return aMatch - bMatch;
+                    });
+
+                    const dropdownOptions = sortedOptions.map(p => {
+                        const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
+                        const statusTag = p.status === 'AVAILABLE' ? 'Ready' : (p.status === 'BUSY' ? 'Busy' : 'Break');
+                        return `<option value="${p.id}">${matchStar}${p.name} [${p.level}] (${statusTag}) - ${p.location}</option>`;
+                    }).join('');
+
+                    const dropdownHtml = matchedPanelists.length > 0
+                        ? `<div class="manual-assign-box">
+                             <div class="manual-assign-row">
+                                 <select id="select_assign_${c.id}">
+                                     <option value="">-- Assign Panelist in Track --</option>
+                                     ${dropdownOptions}
+                                 </select>
+                                 <button class="btn-assign btn-purple" onclick="assignManually('${c.id}')">Assign ➔</button>
+                             </div>
+                           </div>`
+                        : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No track panelists available</div>`;
+
+                    const isR1Cleared = (c.r1 === 'Cleared');
+
+                    return `
+                    <div class="card" style="margin-bottom: 12px;">
+                        <div class="card-top" style="margin-bottom: 0;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">📅 ${c.interviewDate || getTodayFormattedDate()} | Check-in: ${c.checkInTime}</div>
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                        </div>
+
+                        <!-- Round Status Controls -->
+                        <div class="round-status-row">
+                            <div class="round-group">
+                                <span>R1:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r1', this.value)">
+                                    <option value="Pending" ${c.r1 === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Cleared" ${c.r1 === 'Cleared' ? 'selected' : ''}>Cleared</option>
+                                    <option value="Rejected" ${c.r1 === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="round-group">
+                                <span>R2:</span>
+                                <select class="round-select" 
+                                        onchange="updateCandidateRound('${c.id}', 'r2', this.value)" 
+                                        ${!isR1Cleared ? 'disabled title="Candidate must clear Round 1 first"' : ''}>
+                                    <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Cleared" ${c.r2 === 'Cleared' ? 'selected' : ''}>Cleared</option>
+                                    <option value="Rejected" ${c.r2 === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="round-group">
+                                <span>Final:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'final', this.value)">
+                                    <option value="Pending" ${c.final === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="In Progress" ${c.final === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                    <option value="Round 2 Cleared" ${c.final === 'Round 2 Cleared' ? 'selected' : ''}>Round 2 Cleared</option>
+                                    <option value="Selected" ${c.final === 'Selected' ? 'selected' : ''}>Selected</option>
+                                    <option value="Rejected" ${c.final === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        ${dropdownHtml}
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            // 3. Filter Panelists assigned to active recruiter tracks
+            let trackPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
+            trackPanelists = sortPanelistsByAvailability(trackPanelists);
+
+            const recAvail = trackPanelists.filter(p => p.status === 'AVAILABLE').length;
+            const recBusy = trackPanelists.filter(p => p.status === 'BUSY').length;
+
+            document.getElementById('recruiterStatAvail').innerText = `${recAvail} Avail`;
+            document.getElementById('recruiterStatBusy').innerText = `${recBusy} Busy`;
+
+            const recruiterPanelistEl = document.getElementById('recruiterPanelistList');
+            if (trackPanelists.length === 0) {
+                recruiterPanelistEl.innerHTML = `<div class="empty-state">No interviewers assigned to tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
+            } else {
+                recruiterPanelistEl.innerHTML = trackPanelists.map(p => {
+                    let borderLeftColor = 'var(--success)'; 
+                    if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
+                    if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
+
+                    const freeTimeStr = calculatePanelistFreeTime(p);
+
+                    return `
+                    <div class="card" style="border-left: 5px solid ${borderLeftColor};">
+                        <div>
+                            <div class="card-top">
+                                <div>
+                                    <div class="card-title">${p.name}</div>
+                                    <div class="meta-badges">
+                                        <span class="level-badge">${p.level}</span>
+                                        <span class="location-badge">📍 ${p.location}</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                            </div>
+                            
+                            <div style="margin: 12px 0 6px 0; font-size: 13px;">
+                                <div style="margin-bottom: 4px; color: var(--text-muted); font-size: 12px; display: flex; justify-content: space-between;">
+                                    <span>Completed Today: <strong>${p.completed}</strong></span>
+                                    <span style="color: var(--primary);">Est. Free: <strong>${freeTimeStr}</strong></span>
+                                </div>
+                                ${p.status === 'BUSY' ? `
+                                    <div class="status-busy">🎙️ Interviewing: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                                    <div id="timer_box_${p.id}" class="timer-box timer-normal">
+                                        <span id="timer_val_${p.id}">⏱️ Calculating...</span>
+                                        <button class="btn-ff" onclick="fastForwardTimer('${p.id}')" title="Test: Fast-forward 10 mins">⏩ +10m</button>
+                                    </div>
+                                    ${p.nextCandidate ? `
+                                        <div class="next-queue-badge">
+                                            <span>⏳ <strong>Next in Line:</strong> ${p.nextCandidate}</span>
+                                            <button class="btn-ff" onclick="removeNextQueue('${p.id}')" title="Remove next-in-line">✕</button>
+                                        </div>
+                                    ` : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic;">No candidate queued next.</div>`}
+                                ` : ''}
+                                ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
+                                ${p.status === 'BREAK' ? `<div class="status-break">☕ Temporarily On Break</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            ${p.status === 'BUSY' ? `
+                                <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish & Ready</button>
+                                <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Break</button>
+                            ` : ''}
+                            ${p.status === 'AVAILABLE' ? `
+                                <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>
+                            ` : ''}
+                            ${p.status === 'BREAK' ? `
+                                <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+        }
+
         // --- UI RENDERING ENGINE ---
         function renderAll() {
             renderQueue();
             renderPanelists();
             renderTelemetryStats();
             renderPanelistPortal();
+            if (document.getElementById('recruiterViewContainer').style.display === 'block') {
+                renderRecruiterView();
+            }
             updateTimersDOM();
             if (document.getElementById('floorMapModal').style.display === 'flex') {
                 renderFloorMap();
