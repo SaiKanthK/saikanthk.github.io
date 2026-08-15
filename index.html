@@ -32,7 +32,7 @@
             padding: 20px;
         }
 
-        /* Header Box with Visible High-Contrast Top Right Action Shortcuts */
+        /* Header Box */
         header {
             max-width: 1400px;
             margin: 0 auto 20px auto;
@@ -59,7 +59,6 @@
             font-size: 12px; font-weight: 600; background: #fef3c7; color: var(--warning);
         }
 
-        /* Top Action Shortcuts (Floor Map & EOD Report Buttons) */
         .top-shortcuts {
             display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
         }
@@ -86,7 +85,7 @@
             transform: translateY(-1px);
         }
 
-        /* View Switcher Navigation Bar */
+        /* View Switcher Bar */
         .view-switcher {
             max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: center;
             background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;
@@ -98,7 +97,7 @@
         }
         .view-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Top Admin & Reception Controls */
+        /* Controls Grid */
         .controls-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
             max-width: 1400px; margin: 0 auto 20px auto;
@@ -112,11 +111,11 @@
         .control-panel h3 { margin: 0 0 12px 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
         
         .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        input[type="text"], select, button {
+        input[type="text"], select, button, textarea {
             padding: 9px 12px; font-size: 13px; border-radius: 6px;
             border: 1px solid var(--border-color); outline: none; transition: border 0.2s;
         }
-        input[type="text"]:focus, select:focus { border-color: var(--primary); }
+        input[type="text"]:focus, select:focus, textarea:focus { border-color: var(--primary); }
         input[type="text"] { flex: 1; min-width: 120px; }
 
         button {
@@ -131,10 +130,14 @@
         .btn-secondary:hover { background-color: #334155; }
         .btn-success { background-color: var(--success); }
         .btn-success:hover { background-color: #15803d; }
+        .btn-warning { background-color: var(--warning); }
+        .btn-warning:hover { background-color: #b45309; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #b91c1c; }
         .btn-purple { background-color: var(--purple); }
         .btn-purple:hover { background-color: #6d28d9; }
 
-        /* Global Action Toolbar (Export / Import) */
+        /* Global Toolbar */
         .global-toolbar {
             max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
             align-items: center; background: var(--card-bg); padding: 12px 18px;
@@ -142,7 +145,7 @@
         }
         .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-        /* Mode Bar & Auto-Pilot Toggle */
+        /* Mode Bar */
         .mode-bar {
             max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
             align-items: center; background: var(--card-bg); padding: 10px 18px;
@@ -151,7 +154,7 @@
         .toggle-label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); }
         .toggle-label input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
 
-        /* Main Dashboard Columns */
+        /* Dashboard Columns */
         .dashboard {
             display: grid; grid-template-columns: 480px 1fr; gap: 20px;
             max-width: 1400px; margin: 0 auto; align-items: start;
@@ -169,25 +172,19 @@
         }
         .column-header h2 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
 
-        /* Filter Bars */
-        .filter-bar {
-            display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: normal;
-        }
+        .filter-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: normal; }
         .filter-bar select { padding: 4px 8px; font-size: 12px; border-radius: 4px; }
 
-        /* Telemetry Analytics Bar */
         .stats-bar { display: flex; gap: 8px; font-size: 12px; font-weight: 600; }
         .stat-pill { padding: 4px 8px; border-radius: 6px; background: var(--bg-color); }
         .stat-avail { color: var(--success); background: #dcfce7; }
         .stat-busy { color: var(--danger); background: #fee2e2; }
         .stat-break { color: var(--warning); background: #fef3c7; }
 
-        /* Responsive Grid for Multiple Panelists */
         #panelistList, #recruiterPanelistList {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;
         }
 
-        /* Panelist Portal Specific View */
         #panelistPortalView, #recruiterViewContainer {
             max-width: 1400px; margin: 0 auto; display: none;
         }
@@ -195,7 +192,6 @@
             display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;
         }
 
-        /* Recruiter Track Selection Box */
         .recruiter-config-panel {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px;
             padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -222,7 +218,6 @@
         .card-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
         .card-subtitle { font-size: 12px; color: var(--text-muted); }
 
-        /* Location & Level Badges */
         .meta-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
         .location-badge {
             background: #f1f5f9; color: #334155; font-size: 11px; font-weight: 600;
@@ -247,7 +242,6 @@
         .badge-uiux { background: #ffedd5; color: #c2410c; }
         .badge-general { background: #f1f5f9; color: #475569; }
 
-        /* Status Texts & Timers */
         .status-available { color: var(--success); font-weight: 700; font-size: 13px; }
         .status-busy { color: var(--danger); font-weight: 700; font-size: 13px; }
         .status-break { color: var(--warning); font-weight: 700; font-size: 13px; }
@@ -273,7 +267,6 @@
         }
         .btn-ff:hover { background: #e2e8f0; color: #0f172a; }
 
-        /* Manual Assignment Box */
         .manual-assign-box {
             margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);
             display: flex; flex-direction: column; gap: 6px; width: 100%;
@@ -287,7 +280,6 @@
             border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Round Result Controls */
         .round-status-row {
             margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center; font-size: 12px; flex-wrap: wrap; gap: 6px;
@@ -296,7 +288,6 @@
         .round-select { font-size: 11px; padding: 3px 6px; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; }
         .round-select:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
 
-        /* Card Action Buttons */
         .action-buttons {
             display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;
             border-top: 1px solid var(--border-color); padding-top: 12px;
@@ -311,10 +302,10 @@
 
         .empty-state {
             grid-column: 1 / -1; text-align: center; color: var(--text-muted);
-            padding: 40px 20px; font-style: italic; border: 2px dashed var(--border-color); border-radius: 8px;
+            padding: 30px 20px; font-style: italic; border: 2px dashed var(--border-color); border-radius: 8px;
         }
 
-        /* Modals (Floor Map & EOD Report) Styling */
+        /* Modal Overlays */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center;
@@ -339,7 +330,6 @@
         .map-room-card.available { border-color: var(--success); background: #f0fdf4; }
         .map-room-card.on-break { border-color: var(--warning-bg); background: #fffbeb; }
 
-        /* EOD KPI Grid */
         .eod-kpi-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px;
         }
@@ -347,6 +337,30 @@
             background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; text-align: center;
         }
         .eod-kpi-number { font-size: 28px; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+        /* Evaluation Modal Decision Box */
+        .eval-option-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0;
+        }
+        .eval-btn-card {
+            border: 2px solid var(--border-color); border-radius: 8px; padding: 14px; text-align: center;
+            cursor: pointer; background: #f8fafc; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .eval-btn-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.08); }
+        .eval-btn-card.selected-btn { border-color: var(--success); background: #f0fdf4; }
+        .eval-btn-card.hold-btn { border-color: var(--warning); background: #fffbeb; }
+        .eval-btn-card.reject-btn { border-color: var(--danger); background: #fef2f2; }
+
+        .on-hold-badge {
+            background: #fef3c7; color: #b45309; border: 1px solid #f59e0b;
+            font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+            display: inline-block; margin-top: 4px;
+        }
+        .cleared-badge {
+            background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+            font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+            display: inline-block; margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -358,7 +372,6 @@
             <div id="connection-status">🟡 Offline Demo Mode: Runs Instantly Without Server or Cloud Setup</div>
         </div>
         
-        <!-- Top-Right Action Shortcuts -->
         <div class="top-shortcuts">
             <button class="header-shortcut-btn" onclick="openEodModal()">
                 📈 End of Day Report
@@ -369,7 +382,7 @@
         </div>
     </header>
 
-    <!-- View Switcher Navigation Bar -->
+    <!-- Navigation Switcher -->
     <div class="view-switcher">
         <button id="navAdminBtn" class="view-btn active" onclick="switchView('admin')">🏢 Enterprise Admin & Reception View</button>
         <button id="navRecruiterBtn" class="view-btn" onclick="switchView('recruiter')">🎯 Recruiter View (Track Coordinator)</button>
@@ -378,7 +391,6 @@
 
     <!-- ================= VIEW 1: ENTERPRISE ADMIN & RECEPTION ================= -->
     <div id="adminViewContainer">
-        <!-- Global Toolbar for Excel Export / Import & Templates -->
         <div class="global-toolbar">
             <div class="toolbar-group">
                 <button class="btn-secondary" onclick="exportToExcel()">📊 Export All Data to Excel</button>
@@ -392,9 +404,7 @@
             </div>
         </div>
 
-        <!-- Admin & Reception Controls -->
         <div class="controls-grid">
-            <!-- Reception: Check-in Candidates -->
             <div class="control-panel">
                 <h3>🏢 Reception Desk: Candidate Check-in</h3>
                 <div class="form-row">
@@ -412,7 +422,6 @@
                 </div>
             </div>
 
-            <!-- HR: Onboard Panelists -->
             <div class="control-panel">
                 <h3>👨‍💼 HR Admin: Onboard Interview Panelist & Room</h3>
                 <div class="form-row">
@@ -433,7 +442,6 @@
             </div>
         </div>
 
-        <!-- Mode Bar -->
         <div class="mode-bar">
             <label class="toggle-label" title="When ON, candidates are automatically mapped to available interviewers based on skill tags.">
                 <input type="checkbox" id="autoRouteToggle" />
@@ -442,14 +450,12 @@
             <span style="font-size: 12px; color: var(--text-muted);">⏱️ SLA: 45 Mins + 10 Mins Buffer Between Interviews</span>
         </div>
 
-        <!-- Main Dashboard -->
         <div class="dashboard">
-            <!-- Left: Waiting Room Queue -->
+            <!-- Left: Waiting Room Queue & On-Hold Review -->
             <div class="column">
                 <div class="column-header">
                     <h2>Waiting Room <span class="badge" style="background: var(--primary); font-size: 13px;" id="queueCount">0</span></h2>
                     
-                    <!-- Skill Filter for Candidates -->
                     <div class="filter-bar">
                         <label for="filterCandidateSkill">Filter:</label>
                         <select id="filterCandidateSkill" onchange="renderQueue()">
@@ -464,8 +470,23 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Active Candidates Queue -->
                 <div id="queueList">
                     <div class="empty-state">No candidates waiting.</div>
+                </div>
+
+                <!-- Admin On-Hold Review Queue -->
+                <div style="margin-top: 25px; border-top: 2px dashed var(--border-color); padding-top: 15px;">
+                    <div class="column-header" style="border: none; padding-bottom: 6px;">
+                        <h3 style="margin: 0; font-size: 15px; color: var(--warning); display: flex; align-items: center; gap: 6px;">
+                            ⏸️ On-Hold Candidates (Admin Review Needed)
+                            <span class="badge" style="background: var(--warning); color: #fff;" id="holdQueueCount">0</span>
+                        </h3>
+                    </div>
+                    <div id="holdQueueList">
+                        <div class="empty-state" style="padding: 15px;">No candidates currently on hold.</div>
+                    </div>
                 </div>
             </div>
 
@@ -474,7 +495,6 @@
                 <div class="column-header">
                     <h2>Active Interview Rooms</h2>
                     
-                    <!-- Availability Filter for Panelists -->
                     <div class="filter-bar">
                         <label for="filterPanelistStatus">Status:</label>
                         <select id="filterPanelistStatus" onchange="renderPanelists()">
@@ -485,7 +505,6 @@
                         </select>
                     </div>
 
-                    <!-- Telemetry Stats Bar -->
                     <div class="stats-bar">
                         <span class="stat-pill stat-avail" id="statAvail">0 Avail</span>
                         <span class="stat-pill stat-busy" id="statBusy">0 Busy</span>
@@ -501,7 +520,6 @@
 
     <!-- ================= VIEW 2: RECRUITER TRACK DASHBOARD ================= -->
     <div id="recruiterViewContainer">
-        <!-- Recruiter Domain Config Panel -->
         <div class="recruiter-config-panel">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div>
@@ -515,18 +533,13 @@
                 </div>
             </div>
 
-            <!-- Skill Track Multi-Select Chips -->
             <div style="margin-top: 12px;">
                 <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Active Assigned Tracks:</label>
-                <div class="skill-chip-group" id="recruiterSkillChips">
-                    <!-- Rendered dynamically -->
-                </div>
+                <div class="skill-chip-group" id="recruiterSkillChips"></div>
             </div>
         </div>
 
-        <!-- Recruiter Dual Column Layout -->
         <div class="dashboard">
-            <!-- Left: Candidates in Managed Tracks -->
             <div class="column">
                 <div class="column-header">
                     <h2>Track Candidates <span class="badge" style="background: var(--purple); font-size: 13px;" id="recruiterQueueCount">0</span></h2>
@@ -537,7 +550,6 @@
                 </div>
             </div>
 
-            <!-- Right: Panelists Managed by Recruiter -->
             <div class="column">
                 <div class="column-header">
                     <h2>Track Panelists & Room Controls</h2>
@@ -566,6 +578,19 @@
         </div>
     </div>
 
+    <!-- ================= EVALUATION MODAL (INTERVIEW FINISH) ================= -->
+    <div id="evalModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <h2>📝 Complete Interview & Candidate Decision</h2>
+                <button class="modal-close" onclick="closeEvalModal()">✕</button>
+            </div>
+            <div id="evalModalBody">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
     <!-- ================= FLOOR MAP MODAL ================= -->
     <div id="floorMapModal" class="modal-overlay" onclick="closeOnOutsideClick(event, 'floorMapModal')">
         <div class="modal-card">
@@ -576,9 +601,7 @@
             <p style="font-size: 13px; color: var(--text-muted); margin-top: 0;">
                 Visual layout highlighting panelist seat locations, levels, current occupancy status, and scheduled next-in-line candidates.
             </p>
-            <div id="floorMapContainer" class="floor-map-grid">
-                <!-- Dynamically Rendered -->
-            </div>
+            <div id="floorMapContainer" class="floor-map-grid"></div>
         </div>
     </div>
 
@@ -593,7 +616,6 @@
                 Comprehensive walk-in analytics, round progression milestones, and final recruitment conversion metrics for today.
             </p>
             
-            <!-- KPI Summary Cards -->
             <div class="eod-kpi-grid">
                 <div class="eod-kpi-card">
                     <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Total Walk-ins</div>
@@ -613,7 +635,6 @@
                 </div>
             </div>
 
-            <!-- Detailed Roster Table with Interview Date Column -->
             <h3 style="font-size: 15px; margin-bottom: 8px;">Candidate Assessment Breakdown</h3>
             <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
@@ -628,9 +649,7 @@
                             <th style="padding: 10px;">Final Decision</th>
                         </tr>
                     </thead>
-                    <tbody id="eodTableBody">
-                        <!-- Dynamically populated -->
-                    </tbody>
+                    <tbody id="eodTableBody"></tbody>
                 </table>
             </div>
 
@@ -645,16 +664,15 @@
         // Global State Memory
         let queue = [];
         let panelists = [];
-        let localIdCounter = 1;
+        let localIdCounter = 100;
+        let activeEvalContext = null; // Stores evaluation context during panelist completion
         
-        // Recruiter View Specific Managed State
         const ALL_SKILL_DOMAINS = ["Android", "Backend", "Frontend", "DevOps", "DataScience", "UIUX", "General"];
-        let recruiterAssignedSkills = ["Android", "Backend"]; // Default active tracks for recruiter
+        let recruiterAssignedSkills = ["Android", "Backend"];
 
         const SLA_DURATION_SECONDS = 45 * 60; // 45 Minutes Interview Duration
         const BREAK_BUFFER_SECONDS = 10 * 60; // 10 Minutes Buffer Between Interviews
 
-        // Helper: Get formatted date string YYYY-MM-DD
         function getTodayFormattedDate() {
             const today = new Date();
             const year = today.getFullYear();
@@ -663,37 +681,37 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Render Current Date at the Top Header
         function updateHeaderDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const todayStr = new Date().toLocaleDateString(undefined, options);
             document.getElementById('current-date-display').innerText = `📅 Current Date: ${todayStr}`;
         }
 
-        // Initialize with realistic demo data
         function initDemoData() {
             updateHeaderDate();
             const now = Date.now();
             const todayDateStr = getTodayFormattedDate();
 
-            panelists = [
-                { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, nextCandidate: null, startTime: null, completed: 2 },
-                { id: "p2", name: "Marcus Vance", location: "Desk 12", level: "L4", skill: "Backend", status: "AVAILABLE", currentCandidate: null, nextCandidate: null, startTime: null, completed: 1 },
-                { id: "p3", name: "Elena Rostova", location: "Room 4B", level: "L6 (Principal)", skill: "Frontend", status: "BUSY", currentCandidate: "Alex Smith (Frontend)", nextCandidate: "Emma Watson (DataScience)", startTime: now - (41 * 60 * 1000), completed: 3 },
-                { id: "p4", name: "David K.", location: "Pod 6", level: "L4", skill: "DevOps", status: "BREAK", currentCandidate: null, nextCandidate: null, startTime: null, completed: 0 },
-                { id: "p5", name: "Sarah Jenkins", location: "Main Conf", level: "L5", skill: "General", status: "BUSY", currentCandidate: "Liam Neeson (Backend)", nextCandidate: null, startTime: now - (12 * 60 * 1000), completed: 4 }
-            ];
-            
             queue = [
                 { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", r1: "Pending", r2: "Pending", final: "Pending" },
-                { id: "c2", name: "John Wick", skill: "Android", interviewDate: todayDateStr, checkInTime: "10:30 AM", status: "WAITING", r1: "Cleared", r2: "Pending", final: "In Progress" },
-                { id: "c3", name: "Bruce Wayne", skill: "Backend", interviewDate: todayDateStr, checkInTime: "10:15 AM", status: "IN_PROGRESS", r1: "Cleared", r2: "Cleared", final: "Round 2 Cleared" },
-                { id: "c4", name: "Clark Kent", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "09:45 AM", status: "COMPLETED", r1: "Cleared", r2: "Cleared", final: "Selected" }
+                { id: "c2", name: "John Wick", skill: "Android", interviewDate: todayDateStr, checkInTime: "10:30 AM", status: "IN_PROGRESS", r1: "Pending", r2: "Pending", final: "In Progress" },
+                { id: "c3", name: "Bruce Wayne", skill: "Backend", interviewDate: todayDateStr, checkInTime: "10:15 AM", status: "IN_PROGRESS", r1: "Cleared", r2: "Pending", final: "In Progress" },
+                { id: "c4", name: "Clark Kent", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "09:45 AM", status: "COMPLETED", r1: "Cleared", r2: "Cleared", final: "Selected" },
+                { id: "c5", name: "Peter Parker", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "11:00 AM", status: "ON_HOLD", r1: "On Hold", r2: "Pending", final: "On Hold" }
             ];
+
+            panelists = [
+                { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 2 },
+                { id: "p2", name: "Marcus Vance", location: "Desk 12", level: "L4", skill: "Backend", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 1 },
+                { id: "p3", name: "Elena Rostova", location: "Room 4B", level: "L6 (Principal)", skill: "Frontend", status: "BUSY", currentCandidate: "John Wick (Android)", currentCandidateId: "c2", nextCandidate: "Emma Watson (DataScience)", startTime: now - (41 * 60 * 1000), completed: 3 },
+                { id: "p4", name: "David K.", location: "Pod 6", level: "L4", skill: "DevOps", status: "BREAK", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 0 },
+                { id: "p5", name: "Sarah Jenkins", location: "Main Conf", level: "L5", skill: "General", status: "BUSY", currentCandidate: "Bruce Wayne (Backend)", currentCandidateId: "c3", nextCandidate: null, startTime: now - (12 * 60 * 1000), completed: 4 }
+            ];
+            
             renderAll();
         }
 
-        // --- VIEW SWITCHER CONTROLLER ---
+        // View Switcher Navigation
         function switchView(viewName) {
             const adminBtn = document.getElementById('navAdminBtn');
             const recruiterBtn = document.getElementById('navRecruiterBtn');
@@ -725,7 +743,7 @@
             }
         }
 
-        // --- MODAL CONTROLLERS (Floor Map & EOD Report) ---
+        // Modals Controller
         function openFloorMapModal() {
             renderFloorMap();
             document.getElementById('floorMapModal').style.display = 'flex';
@@ -733,7 +751,6 @@
         function closeFloorMapModal() {
             document.getElementById('floorMapModal').style.display = 'none';
         }
-        
         function openEodModal() {
             renderEodReport();
             document.getElementById('eodModal').style.display = 'flex';
@@ -741,13 +758,13 @@
         function closeEodModal() {
             document.getElementById('eodModal').style.display = 'none';
         }
-
         function closeOnOutsideClick(e, modalId) {
             if (e.target === document.getElementById(modalId)) {
                 document.getElementById(modalId).style.display = 'none';
             }
         }
 
+        // Floor Map Renderer
         function renderFloorMap() {
             const mapContainer = document.getElementById('floorMapContainer');
             if (panelists.length === 0) {
@@ -783,28 +800,13 @@
             }).join('');
         }
 
-        // --- EOD REPORT RENDERING LOGIC ---
+        // EOD Report Renderer
         function renderEodReport() {
             const todayDateStr = getTodayFormattedDate();
-            const allCandidates = [...queue]; 
-            panelists.forEach(p => {
-                if (p.currentCandidate) {
-                    allCandidates.push({ 
-                        name: p.currentCandidate, 
-                        skill: p.skill, 
-                        interviewDate: todayDateStr, 
-                        checkInTime: "Active", 
-                        r1: "Pending", 
-                        r2: "Pending", 
-                        final: "In Progress" 
-                    });
-                }
-            });
-
-            const totalWalkins = allCandidates.length;
-            const clearedR1 = allCandidates.filter(c => c.r1 === 'Cleared').length;
-            const clearedR2 = allCandidates.filter(c => c.r2 === 'Cleared').length;
-            const selected = allCandidates.filter(c => c.final === 'Selected').length;
+            const totalWalkins = queue.length;
+            const clearedR1 = queue.filter(c => c.r1 === 'Cleared').length;
+            const clearedR2 = queue.filter(c => c.r2 === 'Cleared').length;
+            const selected = queue.filter(c => c.final === 'Selected').length;
 
             document.getElementById('eodTotalWalkins').innerText = totalWalkins;
             document.getElementById('eodClearedR1').innerText = clearedR1;
@@ -812,22 +814,22 @@
             document.getElementById('eodSelected').innerText = selected;
 
             const tbody = document.getElementById('eodTableBody');
-            if (allCandidates.length === 0) {
+            if (queue.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">No candidate walk-ins recorded yet.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = allCandidates.map(c => `
+            tbody.innerHTML = queue.map(c => `
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td style="padding: 10px; font-weight: 600; color: var(--text-muted);">${c.interviewDate || todayDateStr}</td>
                     <td style="padding: 10px; font-weight: 600;">${c.name}</td>
                     <td style="padding: 10px;"><span class="badge badge-${(c.skill || 'General').toLowerCase()}">${c.skill || 'General'}</span></td>
                     <td style="padding: 10px; color: var(--text-muted);">${c.checkInTime || 'Just now'}</td>
                     <td style="padding: 10px;">
-                        <span style="font-weight: 700; color: ${c.r1 === 'Cleared' ? 'var(--success)' : (c.r1 === 'Rejected' ? 'var(--danger)' : 'var(--text-muted)')}">${c.r1 || 'Pending'}</span>
+                        <span style="font-weight: 700; color: ${c.r1 === 'Cleared' ? 'var(--success)' : (c.r1 === 'Rejected' ? 'var(--danger)' : (c.r1 === 'On Hold' ? 'var(--warning)' : 'var(--text-muted)'))}">${c.r1 || 'Pending'}</span>
                     </td>
                     <td style="padding: 10px;">
-                        <span style="font-weight: 700; color: ${c.r2 === 'Cleared' ? 'var(--success)' : (c.r2 === 'Rejected' ? 'var(--danger)' : 'var(--text-muted)')}">${c.r2 || 'Pending'}</span>
+                        <span style="font-weight: 700; color: ${c.r2 === 'Cleared' ? 'var(--success)' : (c.r2 === 'Rejected' ? 'var(--danger)' : (c.r2 === 'On Hold' ? 'var(--warning)' : 'var(--text-muted)'))}">${c.r2 || 'Pending'}</span>
                     </td>
                     <td style="padding: 10px;">
                         <span style="font-weight: 700; color: ${c.final === 'Selected' ? 'var(--success)' : (c.final === 'Rejected' ? 'var(--danger)' : 'var(--primary)')}">${c.final || 'Pending'}</span>
@@ -836,12 +838,8 @@
             `).join('');
         }
 
-        // --- ESTIMATED FREE TIME CALCULATION ---
         function calculatePanelistFreeTime(p) {
-            if (p.status === 'AVAILABLE') {
-                return "Right Now (Available)";
-            }
-            
+            if (p.status === 'AVAILABLE') return "Right Now (Available)";
             let totalSecondsRemaining = 0;
 
             if (p.status === 'BUSY' && p.startTime) {
@@ -870,12 +868,11 @@
             });
         }
 
-        // --- EXCEL EXPORT FEATURE WITH INTERVIEW DATE IN ALL REPORTS ---
+        // Excel Export/Import
         function exportToExcel() {
             const wb = XLSX.utils.book_new();
             const exportDate = getTodayFormattedDate();
 
-            // Candidate Report Sheet
             const candidatesData = queue.map((c, index) => ({
                 "No.": index + 1,
                 "Interview Date": c.interviewDate || exportDate,
@@ -890,7 +887,6 @@
             const wsCandidates = XLSX.utils.json_to_sheet(candidatesData);
             XLSX.utils.book_append_sheet(wb, wsCandidates, "Candidate Assessment Report");
 
-            // Panelists Report Sheet
             const panelistsData = panelists.map((p, index) => ({
                 "No.": index + 1,
                 "Report Date": exportDate,
@@ -909,7 +905,6 @@
             XLSX.writeFile(wb, `Interview_EOD_Report_${exportDate}.xlsx`);
         }
 
-        // --- DOWNLOAD SAMPLE EXCEL TEMPLATE ---
         function downloadSampleExcel() {
             const sampleData = [
                 { "Name": "Alice Smith", "Location": "Room 101", "Level": "L5", "Skill": "Frontend" },
@@ -922,7 +917,6 @@
             XLSX.writeFile(wb, "Panelist_Import_Template.xlsx");
         }
 
-        // --- BULK IMPORT PANELISTS USING EXCEL ---
         function importPanelistsFromExcel(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -952,6 +946,7 @@
                                 skill: String(skill).trim(),
                                 status: "AVAILABLE",
                                 currentCandidate: null,
+                                currentCandidateId: null,
                                 nextCandidate: null,
                                 startTime: null,
                                 completed: 0
@@ -972,7 +967,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // --- ACTIONS: CANDIDATE CHECK-IN ---
+        // Actions: Reception & HR
         function addCandidate() {
             const nameInput = document.getElementById('candidateNameInput');
             const name = nameInput.value.trim() || "Anonymous Candidate";
@@ -982,21 +977,14 @@
             
             queue.push({ 
                 id: `local_c_${localIdCounter++}`, 
-                name, 
-                skill, 
-                interviewDate,
-                checkInTime, 
-                status: "WAITING",
-                r1: "Pending",
-                r2: "Pending",
-                final: "Pending"
+                name, skill, interviewDate, checkInTime, 
+                status: "WAITING", r1: "Pending", r2: "Pending", final: "Pending"
             });
             nameInput.value = "";
             checkRoutingMode();
             renderAll();
         }
 
-        // --- ACTIONS: ONBOARD NEW PANELIST ---
         function addPanelist() {
             const nameInput = document.getElementById('panelistNameInput');
             const locationInput = document.getElementById('panelistLocationInput');
@@ -1008,12 +996,13 @@
             
             if (!name) { alert("Please enter an interviewer name first."); return; }
 
-            const newPanelist = {
+            panelists.push({
                 id: `local_p_${localIdCounter++}`,
-                name, location, level, skill, status: "AVAILABLE", currentCandidate: null, nextCandidate: null, startTime: null, completed: 0
-            };
+                name, location, level, skill, status: "AVAILABLE",
+                currentCandidate: null, currentCandidateId: null, nextCandidate: null,
+                startTime: null, completed: 0
+            });
 
-            panelists.push(newPanelist);
             nameInput.value = "";
             locationInput.value = "";
             levelInput.value = "";
@@ -1021,122 +1010,253 @@
             renderAll();
         }
 
-        // Attach Button Listeners
         document.getElementById('addCandidateBtn').addEventListener('click', addCandidate);
         document.getElementById('addPanelistBtn').addEventListener('click', addPanelist);
 
-        document.getElementById('candidateNameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addCandidate();
-        });
-        document.getElementById('panelistNameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addPanelist();
-        });
-        document.getElementById('panelistLocationInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addPanelist();
-        });
-        document.getElementById('panelistLevelInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addPanelist();
-        });
+        document.getElementById('candidateNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addCandidate(); });
+        document.getElementById('panelistNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addPanelist(); });
 
-        // --- ACTIONS: UPDATE CANDIDATE ROUND STATUS WITH PREREQUISITE LOGIC ---
+        // Update Round Manual Actions
         function updateCandidateRound(candidateId, roundKey, value) {
             const candidate = queue.find(c => c.id === candidateId);
             if (!candidate) return;
 
-            // Enforce Prerequisite: Round 2 can ONLY be given if Round 1 is Cleared
             if (roundKey === 'r2' && candidate.r1 !== 'Cleared') {
-                alert(`⚠️ PREREQUISITE REQUIRED: Candidate "${candidate.name}" must clear Round 1 before taking or clearing Round 2.`);
+                alert(`⚠️ PREREQUISITE REQUIRED: Candidate "${candidate.name}" must clear Round 1 before taking Round 2.`);
                 renderAll();
                 return;
             }
 
             const roundLabel = roundKey === 'r1' ? 'Round 1' : (roundKey === 'r2' ? 'Round 2' : 'Final Decision');
             if (!confirm(`Are you sure you want to set ${roundLabel} to "${value}" for "${candidate.name}"?`)) {
-                renderAll(); // Reset dropdown selection if user cancels
+                renderAll();
                 return;
             }
 
             candidate[roundKey] = value;
 
-            // Handle Round 1 & Round 2 Logic Rules
             if (roundKey === 'r1') {
                 if (value === 'Rejected') {
                     candidate.r2 = 'Pending';
                     candidate.final = 'Rejected';
-                } else if (value === 'Pending') {
-                    candidate.r2 = 'Pending';
-                    candidate.final = 'Pending';
+                    candidate.status = 'COMPLETED';
+                } else if (value === 'On Hold') {
+                    candidate.status = 'ON_HOLD';
+                    candidate.final = 'On Hold';
                 } else if (value === 'Cleared') {
-                    if (candidate.final === 'Pending') candidate.final = 'In Progress';
+                    candidate.status = 'WAITING'; // Return to queue for Round 2!
+                    candidate.final = 'In Progress';
                 }
             }
 
             if (roundKey === 'r2') {
                 if (value === 'Cleared') {
-                    // Make as "Round 2 Cleared" but DO NOT automatically set as "Selected" (allow for further rounds)
-                    candidate.final = 'Round 2 Cleared';
+                    candidate.final = 'Selected';
+                    candidate.status = 'COMPLETED';
                 } else if (value === 'Rejected') {
                     candidate.final = 'Rejected';
-                } else if (value === 'Pending') {
-                    candidate.final = 'In Progress';
+                    candidate.status = 'COMPLETED';
+                } else if (value === 'On Hold') {
+                    candidate.status = 'ON_HOLD';
+                    candidate.final = 'On Hold';
                 }
             }
 
             renderAll();
         }
 
-        // --- ACTIONS: CHANGE PANELIST STATE (WITH REQUIRED EXPLICIT CONFIRMATION) ---
+        // ================= FEATURE: EVALUATION MODAL & WORKFLOW =================
         function changePanelistStatus(panelistId, newStatus, completedCount) {
             const panelist = panelists.find(p => p.id === panelistId);
             if (!panelist) return;
 
-            let confirmationMessage = "";
-
-            if (panelist.status === "BUSY") {
-                if (newStatus === "AVAILABLE") {
-                    confirmationMessage = `Are you sure you want to finish the current interview with "${panelist.currentCandidate || 'Candidate'}" and mark ${panelist.name} as READY?`;
-                    if (panelist.nextCandidate) {
-                        confirmationMessage += `\n\n⚠️ Note: This will automatically start the next interview with "${panelist.nextCandidate}".`;
-                    }
-                } else if (newStatus === "BREAK") {
-                    confirmationMessage = `Are you sure you want to finish the current interview with "${panelist.currentCandidate || 'Candidate'}" and put ${panelist.name} ON BREAK?`;
-                }
-            } else if (newStatus === "BREAK") {
-                confirmationMessage = `Are you sure you want to put ${panelist.name} ON BREAK?`;
-            } else if (newStatus === "AVAILABLE") {
-                confirmationMessage = `Are you sure you want to set ${panelist.name} as READY / AVAILABLE for interviews?`;
-            }
-
-            if (confirmationMessage && !confirm(confirmationMessage)) {
+            // If panelist is currently BUSY, prompt evaluation modal for current candidate
+            if (panelist.status === "BUSY" && panelist.currentCandidate) {
+                openEvalModal(panelist, newStatus, completedCount);
                 return;
             }
 
-            let updatedCompletedCount = completedCount;
-            if (panelist.status === "BUSY" && (newStatus === "AVAILABLE" || newStatus === "BREAK")) {
-                updatedCompletedCount++;
+            // Normal state transitions (AVAILABLE <-> BREAK)
+            let confirmationMessage = newStatus === "BREAK" 
+                ? `Put ${panelist.name} ON BREAK?` 
+                : `Set ${panelist.name} as READY / AVAILABLE?`;
+
+            if (confirm(confirmationMessage)) {
+                panelist.status = newStatus;
+                checkRoutingMode();
+                renderAll();
+            }
+        }
+
+        function openEvalModal(panelist, targetNextStatus, completedCount) {
+            // Find active candidate object
+            let candidate = queue.find(c => c.id === panelist.currentCandidateId);
+            if (!candidate) {
+                // Fallback search by name if ID was not attached
+                candidate = queue.find(c => panelist.currentCandidate && panelist.currentCandidate.includes(c.name));
             }
 
-            if (newStatus === "AVAILABLE" && panelist.nextCandidate) {
+            const candidateName = candidate ? candidate.name : (panelist.currentCandidate || "Current Candidate");
+            const activeRound = candidate ? (candidate.r1 === 'Cleared' ? 'Round 2' : 'Round 1') : 'Round 1';
+
+            activeEvalContext = {
+                panelistId: panelist.id,
+                candidateId: candidate ? candidate.id : null,
+                candidateName: candidateName,
+                activeRound: activeRound,
+                targetNextStatus: targetNextStatus,
+                completedCount: completedCount
+            };
+
+            const evalModalBody = document.getElementById('evalModalBody');
+            evalModalBody.innerHTML = `
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">👤 Candidate: ${candidateName}</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                        Interviewer: <strong>${panelist.name}</strong> (${panelist.location}) | Evaluating: <strong style="color: var(--primary);">${activeRound}</strong>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600;">
+                    Please select the evaluation outcome for ${activeRound}:
+                </p>
+
+                <div class="eval-option-grid">
+                    <div class="eval-btn-card selected-btn" onclick="submitCandidateEvaluation('SELECT')">
+                        <span style="font-size: 22px;">✅</span>
+                        <strong style="font-size: 13px; color: var(--success);">Select / Pass</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">Mark Cleared & put back in Candidate Queue</span>
+                    </div>
+
+                    <div class="eval-btn-card hold-btn" onclick="submitCandidateEvaluation('HOLD')">
+                        <span style="font-size: 22px;">⏸️</span>
+                        <strong style="font-size: 13px; color: var(--warning);">Put On Hold</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">Admin will decide whether to advance</span>
+                    </div>
+
+                    <div class="eval-btn-card reject-btn" onclick="submitCandidateEvaluation('REJECT')">
+                        <span style="font-size: 22px;">❌</span>
+                        <strong style="font-size: 13px; color: var(--danger);">Reject</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">End interview track for candidate</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Feedback / Notes (Optional):</label>
+                    <textarea id="evalNotesInput" rows="2" style="width: 100%; margin-top: 4px;" placeholder="Add quick interviewer evaluation notes..."></textarea>
+                </div>
+            `;
+
+            document.getElementById('evalModal').style.display = 'flex';
+        }
+
+        function closeEvalModal() {
+            document.getElementById('evalModal').style.display = 'none';
+            activeEvalContext = null;
+        }
+
+        function submitCandidateEvaluation(decision) {
+            if (!activeEvalContext) return;
+
+            const ctx = activeEvalContext;
+            const panelist = panelists.find(p => p.id === ctx.panelistId);
+            const candidate = queue.find(c => c.id === ctx.candidateId);
+
+            if (candidate) {
+                if (ctx.activeRound === 'Round 1') {
+                    if (decision === 'SELECT') {
+                        candidate.r1 = 'Cleared';
+                        candidate.status = 'WAITING'; // Put back into candidates queue for Round 2!
+                        candidate.final = 'In Progress';
+                    } else if (decision === 'HOLD') {
+                        candidate.r1 = 'On Hold';
+                        candidate.status = 'ON_HOLD'; // Admin decision required
+                        candidate.final = 'On Hold';
+                    } else if (decision === 'REJECT') {
+                        candidate.r1 = 'Rejected';
+                        candidate.status = 'COMPLETED';
+                        candidate.final = 'Rejected';
+                    }
+                } else if (ctx.activeRound === 'Round 2') {
+                    if (decision === 'SELECT') {
+                        candidate.r2 = 'Cleared';
+                        candidate.final = 'Selected';
+                        candidate.status = 'COMPLETED';
+                    } else if (decision === 'HOLD') {
+                        candidate.r2 = 'On Hold';
+                        candidate.status = 'ON_HOLD';
+                        candidate.final = 'On Hold';
+                    } else if (decision === 'REJECT') {
+                        candidate.r2 = 'Rejected';
+                        candidate.status = 'COMPLETED';
+                        candidate.final = 'Rejected';
+                    }
+                }
+            }
+
+            // Update Panelist State
+            let updatedCompletedCount = ctx.completedCount + 1;
+
+            if (ctx.targetNextStatus === "AVAILABLE" && panelist.nextCandidate) {
+                // Auto-start queued next candidate
+                const nextCandidateObj = queue.find(c => panelist.nextCandidate.includes(c.name));
                 panelist.status = "BUSY";
                 panelist.currentCandidate = panelist.nextCandidate;
+                panelist.currentCandidateId = nextCandidateObj ? nextCandidateObj.id : null;
                 panelist.nextCandidate = null;
                 panelist.startTime = Date.now();
                 panelist.completed = updatedCompletedCount;
+
+                if (nextCandidateObj) nextCandidateObj.status = "IN_PROGRESS";
             } else {
-                panelist.status = newStatus;
+                panelist.status = ctx.targetNextStatus;
                 panelist.currentCandidate = null;
+                panelist.currentCandidateId = null;
                 panelist.startTime = null;
                 panelist.completed = updatedCompletedCount;
-                if (newStatus !== "BUSY") {
+                if (ctx.targetNextStatus !== "BUSY") {
                     panelist.nextCandidate = null;
                 }
             }
 
+            closeEvalModal();
             checkRoutingMode();
             renderAll();
         }
 
-        // --- ACTIONS: MANUAL ASSIGNMENT & NEXT-IN-LINE QUEUEING (WITH CONFIRMATION) ---
+        // Admin Decision Controls for On-Hold Candidates
+        function adminApproveHold(candidateId) {
+            const c = queue.find(x => x.id === candidateId);
+            if (!c) return;
+
+            if (confirm(`Approve "${c.name}" and return them to the candidates queue for their next interview round?`)) {
+                if (c.r1 === 'On Hold') {
+                    c.r1 = 'Cleared';
+                    c.final = 'In Progress';
+                } else if (c.r2 === 'On Hold') {
+                    c.r2 = 'Cleared';
+                    c.final = 'Round 2 Cleared';
+                }
+                c.status = 'WAITING'; // Return to queue!
+                checkRoutingMode();
+                renderAll();
+            }
+        }
+
+        function adminRejectHold(candidateId) {
+            const c = queue.find(x => x.id === candidateId);
+            if (!c) return;
+
+            if (confirm(`Reject candidate "${c.name}"?`)) {
+                if (c.r1 === 'On Hold') c.r1 = 'Rejected';
+                if (c.r2 === 'On Hold') c.r2 = 'Rejected';
+                c.final = 'Rejected';
+                c.status = 'COMPLETED';
+                renderAll();
+            }
+        }
+
+        // Manual Assignment & Fast-Forward Controls
         function assignManually(candidateId) {
             const selectEl = document.getElementById(`select_assign_${candidateId}`);
             const panelistId = selectEl ? selectEl.value : null;
@@ -1151,28 +1271,24 @@
                     ? `start the interview immediately with ${panelist.name}` 
                     : `queue "${candidate.name}" as NEXT IN LINE for ${panelist.name}`;
 
-                if (!confirm(`Are you sure you want to ${actionDesc}?`)) {
-                    return;
-                }
+                if (!confirm(`Are you sure you want to ${actionDesc}?`)) return;
 
                 const formattedCandidateString = `${candidate.name} (${candidate.skill})`;
 
                 if (panelist.status === 'AVAILABLE') {
                     panelist.status = "BUSY";
                     panelist.currentCandidate = formattedCandidateString;
+                    panelist.currentCandidateId = candidate.id;
                     panelist.startTime = Date.now();
                 } else {
                     panelist.nextCandidate = formattedCandidateString;
                 }
 
                 candidate.status = "IN_PROGRESS";
-                queue = queue.filter(c => c.id !== candidateId);
-                queue.push(candidate);
                 renderAll();
             }
         }
 
-        // --- ACTIONS: REMOVE NEXT-IN-LINE QUEUE ITEM (WITH CONFIRMATION) ---
         function removeNextQueue(panelistId) {
             const p = panelists.find(x => x.id === panelistId);
             if (p && p.nextCandidate) {
@@ -1183,7 +1299,6 @@
             }
         }
 
-        // --- ACTIONS: TEST SLA TIMER (+10 Mins Fast-Forward) ---
         function fastForwardTimer(panelistId) {
             const p = panelists.find(x => x.id === panelistId);
             if (p && p.startTime) {
@@ -1192,27 +1307,23 @@
             }
         }
 
-        // --- ACTIONS: REMOVE PANELIST (WITH CONFIRMATION) ---
         function removePanelist(panelistId) {
             const p = panelists.find(x => x.id === panelistId);
-            const pName = p ? p.name : "this interviewer";
-            if (!confirm(`Are you sure you want to remove ${pName} from the active interviewer rooms pool?`)) return;
+            if (!confirm(`Are you sure you want to remove ${p ? p.name : 'interviewer'}?`)) return;
             panelists = panelists.filter(p => p.id !== panelistId);
             renderAll();
         }
 
-        // --- ROUTING MODE CONTROLLER ---
+        // Automatic Skill-Weighted Routing
         document.getElementById('autoRouteToggle').addEventListener('change', () => {
             checkRoutingMode();
             renderAll();
         });
 
         function checkRoutingMode() {
-            const isAuto = document.getElementById('autoRouteToggle').checked;
-            if (isAuto) attemptAutoRouting();
+            if (document.getElementById('autoRouteToggle').checked) attemptAutoRouting();
         }
 
-        // --- CORE ALGORITHM: AUTOMATIC SKILL-WEIGHTED ROUTING ---
         function attemptAutoRouting() {
             let availablePanelists = panelists
                 .filter(p => p.status === 'AVAILABLE')
@@ -1223,10 +1334,9 @@
                 
                 if (candidateIndex !== -1) {
                     let candidate = queue[candidateIndex];
-                    const formattedString = `${candidate.name} (${candidate.skill})`;
-                    
                     panelist.status = "BUSY";
-                    panelist.currentCandidate = formattedString;
+                    panelist.currentCandidate = `${candidate.name} (${candidate.skill})`;
+                    panelist.currentCandidateId = candidate.id;
                     panelist.startTime = Date.now();
                     candidate.status = "IN_PROGRESS";
                     renderAll();
@@ -1235,7 +1345,7 @@
             }
         }
 
-        // --- TIMER ENGINE: UPDATES DOM EVERY SECOND ---
+        // Live SLA Timer Loop
         setInterval(updateTimersDOM, 1000);
 
         function updateTimersDOM() {
@@ -1269,13 +1379,10 @@
             });
         }
 
-        // --- RECRUITER VIEW SPECIFIC CONTROLLERS & RENDERING ---
+        // Recruiter View Logic
         function toggleRecruiterSkill(skillName) {
             if (recruiterAssignedSkills.includes(skillName)) {
-                if (recruiterAssignedSkills.length === 1) {
-                    alert("Please keep at least one skill track active.");
-                    return;
-                }
+                if (recruiterAssignedSkills.length === 1) { alert("Please keep at least one skill track active."); return; }
                 recruiterAssignedSkills = recruiterAssignedSkills.filter(s => s !== skillName);
             } else {
                 recruiterAssignedSkills.push(skillName);
@@ -1284,7 +1391,6 @@
         }
 
         function renderRecruiterView() {
-            // 1. Render Track Selector Chips
             const chipContainer = document.getElementById('recruiterSkillChips');
             chipContainer.innerHTML = ALL_SKILL_DOMAINS.map(skill => {
                 const isActive = recruiterAssignedSkills.includes(skill);
@@ -1293,7 +1399,6 @@
 
             document.getElementById('recruiterTrackSummary').innerText = `${recruiterAssignedSkills.length} Tracks Active (${recruiterAssignedSkills.join(', ')})`;
 
-            // 2. Filter Queue candidates for active recruiter tracks
             const trackQueue = queue.filter(c => c.status === 'WAITING' && recruiterAssignedSkills.includes(c.skill));
             document.getElementById('recruiterQueueCount').innerText = trackQueue.length;
 
@@ -1301,7 +1406,6 @@
             if (trackQueue.length === 0) {
                 recruiterQueueEl.innerHTML = `<div class="empty-state">No candidates waiting in active tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
             } else {
-                // Filter available panelists for assignment in this recruiter's track
                 const matchedPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
 
                 recruiterQueueEl.innerHTML = trackQueue.map(c => {
@@ -1329,77 +1433,34 @@
                            </div>`
                         : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No track panelists available</div>`;
 
-                    const isR1Cleared = (c.r1 === 'Cleared');
-
                     return `
                     <div class="card" style="margin-bottom: 12px;">
                         <div class="card-top" style="margin-bottom: 0;">
                             <div>
                                 <div class="card-title">👤 ${c.name}</div>
-                                <div class="card-subtitle">📅 ${c.interviewDate || getTodayFormattedDate()} | Check-in: ${c.checkInTime}</div>
+                                <div class="card-subtitle">Check-in: ${c.checkInTime}</div>
+                                ${c.r1 === 'Cleared' ? `<span class="cleared-badge">🟢 Round 1 Cleared — Ready for R2</span>` : ''}
                             </div>
                             <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
                         </div>
-
-                        <!-- Round Status Controls -->
-                        <div class="round-status-row">
-                            <div class="round-group">
-                                <span>R1:</span>
-                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r1', this.value)">
-                                    <option value="Pending" ${c.r1 === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="Cleared" ${c.r1 === 'Cleared' ? 'selected' : ''}>Cleared</option>
-                                    <option value="Rejected" ${c.r1 === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                </select>
-                            </div>
-                            <div class="round-group">
-                                <span>R2:</span>
-                                <select class="round-select" 
-                                        onchange="updateCandidateRound('${c.id}', 'r2', this.value)" 
-                                        ${!isR1Cleared ? 'disabled title="Candidate must clear Round 1 first"' : ''}>
-                                    <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="Cleared" ${c.r2 === 'Cleared' ? 'selected' : ''}>Cleared</option>
-                                    <option value="Rejected" ${c.r2 === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                </select>
-                            </div>
-                            <div class="round-group">
-                                <span>Final:</span>
-                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'final', this.value)">
-                                    <option value="Pending" ${c.final === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="In Progress" ${c.final === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                    <option value="Round 2 Cleared" ${c.final === 'Round 2 Cleared' ? 'selected' : ''}>Round 2 Cleared</option>
-                                    <option value="Selected" ${c.final === 'Selected' ? 'selected' : ''}>Selected</option>
-                                    <option value="Rejected" ${c.final === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                </select>
-                            </div>
-                        </div>
-
                         ${dropdownHtml}
                     </div>
                     `;
                 }).join('');
             }
 
-            // 3. Filter Panelists assigned to active recruiter tracks
             let trackPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
             trackPanelists = sortPanelistsByAvailability(trackPanelists);
 
-            const recAvail = trackPanelists.filter(p => p.status === 'AVAILABLE').length;
-            const recBusy = trackPanelists.filter(p => p.status === 'BUSY').length;
-
-            document.getElementById('recruiterStatAvail').innerText = `${recAvail} Avail`;
-            document.getElementById('recruiterStatBusy').innerText = `${recBusy} Busy`;
+            document.getElementById('recruiterStatAvail').innerText = `${trackPanelists.filter(p => p.status === 'AVAILABLE').length} Avail`;
+            document.getElementById('recruiterStatBusy').innerText = `${trackPanelists.filter(p => p.status === 'BUSY').length} Busy`;
 
             const recruiterPanelistEl = document.getElementById('recruiterPanelistList');
             if (trackPanelists.length === 0) {
                 recruiterPanelistEl.innerHTML = `<div class="empty-state">No interviewers assigned to tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
             } else {
                 recruiterPanelistEl.innerHTML = trackPanelists.map(p => {
-                    let borderLeftColor = 'var(--success)'; 
-                    if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
-                    if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
-
-                    const freeTimeStr = calculatePanelistFreeTime(p);
-
+                    let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
                     return `
                     <div class="card" style="border-left: 5px solid ${borderLeftColor};">
                         <div>
@@ -1413,41 +1474,16 @@
                                 </div>
                                 <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
                             </div>
-                            
                             <div style="margin: 12px 0 6px 0; font-size: 13px;">
-                                <div style="margin-bottom: 4px; color: var(--text-muted); font-size: 12px; display: flex; justify-content: space-between;">
-                                    <span>Completed Today: <strong>${p.completed}</strong></span>
-                                    <span style="color: var(--primary);">Est. Free: <strong>${freeTimeStr}</strong></span>
-                                </div>
-                                ${p.status === 'BUSY' ? `
-                                    <div class="status-busy">🎙️ Interviewing: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
-                                    <div id="timer_box_${p.id}" class="timer-box timer-normal">
-                                        <span id="timer_val_${p.id}">⏱️ Calculating...</span>
-                                        <button class="btn-ff" onclick="fastForwardTimer('${p.id}')" title="Test: Fast-forward 10 mins">⏩ +10m</button>
-                                    </div>
-                                    ${p.nextCandidate ? `
-                                        <div class="next-queue-badge">
-                                            <span>⏳ <strong>Next in Line:</strong> ${p.nextCandidate}</span>
-                                            <button class="btn-ff" onclick="removeNextQueue('${p.id}')" title="Remove next-in-line">✕</button>
-                                        </div>
-                                    ` : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic;">No candidate queued next.</div>`}
-                                ` : ''}
+                                ${p.status === 'BUSY' ? `<div class="status-busy">🎙️ Interviewing: ${p.currentCandidate}</div>` : ''}
                                 ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
-                                ${p.status === 'BREAK' ? `<div class="status-break">☕ Temporarily On Break</div>` : ''}
+                                ${p.status === 'BREAK' ? `<div class="status-break">☕ On Break</div>` : ''}
                             </div>
                         </div>
-                        
                         <div class="action-buttons">
-                            ${p.status === 'BUSY' ? `
-                                <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish & Ready</button>
-                                <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Break</button>
-                            ` : ''}
-                            ${p.status === 'AVAILABLE' ? `
-                                <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>
-                            ` : ''}
-                            ${p.status === 'BREAK' ? `
-                                <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>
-                            ` : ''}
+                            ${p.status === 'BUSY' ? `<button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>` : ''}
+                            ${p.status === 'AVAILABLE' ? `<button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>` : ''}
+                            ${p.status === 'BREAK' ? `<button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>` : ''}
                         </div>
                     </div>
                     `;
@@ -1455,113 +1491,132 @@
             }
         }
 
-        // --- UI RENDERING ENGINE ---
+        // Global Render Engine
         function renderAll() {
             renderQueue();
             renderPanelists();
             renderTelemetryStats();
             renderPanelistPortal();
-            if (document.getElementById('recruiterViewContainer').style.display === 'block') {
-                renderRecruiterView();
-            }
+            if (document.getElementById('recruiterViewContainer').style.display === 'block') renderRecruiterView();
             updateTimersDOM();
-            if (document.getElementById('floorMapModal').style.display === 'flex') {
-                renderFloorMap();
-            }
-            if (document.getElementById('eodModal').style.display === 'flex') {
-                renderEodReport();
-            }
+            if (document.getElementById('floorMapModal').style.display === 'flex') renderFloorMap();
+            if (document.getElementById('eodModal').style.display === 'flex') renderEodReport();
         }
 
         function renderQueue() {
             const skillFilter = document.getElementById('filterCandidateSkill').value;
             const waitingQueue = queue.filter(c => c.status === 'WAITING' && (!skillFilter || c.skill === skillFilter));
-            
+            const holdQueue = queue.filter(c => c.status === 'ON_HOLD');
+
             document.getElementById('queueCount').innerText = `${waitingQueue.length} ${skillFilter ? `(${skillFilter})` : ''}`;
+            document.getElementById('holdQueueCount').innerText = holdQueue.length;
+
             const list = document.getElementById('queueList');
+            const holdList = document.getElementById('holdQueueList');
             const isAuto = document.getElementById('autoRouteToggle').checked;
             
+            // Render Waiting Queue
             if (waitingQueue.length === 0) {
                 list.innerHTML = `<div class="empty-state">No candidates waiting for assignment.</div>`;
-                return;
+            } else {
+                list.innerHTML = waitingQueue.map(c => {
+                    let dropdownHtml = '';
+                    if (!isAuto) {
+                        const sortedOptions = [...panelists].sort((a, b) => {
+                            const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
+                            const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
+                            return aMatch - bMatch;
+                        });
+
+                        const dropdownOptions = sortedOptions.map(p => {
+                            const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
+                            const statusTag = p.status === 'AVAILABLE' ? 'Ready' : (p.status === 'BUSY' ? 'Busy' : 'Break');
+                            return `<option value="${p.id}">${matchStar}${p.name} [${p.level}] (${statusTag}) - ${p.location}</option>`;
+                        }).join('');
+
+                        dropdownHtml = panelists.length > 0
+                            ? `<div class="manual-assign-box">
+                                 <div class="manual-assign-row">
+                                     <select id="select_assign_${c.id}">
+                                         <option value="">-- Assign / Queue for Panelist --</option>
+                                         ${dropdownOptions}
+                                     </select>
+                                     <button class="btn-assign" onclick="assignManually('${c.id}')">Assign ➔</button>
+                                 </div>
+                               </div>`
+                            : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No interviewers available</div>`;
+                    }
+
+                    const isR1Cleared = (c.r1 === 'Cleared');
+
+                    return `
+                    <div class="card" style="margin-bottom: 12px;">
+                        <div class="card-top" style="margin-bottom: 0;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">📅 ${c.interviewDate || getTodayFormattedDate()} | Check-in: ${c.checkInTime}</div>
+                                ${isR1Cleared ? `<span class="cleared-badge">🟢 Round 1 Cleared — Ready for Round 2</span>` : ''}
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                        </div>
+
+                        <div class="round-status-row">
+                            <div class="round-group">
+                                <span>R1:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r1', this.value)">
+                                    <option value="Pending" ${c.r1 === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Cleared" ${c.r1 === 'Cleared' ? 'selected' : ''}>Cleared</option>
+                                    <option value="On Hold" ${c.r1 === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                    <option value="Rejected" ${c.r1 === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="round-group">
+                                <span>R2:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r2', this.value)" ${!isR1Cleared ? 'disabled' : ''}>
+                                    <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Cleared" ${c.r2 === 'Cleared' ? 'selected' : ''}>Cleared</option>
+                                    <option value="On Hold" ${c.r2 === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                    <option value="Rejected" ${c.r2 === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="round-group">
+                                <span>Final:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'final', this.value)">
+                                    <option value="Pending" ${c.final === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="In Progress" ${c.final === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                    <option value="On Hold" ${c.final === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                    <option value="Selected" ${c.final === 'Selected' ? 'selected' : ''}>Selected</option>
+                                    <option value="Rejected" ${c.final === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        ${dropdownHtml}
+                    </div>
+                    `;
+                }).join('');
             }
 
-            list.innerHTML = waitingQueue.map(c => {
-                let dropdownHtml = '';
-                if (!isAuto) {
-                    const sortedOptions = [...panelists].sort((a, b) => {
-                        const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
-                        const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
-                        return aMatch - bMatch;
-                    });
-
-                    const dropdownOptions = sortedOptions.map(p => {
-                        const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
-                        const statusTag = p.status === 'AVAILABLE' ? 'Ready' : (p.status === 'BUSY' ? 'Busy' : 'Break');
-                        return `<option value="${p.id}">${matchStar}${p.name} [${p.level}] (${statusTag}) - ${p.location}</option>`;
-                    }).join('');
-
-                    dropdownHtml = panelists.length > 0
-                        ? `<div class="manual-assign-box">
-                             <div class="manual-assign-row">
-                                 <select id="select_assign_${c.id}">
-                                     <option value="">-- Assign / Queue for Panelist --</option>
-                                     ${dropdownOptions}
-                                 </select>
-                                 <button class="btn-assign" onclick="assignManually('${c.id}')">Assign ➔</button>
-                             </div>
-                           </div>`
-                        : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No interviewers available</div>`;
-                }
-
-                const isR1Cleared = (c.r1 === 'Cleared');
-
-                return `
-                <div class="card" style="margin-bottom: 12px;">
-                    <div class="card-top" style="margin-bottom: 0;">
-                        <div>
-                            <div class="card-title">👤 ${c.name}</div>
-                            <div class="card-subtitle">📅 ${c.interviewDate || getTodayFormattedDate()} | Check-in: ${c.checkInTime}</div>
+            // Render On-Hold Review Queue
+            if (holdQueue.length === 0) {
+                holdList.innerHTML = `<div class="empty-state" style="padding: 15px;">No candidates currently on hold.</div>`;
+            } else {
+                holdList.innerHTML = holdQueue.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--warning); background: #fffbeb;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <span class="on-hold-badge">⏸️ On Hold (${c.r1 === 'On Hold' ? 'Round 1' : 'Round 2'})</span>
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
                         </div>
-                        <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
-                    </div>
-
-                    <!-- Round Status Controls with Prerequisite Safeguards -->
-                    <div class="round-status-row">
-                        <div class="round-group">
-                            <span>R1:</span>
-                            <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r1', this.value)">
-                                <option value="Pending" ${c.r1 === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Cleared" ${c.r1 === 'Cleared' ? 'selected' : ''}>Cleared</option>
-                                <option value="Rejected" ${c.r1 === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                            </select>
-                        </div>
-                        <div class="round-group">
-                            <span>R2:</span>
-                            <select class="round-select" 
-                                    onchange="updateCandidateRound('${c.id}', 'r2', this.value)" 
-                                    ${!isR1Cleared ? 'disabled title="Candidate must clear Round 1 first"' : ''}>
-                                <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Cleared" ${c.r2 === 'Cleared' ? 'selected' : ''}>Cleared</option>
-                                <option value="Rejected" ${c.r2 === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                            </select>
-                        </div>
-                        <div class="round-group">
-                            <span>Final:</span>
-                            <select class="round-select" onchange="updateCandidateRound('${c.id}', 'final', this.value)">
-                                <option value="Pending" ${c.final === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="In Progress" ${c.final === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                <option value="Round 2 Cleared" ${c.final === 'Round 2 Cleared' ? 'selected' : ''}>Round 2 Cleared</option>
-                                <option value="Selected" ${c.final === 'Selected' ? 'selected' : ''}>Selected</option>
-                                <option value="Rejected" ${c.final === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                            </select>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="btn-sm btn-success" onclick="adminApproveHold('${c.id}')">✅ Move Ahead (Put Back in Queue)</button>
+                            <button class="btn-sm btn-danger" onclick="adminRejectHold('${c.id}')">❌ Reject</button>
                         </div>
                     </div>
-
-                    ${dropdownHtml}
-                </div>
-                `;
-            }).join('');
+                `).join('');
+            }
         }
 
         function renderPanelists() {
@@ -1577,10 +1632,7 @@
             }
 
             list.innerHTML = filteredPanelists.map(p => {
-                let borderLeftColor = 'var(--success)'; 
-                if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
-                if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
-
+                let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
                 const freeTimeStr = calculatePanelistFreeTime(p);
 
                 return `
@@ -1622,8 +1674,8 @@
                     
                     <div class="action-buttons">
                         ${p.status === 'BUSY' ? `
-                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish & Ready ${p.nextCandidate ? '(Auto-Starts Next)' : ''}</button>
-                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Break</button>
+                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>
+                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Take Break</button>
                         ` : ''}
                         ${p.status === 'AVAILABLE' ? `
                             <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>
@@ -1631,14 +1683,13 @@
                         ${p.status === 'BREAK' ? `
                             <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>
                         ` : ''}
-                        <button class="btn-sm btn-remove" title="Remove interviewer from room" onclick="removePanelist('${p.id}')">✕</button>
+                        <button class="btn-sm btn-remove" title="Remove interviewer" onclick="removePanelist('${p.id}')">✕</button>
                     </div>
                 </div>
                 `;
             }).join('');
         }
 
-        // --- RENDER PANELISTS PORTAL VIEW ---
         function renderPanelistPortal() {
             const portalList = document.getElementById('panelistPortalCards');
             if (panelists.length === 0) {
@@ -1649,10 +1700,7 @@
             const sortedPanelists = sortPanelistsByAvailability(panelists);
 
             portalList.innerHTML = sortedPanelists.map(p => {
-                let borderLeftColor = 'var(--success)'; 
-                if (p.status === 'BUSY') borderLeftColor = 'var(--danger)'; 
-                if (p.status === 'BREAK') borderLeftColor = 'var(--warning-bg)'; 
-
+                let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
                 const freeTimeStr = calculatePanelistFreeTime(p);
 
                 return `
@@ -1689,7 +1737,7 @@
                     
                     <div class="action-buttons" style="margin-top: 15px;">
                         ${p.status === 'BUSY' ? `
-                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Set Ready ${p.nextCandidate ? '(Auto-Starts Next)' : ''}</button>
+                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>
                             <button class="btn-sm btn-break" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Take Break</button>
                         ` : ''}
                         ${p.status === 'AVAILABLE' ? `
@@ -1705,16 +1753,12 @@
         }
 
         function renderTelemetryStats() {
-            const avail = panelists.filter(p => p.status === 'AVAILABLE').length;
-            const busy = panelists.filter(p => p.status === 'BUSY').length;
-            const breakCount = panelists.filter(p => p.status === 'BREAK').length;
-            
-            document.getElementById('statAvail').innerText = `${avail} Avail`;
-            document.getElementById('statBusy').innerText = `${busy} Busy`;
-            document.getElementById('statBreak').innerText = `${breakCount} On Break`;
+            document.getElementById('statAvail').innerText = `${panelists.filter(p => p.status === 'AVAILABLE').length} Avail`;
+            document.getElementById('statBusy').innerText = `${panelists.filter(p => p.status === 'BUSY').length} Busy`;
+            document.getElementById('statBreak').innerText = `${panelists.filter(p => p.status === 'BREAK').length} On Break`;
         }
 
-        // Run initialization on startup
+        // Initialize App
         initDemoData();
     </script>
 </body>
