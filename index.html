@@ -456,7 +456,9 @@
                 <div class="column-header">
                     <h2>Waiting Room <span class="badge" style="background: var(--primary); font-size: 13px;" id="queueCount">0</span></h2>
                     
-                    <div class="filter-bar">
+                    <div class="filter-bar" style="flex-wrap: wrap;">
+                        <label for="searchQueueCandidate">Search:</label>
+                        <input type="text" id="searchQueueCandidate" placeholder="Candidate name..." oninput="renderQueue()" style="width: 150px; flex: 0 1 150px;">
                         <label for="filterCandidateSkill">Filter:</label>
                         <select id="filterCandidateSkill" onchange="renderQueue()">
                             <option value="">All Skills</option>
@@ -479,13 +481,48 @@
                 <!-- Admin On-Hold Review Queue -->
                 <div style="margin-top: 25px; border-top: 2px dashed var(--border-color); padding-top: 15px;">
                     <div class="column-header" style="border: none; padding-bottom: 6px;">
-                        <h3 style="margin: 0; font-size: 15px; color: var(--warning); display: flex; align-items: center; gap: 6px;">
-                            ⏸️ On-Hold Candidates (Admin Review Needed)
-                            <span class="badge" style="background: var(--warning); color: #fff;" id="holdQueueCount">0</span>
-                        </h3>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;">
+                            <h3 style="margin: 0; font-size: 15px; color: var(--warning); display: flex; align-items: center; gap: 6px;">
+                                ⏸️ On-Hold Candidates (Admin Review Needed)
+                                <span class="badge" style="background: var(--warning); color: #fff;" id="holdQueueCount">0</span>
+                            </h3>
+                            <input type="text" id="searchHoldCandidate" placeholder="Search name..." oninput="renderQueue()" style="margin-left:auto; width:160px;">
+                        </div>
                     </div>
                     <div id="holdQueueList">
                         <div class="empty-state" style="padding: 15px;">No candidates currently on hold.</div>
+                    </div>
+                </div>
+
+                <!-- Completed Candidate History -->
+                <div style="margin-top: 25px; border-top: 2px dashed var(--border-color); padding-top: 15px;">
+                    <div class="column-header" style="border: none; padding-bottom: 6px;">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;">
+                            <h3 style="margin: 0; font-size: 15px; color: var(--success); display: flex; align-items: center; gap: 6px;">
+                                ✅ Completed / Selected Candidates
+                                <span class="badge" style="background: var(--success); color: #fff;" id="completedQueueCount">0</span>
+                            </h3>
+                            <input type="text" id="searchCompletedCandidate" placeholder="Search name..." oninput="renderQueue()" style="margin-left:auto; width:160px;">
+                        </div>
+                    </div>
+                    <div id="completedQueueList">
+                        <div class="empty-state" style="padding: 15px;">No completed candidates yet.</div>
+                    </div>
+                </div>
+
+                <!-- Rejected Candidate History -->
+                <div style="margin-top: 25px; border-top: 2px dashed var(--border-color); padding-top: 15px;">
+                    <div class="column-header" style="border: none; padding-bottom: 6px;">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;">
+                            <h3 style="margin: 0; font-size: 15px; color: var(--danger); display: flex; align-items: center; gap: 6px;">
+                                ❌ Rejected Candidates
+                                <span class="badge" style="background: var(--danger); color: #fff;" id="rejectedQueueCount">0</span>
+                            </h3>
+                            <input type="text" id="searchRejectedCandidate" placeholder="Search name..." oninput="renderQueue()" style="margin-left:auto; width:160px;">
+                        </div>
+                    </div>
+                    <div id="rejectedQueueList">
+                        <div class="empty-state" style="padding: 15px;">No rejected candidates yet.</div>
                     </div>
                 </div>
             </div>
@@ -693,21 +730,22 @@
             const todayDateStr = getTodayFormattedDate();
 
             queue = [
-                { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", r1: "Pending", r2: "Pending", final: "Pending" },
+                { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", currentRound: 1 },
                 { id: "c2", name: "John Wick", skill: "Android", interviewDate: todayDateStr, checkInTime: "10:30 AM", status: "IN_PROGRESS", r1: "Pending", r2: "Pending", final: "In Progress" },
                 { id: "c3", name: "Bruce Wayne", skill: "Backend", interviewDate: todayDateStr, checkInTime: "10:15 AM", status: "IN_PROGRESS", r1: "Cleared", r2: "Pending", final: "In Progress" },
                 { id: "c4", name: "Clark Kent", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "09:45 AM", status: "COMPLETED", r1: "Cleared", r2: "Cleared", final: "Selected" },
-                { id: "c5", name: "Peter Parker", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "11:00 AM", status: "ON_HOLD", r1: "On Hold", r2: "Pending", final: "On Hold" }
+                { id: "c5", name: "Peter Parker", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "11:00 AM", status: "ON_HOLD", r1: "On Hold", r2: "Pending", final: "On Hold", currentRound: 1 }
             ];
 
             panelists = [
-                { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 2 },
-                { id: "p2", name: "Marcus Vance", location: "Desk 12", level: "L4", skill: "Backend", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 1 },
-                { id: "p3", name: "Elena Rostova", location: "Room 4B", level: "L6 (Principal)", skill: "Frontend", status: "BUSY", currentCandidate: "John Wick (Android)", currentCandidateId: "c2", nextCandidate: "Emma Watson (DataScience)", startTime: now - (41 * 60 * 1000), completed: 3 },
-                { id: "p4", name: "David K.", location: "Pod 6", level: "L4", skill: "DevOps", status: "BREAK", currentCandidate: null, currentCandidateId: null, nextCandidate: null, startTime: null, completed: 0 },
+                { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 2 },
+                { id: "p2", name: "Marcus Vance", location: "Desk 12", level: "L4", skill: "Backend", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 1 },
+                { id: "p3", name: "Elena Rostova", location: "Room 4B", level: "L6 (Principal)", skill: "Frontend", status: "BUSY", currentCandidate: "John Wick (Android)", currentCandidateId: "c2", nextCandidate: null, nextCandidateId: null, startTime: now - (41 * 60 * 1000), completed: 3 },
+                { id: "p4", name: "David K.", location: "Pod 6", level: "L4", skill: "DevOps", status: "BREAK", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 0 },
                 { id: "p5", name: "Sarah Jenkins", location: "Main Conf", level: "L5", skill: "General", status: "BUSY", currentCandidate: "Bruce Wayne (Backend)", currentCandidateId: "c3", nextCandidate: null, startTime: now - (12 * 60 * 1000), completed: 4 }
             ];
             
+            migrateCandidateAndPanelistState();
             renderAll();
         }
 
@@ -882,7 +920,12 @@
                 "Round 1 Status": c.r1,
                 "Round 2 Status": c.r2,
                 "Final Decision": c.final,
-                "Current Queue Status": c.status
+                "Rejected Round": c.rejectedRound || "",
+                "Current Queue Status": c.status,
+                "Current Round": c.currentRound || (c.r1 === "Cleared" ? 2 : 1),
+                "Assigned Interviewer": c.assignedPanelistId ? ((panelists.find(p => p.id === c.assignedPanelistId) || {}).name || "") : "",
+                "Queued With Interviewer": c.queuedPanelistId ? ((panelists.find(p => p.id === c.queuedPanelistId) || {}).name || "") : "",
+                "Evaluation Notes": (c.evaluationNotes || []).map(n => `[${n.round === 1 ? "R1" : "R2"}] ${n.interviewer}: ${n.note}`).join(" | ")
             }));
             const wsCandidates = XLSX.utils.json_to_sheet(candidatesData);
             XLSX.utils.book_append_sheet(wb, wsCandidates, "Candidate Assessment Report");
@@ -948,6 +991,7 @@
                                 currentCandidate: null,
                                 currentCandidateId: null,
                                 nextCandidate: null,
+                                nextCandidateId: null,
                                 startTime: null,
                                 completed: 0
                             });
@@ -978,7 +1022,7 @@
             queue.push({ 
                 id: `local_c_${localIdCounter++}`, 
                 name, skill, interviewDate, checkInTime, 
-                status: "WAITING", r1: "Pending", r2: "Pending", final: "Pending"
+                status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", currentRound: 1, assignedPanelistId: null, queuedPanelistId: null, evaluationNotes: [], rejectedRound: null
             });
             nameInput.value = "";
             checkRoutingMode();
@@ -999,7 +1043,7 @@
             panelists.push({
                 id: `local_p_${localIdCounter++}`,
                 name, location, level, skill, status: "AVAILABLE",
-                currentCandidate: null, currentCandidateId: null, nextCandidate: null,
+                currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null,
                 startTime: null, completed: 0
             });
 
@@ -1016,12 +1060,139 @@
         document.getElementById('candidateNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addCandidate(); });
         document.getElementById('panelistNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addPanelist(); });
 
+        // Candidate workflow helpers
+        function ensureCandidateWorkflow(candidate) {
+            if (!candidate) return;
+            if (![1, 2].includes(candidate.currentRound)) {
+                candidate.currentRound = candidate.r1 === 'Cleared' ? 2 : 1;
+            }
+            if (!Array.isArray(candidate.evaluationNotes)) candidate.evaluationNotes = [];
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'rejectedRound')) candidate.rejectedRound = null;
+            if (!candidate.assignedPanelistId) candidate.assignedPanelistId = null;
+            if (!candidate.queuedPanelistId) candidate.queuedPanelistId = null;
+        }
+
+        function candidateRoundLabel(candidate) {
+            ensureCandidateWorkflow(candidate);
+            return candidate.currentRound === 2 ? 'Round 2' : 'Round 1';
+        }
+
+        function setCandidateWaiting(candidate, roundNumber = null) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            const round = roundNumber || candidate.currentRound;
+            candidate.currentRound = round;
+            candidate.status = 'WAITING';
+            candidate.assignedPanelistId = null;
+            candidate.queuedPanelistId = null;
+            candidate.final = round === 2 ? 'In Progress' : (candidate.final === 'Selected' ? 'Pending' : candidate.final || 'Pending');
+        }
+
+        function setCandidateQueued(candidate, panelistId) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.status = 'QUEUED';
+            candidate.queuedPanelistId = panelistId;
+            candidate.assignedPanelistId = null;
+        }
+
+        function setCandidateInProgress(candidate, panelistId) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.status = 'IN_PROGRESS';
+            candidate.assignedPanelistId = panelistId;
+            candidate.queuedPanelistId = null;
+        }
+
+        function finalizeCandidate(candidate, decision) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.assignedPanelistId = null;
+            candidate.queuedPanelistId = null;
+            if (decision === 'SELECT' || decision === 'Selected') {
+                candidate.final = 'Selected';
+                candidate.status = 'COMPLETED';
+                candidate.rejectedRound = null;
+            } else if (decision === 'REJECT' || decision === 'Rejected') {
+                candidate.final = 'Rejected';
+                candidate.status = 'COMPLETED';
+                candidate.rejectedRound = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            }
+        }
+
+        function isRejectedCandidate(candidate) {
+            return !!candidate && (candidate.final === 'Rejected' || candidate.r1 === 'Rejected' || candidate.r2 === 'Rejected');
+        }
+
+        function rejectedRoundLabel(candidate) {
+            if (candidate && candidate.rejectedRound === 2) return 'Round 2';
+            if (candidate && candidate.rejectedRound === 1) return 'Round 1';
+            if (candidate && candidate.r2 === 'Rejected') return 'Round 2';
+            if (candidate && candidate.r1 === 'Rejected') return 'Round 1';
+            return 'Final';
+        }
+
+        function getQueuedCandidate(panelist) {
+            if (!panelist || !panelist.nextCandidateId) return null;
+            const candidate = queue.find(c => c.id === panelist.nextCandidateId);
+            return candidate && candidate.status === 'QUEUED' ? candidate : null;
+        }
+
+        function startCandidateForPanelist(panelist, candidate) {
+            if (!panelist || !candidate) return false;
+            ensureCandidateWorkflow(candidate);
+            panelist.status = 'BUSY';
+            panelist.currentCandidate = `${candidate.name} (${candidate.skill})`;
+            panelist.currentCandidateId = candidate.id;
+            panelist.startTime = Date.now();
+            setCandidateInProgress(candidate, panelist.id);
+            return true;
+        }
+
+        function startNextCandidateIfAvailable(panelist) {
+            const nextCandidate = getQueuedCandidate(panelist);
+            if (!nextCandidate) {
+                if (panelist) {
+                    panelist.nextCandidate = null;
+                    panelist.nextCandidateId = null;
+                }
+                return false;
+            }
+            panelist.nextCandidate = null;
+            panelist.nextCandidateId = null;
+            return startCandidateForPanelist(panelist, nextCandidate);
+        }
+
+        function migrateCandidateAndPanelistState() {
+            queue.forEach(ensureCandidateWorkflow);
+            panelists.forEach(p => {
+                if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null;
+                if (!Object.prototype.hasOwnProperty.call(p, 'startTime')) p.startTime = null;
+                if (!Object.prototype.hasOwnProperty.call(p, 'completed')) p.completed = 0;
+            });
+
+            // Repair/derive queued candidate IDs from legacy display-only state where possible.
+            panelists.forEach(p => {
+                if (!p.nextCandidateId && p.nextCandidate) {
+                    const match = queue.find(c => c.status === 'QUEUED' && p.nextCandidate.includes(c.name));
+                    if (match) p.nextCandidateId = match.id;
+                }
+                if (p.currentCandidateId) {
+                    const current = queue.find(c => c.id === p.currentCandidateId);
+                    if (current) setCandidateInProgress(current, p.id);
+                }
+                const queued = getQueuedCandidate(p);
+                if (queued) setCandidateQueued(queued, p.id);
+            });
+        }
+
         // Update Round Manual Actions
         function updateCandidateRound(candidateId, roundKey, value) {
             const candidate = queue.find(c => c.id === candidateId);
             if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
 
-            if (roundKey === 'r2' && candidate.r1 !== 'Cleared') {
+            if (roundKey === 'r2' && value !== 'Pending' && candidate.r1 !== 'Cleared') {
                 alert(`⚠️ PREREQUISITE REQUIRED: Candidate "${candidate.name}" must clear Round 1 before taking Round 2.`);
                 renderAll();
                 return;
@@ -1036,32 +1207,71 @@
             candidate[roundKey] = value;
 
             if (roundKey === 'r1') {
-                if (value === 'Rejected') {
-                    candidate.r2 = 'Pending';
-                    candidate.final = 'Rejected';
-                    candidate.status = 'COMPLETED';
-                } else if (value === 'On Hold') {
-                    candidate.status = 'ON_HOLD';
-                    candidate.final = 'On Hold';
-                } else if (value === 'Cleared') {
-                    candidate.status = 'WAITING'; // Return to queue for Round 2!
-                    candidate.final = 'In Progress';
-                }
-            }
-
-            if (roundKey === 'r2') {
                 if (value === 'Cleared') {
-                    candidate.final = 'Selected';
-                    candidate.status = 'COMPLETED';
+                    candidate.r2 = candidate.r2 === 'Rejected' ? 'Pending' : candidate.r2;
+                    candidate.currentRound = 2;
+                    candidate.status = 'WAITING';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'In Progress';
+                } else if (value === 'On Hold') {
+                    candidate.currentRound = 1;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
                 } else if (value === 'Rejected') {
-                    candidate.final = 'Rejected';
-                    candidate.status = 'COMPLETED';
+                    candidate.currentRound = 1;
+                    candidate.rejectedRound = 1;
+                    candidate.r2 = 'Pending';
+                    finalizeCandidate(candidate, 'Rejected');
+                } else if (value === 'Pending') {
+                    candidate.currentRound = 1;
+                    candidate.r2 = 'Pending';
+                    candidate.final = 'Pending';
+                    setCandidateWaiting(candidate, 1);
+                }
+            } else if (roundKey === 'r2') {
+                if (value === 'Cleared') {
+                    candidate.currentRound = 2;
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (value === 'Rejected') {
+                    candidate.currentRound = 2;
+                    candidate.rejectedRound = 2;
+                    finalizeCandidate(candidate, 'Rejected');
+                } else if (value === 'On Hold') {
+                    candidate.currentRound = 2;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (value === 'Pending') {
+                    candidate.currentRound = 2;
+                    candidate.r2 = 'Pending';
+                    candidate.final = 'In Progress';
+                    setCandidateWaiting(candidate, 2);
+                }
+            } else if (roundKey === 'final') {
+                if (value === 'Selected') {
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (value === 'Rejected') {
+                    finalizeCandidate(candidate, 'Rejected');
                 } else if (value === 'On Hold') {
                     candidate.status = 'ON_HOLD';
-                    candidate.final = 'On Hold';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                } else if (value === 'In Progress') {
+                    const round = candidate.r1 === 'Cleared' ? 2 : 1;
+                    setCandidateWaiting(candidate, round);
+                    candidate.final = 'In Progress';
+                } else if (value === 'Pending') {
+                    const round = candidate.r1 === 'Cleared' ? 2 : 1;
+                    setCandidateWaiting(candidate, round);
+                    candidate.final = 'Pending';
                 }
             }
 
+            checkRoutingMode();
             renderAll();
         }
 
@@ -1070,45 +1280,53 @@
             const panelist = panelists.find(p => p.id === panelistId);
             if (!panelist) return;
 
-            // If panelist is currently BUSY, prompt evaluation modal for current candidate
-            if (panelist.status === "BUSY" && panelist.currentCandidate) {
-                openEvalModal(panelist, newStatus, completedCount);
+            if (panelist.status === 'BUSY' && panelist.currentCandidate) {
+                openEvalModal(panelist, newStatus, panelist.completed);
                 return;
             }
 
-            // Normal state transitions (AVAILABLE <-> BREAK)
-            let confirmationMessage = newStatus === "BREAK" 
-                ? `Put ${panelist.name} ON BREAK?` 
+            const confirmationMessage = newStatus === 'BREAK'
+                ? `Put ${panelist.name} ON BREAK?`
                 : `Set ${panelist.name} as READY / AVAILABLE?`;
 
-            if (confirm(confirmationMessage)) {
+            if (!confirm(confirmationMessage)) return;
+
+            if (newStatus === 'AVAILABLE') {
+                panelist.status = 'AVAILABLE';
+                if (!startNextCandidateIfAvailable(panelist)) {
+                    checkRoutingMode();
+                }
+            } else if (newStatus === 'BREAK') {
+                panelist.status = 'BREAK';
+            } else {
                 panelist.status = newStatus;
-                checkRoutingMode();
-                renderAll();
             }
+            renderAll();
         }
 
         function openEvalModal(panelist, targetNextStatus, completedCount) {
-            // Find active candidate object
-            let candidate = queue.find(c => c.id === panelist.currentCandidateId);
+            const candidate = queue.find(c => c.id === panelist.currentCandidateId);
             if (!candidate) {
-                // Fallback search by name if ID was not attached
-                candidate = queue.find(c => panelist.currentCandidate && panelist.currentCandidate.includes(c.name));
+                alert(`Unable to find the active candidate for ${panelist.name}. The interview cannot be completed safely.`);
+                return;
             }
+            ensureCandidateWorkflow(candidate);
 
-            const candidateName = candidate ? candidate.name : (panelist.currentCandidate || "Current Candidate");
-            const activeRound = candidate ? (candidate.r1 === 'Cleared' ? 'Round 2' : 'Round 1') : 'Round 1';
+            const candidateName = candidate.name;
+            const activeRound = candidateRoundLabel(candidate);
 
             activeEvalContext = {
                 panelistId: panelist.id,
-                candidateId: candidate ? candidate.id : null,
-                candidateName: candidateName,
-                activeRound: activeRound,
-                targetNextStatus: targetNextStatus,
-                completedCount: completedCount
+                candidateId: candidate.id,
+                candidateName,
+                activeRound,
+                targetNextStatus,
+                completedCount: Number.isFinite(completedCount) ? completedCount : panelist.completed,
+                roundNumber: candidate.currentRound
             };
 
             const evalModalBody = document.getElementById('evalModalBody');
+            const isRound2 = candidate.currentRound === 2;
             evalModalBody.innerHTML = `
                 <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
                     <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">👤 Candidate: ${candidateName}</div>
@@ -1124,8 +1342,8 @@
                 <div class="eval-option-grid">
                     <div class="eval-btn-card selected-btn" onclick="submitCandidateEvaluation('SELECT')">
                         <span style="font-size: 22px;">✅</span>
-                        <strong style="font-size: 13px; color: var(--success);">Select / Pass</strong>
-                        <span style="font-size: 11px; color: var(--text-muted);">Mark Cleared & put back in Candidate Queue</span>
+                        <strong style="font-size: 13px; color: var(--success);">${isRound2 ? 'Select / Finalize' : 'Select / Pass'}</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">${isRound2 ? 'Complete the interview track' : 'Clear Round 1 and queue for Round 2'}</span>
                     </div>
 
                     <div class="eval-btn-card hold-btn" onclick="submitCandidateEvaluation('HOLD')">
@@ -1143,7 +1361,7 @@
 
                 <div style="margin-top: 15px;">
                     <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Feedback / Notes (Optional):</label>
-                    <textarea id="evalNotesInput" rows="2" style="width: 100%; margin-top: 4px;" placeholder="Add quick interviewer evaluation notes..."></textarea>
+                    <textarea id="evalNotesInput" rows="3" style="width: 100%; margin-top: 4px;" placeholder="Add quick interviewer evaluation notes..."></textarea>
                 </div>
             `;
 
@@ -1161,66 +1379,84 @@
             const ctx = activeEvalContext;
             const panelist = panelists.find(p => p.id === ctx.panelistId);
             const candidate = queue.find(c => c.id === ctx.candidateId);
+            if (!panelist || !candidate) {
+                closeEvalModal();
+                renderAll();
+                return;
+            }
 
-            if (candidate) {
-                if (ctx.activeRound === 'Round 1') {
-                    if (decision === 'SELECT') {
-                        candidate.r1 = 'Cleared';
-                        candidate.status = 'WAITING'; // Put back into candidates queue for Round 2!
-                        candidate.final = 'In Progress';
-                    } else if (decision === 'HOLD') {
-                        candidate.r1 = 'On Hold';
-                        candidate.status = 'ON_HOLD'; // Admin decision required
-                        candidate.final = 'On Hold';
-                    } else if (decision === 'REJECT') {
-                        candidate.r1 = 'Rejected';
-                        candidate.status = 'COMPLETED';
-                        candidate.final = 'Rejected';
-                    }
-                } else if (ctx.activeRound === 'Round 2') {
-                    if (decision === 'SELECT') {
-                        candidate.r2 = 'Cleared';
-                        candidate.final = 'Selected';
-                        candidate.status = 'COMPLETED';
-                    } else if (decision === 'HOLD') {
-                        candidate.r2 = 'On Hold';
-                        candidate.status = 'ON_HOLD';
-                        candidate.final = 'On Hold';
-                    } else if (decision === 'REJECT') {
-                        candidate.r2 = 'Rejected';
-                        candidate.status = 'COMPLETED';
-                        candidate.final = 'Rejected';
-                    }
+            ensureCandidateWorkflow(candidate);
+            const notesInput = document.getElementById('evalNotesInput');
+            const notes = notesInput ? notesInput.value.trim() : '';
+            if (notes) {
+                candidate.evaluationNotes.push({
+                    round: ctx.roundNumber,
+                    interviewerId: panelist.id,
+                    interviewer: panelist.name,
+                    timestamp: new Date().toISOString(),
+                    note: notes
+                });
+            }
+
+            const activeRound = ctx.roundNumber;
+            if (activeRound === 1) {
+                if (decision === 'SELECT') {
+                    candidate.r1 = 'Cleared';
+                    candidate.r2 = 'Pending';
+                    candidate.currentRound = 2;
+                    candidate.final = 'In Progress';
+                    setCandidateWaiting(candidate, 2);
+                } else if (decision === 'HOLD') {
+                    candidate.r1 = 'On Hold';
+                    candidate.currentRound = 1;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (decision === 'REJECT') {
+                    candidate.r1 = 'Rejected';
+                    candidate.r2 = 'Pending';
+                    candidate.currentRound = 1;
+                    candidate.rejectedRound = 1;
+                    finalizeCandidate(candidate, 'Rejected');
+                }
+            } else {
+                if (decision === 'SELECT') {
+                    candidate.r2 = 'Cleared';
+                    candidate.currentRound = 2;
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (decision === 'HOLD') {
+                    candidate.r2 = 'On Hold';
+                    candidate.currentRound = 2;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (decision === 'REJECT') {
+                    candidate.r2 = 'Rejected';
+                    candidate.currentRound = 2;
+                    candidate.rejectedRound = 2;
+                    finalizeCandidate(candidate, 'Rejected');
                 }
             }
 
-            // Update Panelist State
-            let updatedCompletedCount = ctx.completedCount + 1;
+            panelist.completed = (Number(panelist.completed) || 0) + 1;
+            panelist.currentCandidate = null;
+            panelist.currentCandidateId = null;
+            panelist.startTime = null;
 
-            if (ctx.targetNextStatus === "AVAILABLE" && panelist.nextCandidate) {
-                // Auto-start queued next candidate
-                const nextCandidateObj = queue.find(c => panelist.nextCandidate.includes(c.name));
-                panelist.status = "BUSY";
-                panelist.currentCandidate = panelist.nextCandidate;
-                panelist.currentCandidateId = nextCandidateObj ? nextCandidateObj.id : null;
-                panelist.nextCandidate = null;
-                panelist.startTime = Date.now();
-                panelist.completed = updatedCompletedCount;
-
-                if (nextCandidateObj) nextCandidateObj.status = "IN_PROGRESS";
+            // If the interviewer is returning to AVAILABLE, immediately start the
+            // reserved next candidate. If taking a break, keep the reservation intact.
+            if (ctx.targetNextStatus === 'AVAILABLE') {
+                panelist.status = 'AVAILABLE';
+                if (!startNextCandidateIfAvailable(panelist)) {
+                    checkRoutingMode();
+                }
             } else {
                 panelist.status = ctx.targetNextStatus;
-                panelist.currentCandidate = null;
-                panelist.currentCandidateId = null;
-                panelist.startTime = null;
-                panelist.completed = updatedCompletedCount;
-                if (ctx.targetNextStatus !== "BUSY") {
-                    panelist.nextCandidate = null;
-                }
             }
 
             closeEvalModal();
-            checkRoutingMode();
             renderAll();
         }
 
@@ -1228,19 +1464,28 @@
         function adminApproveHold(candidateId) {
             const c = queue.find(x => x.id === candidateId);
             if (!c) return;
+            ensureCandidateWorkflow(c);
 
-            if (confirm(`Approve "${c.name}" and return them to the candidates queue for their next interview round?`)) {
-                if (c.r1 === 'On Hold') {
-                    c.r1 = 'Cleared';
-                    c.final = 'In Progress';
-                } else if (c.r2 === 'On Hold') {
-                    c.r2 = 'Cleared';
-                    c.final = 'Round 2 Cleared';
-                }
-                c.status = 'WAITING'; // Return to queue!
-                checkRoutingMode();
-                renderAll();
+            if (!confirm(`Approve "${c.name}" and advance the candidate?`)) return;
+
+            if (c.r1 === 'On Hold') {
+                c.r1 = 'Cleared';
+                c.r2 = 'Pending';
+                c.currentRound = 2;
+                c.final = 'In Progress';
+                setCandidateWaiting(c, 2);
+            } else if (c.r2 === 'On Hold') {
+                // Round 2 is the final interview round in this application.
+                // Approval therefore completes the candidate instead of sending them back to R2.
+                c.r2 = 'Cleared';
+                c.currentRound = 2;
+                finalizeCandidate(c, 'Selected');
+            } else {
+                return;
             }
+
+            checkRoutingMode();
+            renderAll();
         }
 
         function adminRejectHold(candidateId) {
@@ -1248,10 +1493,10 @@
             if (!c) return;
 
             if (confirm(`Reject candidate "${c.name}"?`)) {
+                ensureCandidateWorkflow(c);
                 if (c.r1 === 'On Hold') c.r1 = 'Rejected';
                 if (c.r2 === 'On Hold') c.r2 = 'Rejected';
-                c.final = 'Rejected';
-                c.status = 'COMPLETED';
+                finalizeCandidate(c, 'Rejected');
                 renderAll();
             }
         }
@@ -1260,42 +1505,53 @@
         function assignManually(candidateId) {
             const selectEl = document.getElementById(`select_assign_${candidateId}`);
             const panelistId = selectEl ? selectEl.value : null;
-            
             if (!panelistId) { alert("Please select an interviewer from the dropdown first."); return; }
 
             const candidate = queue.find(c => c.id === candidateId);
             const panelist = panelists.find(p => p.id === panelistId);
+            if (!candidate || !panelist) return;
+            ensureCandidateWorkflow(candidate);
 
-            if (candidate && panelist) {
-                const actionDesc = panelist.status === 'AVAILABLE' 
-                    ? `start the interview immediately with ${panelist.name}` 
-                    : `queue "${candidate.name}" as NEXT IN LINE for ${panelist.name}`;
-
-                if (!confirm(`Are you sure you want to ${actionDesc}?`)) return;
-
-                const formattedCandidateString = `${candidate.name} (${candidate.skill})`;
-
-                if (panelist.status === 'AVAILABLE') {
-                    panelist.status = "BUSY";
-                    panelist.currentCandidate = formattedCandidateString;
-                    panelist.currentCandidateId = candidate.id;
-                    panelist.startTime = Date.now();
-                } else {
-                    panelist.nextCandidate = formattedCandidateString;
-                }
-
-                candidate.status = "IN_PROGRESS";
-                renderAll();
+            if (candidate.status !== 'WAITING') {
+                alert(`Candidate "${candidate.name}" is not currently available for assignment.`);
+                return;
             }
+
+            if (panelist.status === 'BREAK') {
+                alert(`${panelist.name} is on break. Resume the shift before assigning a candidate.`);
+                return;
+            }
+
+            if (panelist.status === 'BUSY') {
+                if (panelist.nextCandidateId) {
+                    const queued = getQueuedCandidate(panelist);
+                    alert(`${panelist.name} already has ${queued ? `"${queued.name}"` : 'a candidate'} queued next. Complete or remove that candidate first.`);
+                    return;
+                }
+                if (!confirm(`Queue "${candidate.name}" as NEXT IN LINE for ${panelist.name}?`)) return;
+                panelist.nextCandidate = `${candidate.name} (${candidate.skill})`;
+                panelist.nextCandidateId = candidate.id;
+                setCandidateQueued(candidate, panelist.id);
+                renderAll();
+                return;
+            }
+
+            if (!confirm(`Start the interview immediately with ${panelist.name}?`)) return;
+            startCandidateForPanelist(panelist, candidate);
+            renderAll();
         }
 
         function removeNextQueue(panelistId) {
             const p = panelists.find(x => x.id === panelistId);
-            if (p && p.nextCandidate) {
-                if (confirm(`Are you sure you want to remove "${p.nextCandidate}" from ${p.name}'s next-in-line queue?`)) {
-                    p.nextCandidate = null;
-                    renderAll();
-                }
+            if (!p || !p.nextCandidateId) return;
+            const queuedCandidate = queue.find(c => c.id === p.nextCandidateId);
+            const queuedName = queuedCandidate ? queuedCandidate.name : p.nextCandidate;
+            if (confirm(`Are you sure you want to remove "${queuedName}" from ${p.name}'s next-in-line queue?`)) {
+                if (queuedCandidate) setCandidateWaiting(queuedCandidate, queuedCandidate.currentRound);
+                p.nextCandidate = null;
+                p.nextCandidateId = null;
+                checkRoutingMode();
+                renderAll();
             }
         }
 
@@ -1309,8 +1565,16 @@
 
         function removePanelist(panelistId) {
             const p = panelists.find(x => x.id === panelistId);
-            if (!confirm(`Are you sure you want to remove ${p ? p.name : 'interviewer'}?`)) return;
-            panelists = panelists.filter(p => p.id !== panelistId);
+            if (!p) return;
+            if (!confirm(`Are you sure you want to remove ${p.name}? Any active or queued candidates will be returned to the waiting queue.`)) return;
+
+            const current = p.currentCandidateId ? queue.find(c => c.id === p.currentCandidateId) : null;
+            const queued = p.nextCandidateId ? queue.find(c => c.id === p.nextCandidateId) : null;
+            if (current) setCandidateWaiting(current, current.currentRound);
+            if (queued) setCandidateWaiting(queued, queued.currentRound);
+
+            panelists = panelists.filter(x => x.id !== panelistId);
+            checkRoutingMode();
             renderAll();
         }
 
@@ -1325,24 +1589,34 @@
         }
 
         function attemptAutoRouting() {
+            let madeAssignment = false;
             let availablePanelists = panelists
                 .filter(p => p.status === 'AVAILABLE')
-                .sort((a, b) => a.completed - b.completed);
+                .sort((a, b) => (Number(a.completed) || 0) - (Number(b.completed) || 0) || a.name.localeCompare(b.name));
 
-            for (let panelist of availablePanelists) {
-                let candidateIndex = queue.findIndex(c => c.status === 'WAITING' && (c.skill === panelist.skill || panelist.skill === 'General'));
-                
-                if (candidateIndex !== -1) {
-                    let candidate = queue[candidateIndex];
-                    panelist.status = "BUSY";
-                    panelist.currentCandidate = `${candidate.name} (${candidate.skill})`;
-                    panelist.currentCandidateId = candidate.id;
-                    panelist.startTime = Date.now();
-                    candidate.status = "IN_PROGRESS";
-                    renderAll();
-                    break;
+            // First honor explicit next-in-line reservations.
+            for (const panelist of availablePanelists) {
+                if (startNextCandidateIfAvailable(panelist)) madeAssignment = true;
+            }
+
+            availablePanelists = panelists
+                .filter(p => p.status === 'AVAILABLE')
+                .sort((a, b) => (Number(a.completed) || 0) - (Number(b.completed) || 0) || a.name.localeCompare(b.name));
+
+            for (const panelist of availablePanelists) {
+                while (panelist.status === 'AVAILABLE') {
+                    const candidateIndex = queue.findIndex(c => {
+                        ensureCandidateWorkflow(c);
+                        return c.status === 'WAITING' && (c.skill === panelist.skill || panelist.skill === 'General');
+                    });
+                    if (candidateIndex === -1) break;
+                    const candidate = queue[candidateIndex];
+                    startCandidateForPanelist(panelist, candidate);
+                    madeAssignment = true;
                 }
             }
+
+            return madeAssignment;
         }
 
         // Live SLA Timer Loop
@@ -1438,7 +1712,7 @@
                         <div class="card-top" style="margin-bottom: 0;">
                             <div>
                                 <div class="card-title">👤 ${c.name}</div>
-                                <div class="card-subtitle">Check-in: ${c.checkInTime}</div>
+                                <div class="card-subtitle">Check-in: ${c.checkInTime} · Next: ${c.r1 === 'Cleared' ? 'Round 2' : 'Round 1'}</div>
                                 ${c.r1 === 'Cleared' ? `<span class="cleared-badge">🟢 Round 1 Cleared — Ready for R2</span>` : ''}
                             </div>
                             <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
@@ -1475,7 +1749,15 @@
                                 <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
                             </div>
                             <div style="margin: 12px 0 6px 0; font-size: 13px;">
-                                ${p.status === 'BUSY' ? `<div class="status-busy">🎙️ Interviewing: ${p.currentCandidate}</div>` : ''}
+                                ${p.status === 'BUSY' ? `
+                                    <div class="status-busy">🎙️ Interviewing: ${p.currentCandidate}</div>
+                                    <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
+                                        📋 Current Round: ${getPanelistCurrentRound(p)}
+                                    </div>
+                                    <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
+                                        📋 Current Round: ${getPanelistCurrentRound(p)}
+                                    </div>
+                                ` : ''}
                                 ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
                                 ${p.status === 'BREAK' ? `<div class="status-break">☕ On Break</div>` : ''}
                             </div>
@@ -1493,6 +1775,8 @@
 
         // Global Render Engine
         function renderAll() {
+            queue.forEach(ensureCandidateWorkflow);
+            panelists.forEach(p => { if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null; });
             renderQueue();
             renderPanelists();
             renderTelemetryStats();
@@ -1503,10 +1787,18 @@
             if (document.getElementById('eodModal').style.display === 'flex') renderEodReport();
         }
 
+        function candidateNameMatches(candidate, searchInputId) {
+            const input = document.getElementById(searchInputId);
+            const query = input ? input.value.trim().toLowerCase() : "";
+            if (!query) return true;
+            return String(candidate.name || "").toLowerCase().includes(query);
+        }
+
         function renderQueue() {
             const skillFilter = document.getElementById('filterCandidateSkill').value;
-            const waitingQueue = queue.filter(c => c.status === 'WAITING' && (!skillFilter || c.skill === skillFilter));
-            const holdQueue = queue.filter(c => c.status === 'ON_HOLD');
+            const waitingQueue = queue.filter(c => c.status === 'WAITING' && (!skillFilter || c.skill === skillFilter) && candidateNameMatches(c, 'searchQueueCandidate'));
+            const holdSearch = document.getElementById('searchHoldCandidate')?.value.trim().toLowerCase() || "";
+            const holdQueue = queue.filter(c => c.status === 'ON_HOLD' && (!holdSearch || String(c.name || '').toLowerCase().includes(holdSearch)));
 
             document.getElementById('queueCount').innerText = `${waitingQueue.length} ${skillFilter ? `(${skillFilter})` : ''}`;
             document.getElementById('holdQueueCount').innerText = holdQueue.length;
@@ -1611,12 +1903,74 @@
                             <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
                         </div>
                         <div style="display: flex; gap: 8px; margin-top: 10px;">
-                            <button class="btn-sm btn-success" onclick="adminApproveHold('${c.id}')">✅ Move Ahead (Put Back in Queue)</button>
+                            <button class="btn-sm btn-success" onclick="adminApproveHold('${c.id}')">✅ Move Ahead</button>
                             <button class="btn-sm btn-danger" onclick="adminRejectHold('${c.id}')">❌ Reject</button>
                         </div>
                     </div>
                 `).join('');
             }
+
+            // Completed / selected history. These candidates intentionally leave the active
+            // waiting queue, but remain visible here so R2 completion never looks like data loss.
+            const completedCandidates = queue.filter(c => c.status === 'COMPLETED' && c.final === 'Selected' && !isRejectedCandidate(c) && candidateNameMatches(c, 'searchCompletedCandidate'));
+            const completedList = document.getElementById('completedQueueList');
+            const completedCount = document.getElementById('completedQueueCount');
+            completedCount.innerText = completedCandidates.length;
+            if (completedCandidates.length === 0) {
+                completedList.innerHTML = `<div class="empty-state" style="padding: 15px;">No completed / selected candidates yet.</div>`;
+            } else {
+                completedList.innerHTML = completedCandidates.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--success); background: #f0fdf4;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">${c.skill} · R1: ${c.r1} · R2: ${c.r2}</div>
+                            </div>
+                            <span class="cleared-badge">✅ Selected</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Rejected history across every round. Rejected candidates are never put back into
+            // the waiting queue, but their record remains available for audit/review.
+            const rejectedCandidates = queue.filter(c => isRejectedCandidate(c) && candidateNameMatches(c, 'searchRejectedCandidate'));
+            const rejectedList = document.getElementById('rejectedQueueList');
+            const rejectedCount = document.getElementById('rejectedQueueCount');
+            rejectedCount.innerText = rejectedCandidates.length;
+            if (rejectedCandidates.length === 0) {
+                rejectedList.innerHTML = `<div class="empty-state" style="padding: 15px;">No rejected candidates yet.</div>`;
+            } else {
+                rejectedList.innerHTML = rejectedCandidates.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--danger); background: #fef2f2;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">${c.skill} · Rejected in ${rejectedRoundLabel(c)}</div>
+                            </div>
+                            <span class="badge" style="background: #fee2e2; color: var(--danger);">❌ Rejected</span>
+                        </div>
+                        <div class="round-status-row">
+                            <span>R1: <strong>${c.r1 || 'Pending'}</strong></span>
+                            <span>R2: <strong>${c.r2 || 'Pending'}</strong></span>
+                            <span>Final: <strong>${c.final || 'Rejected'}</strong></span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+
+        function getCandidateRoundDisplay(candidate) {
+            if (!candidate) return "Round 1";
+            return (candidate.currentRound === 2 || candidate.r1 === 'Cleared') ? "Round 2" : "Round 1";
+        }
+
+        function getPanelistCurrentRound(panelist) {
+            const candidate = panelist && panelist.currentCandidateId
+                ? queue.find(c => c.id === panelist.currentCandidateId)
+                : null;
+            return getCandidateRoundDisplay(candidate);
         }
 
         function renderPanelists() {
@@ -1656,6 +2010,9 @@
                             </div>
                             ${p.status === 'BUSY' ? `
                                 <div class="status-busy">🎙️ Interviewing: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                                <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
+                                    📋 Current Round: ${getPanelistCurrentRound(p)}
+                                </div>
                                 <div id="timer_box_${p.id}" class="timer-box timer-normal">
                                     <span id="timer_val_${p.id}">⏱️ Calculating...</span>
                                     <button class="btn-ff" onclick="fastForwardTimer('${p.id}')" title="Test: Fast-forward 10 mins">⏩ +10m</button>
@@ -1757,6 +2114,17 @@
             document.getElementById('statBusy').innerText = `${panelists.filter(p => p.status === 'BUSY').length} Busy`;
             document.getElementById('statBreak').innerText = `${panelists.filter(p => p.status === 'BREAK').length} On Break`;
         }
+
+
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            const ids = ['searchQueueCandidate', 'searchHoldCandidate', 'searchCompletedCandidate', 'searchRejectedCandidate'];
+            const active = document.activeElement;
+            if (active && ids.includes(active.id)) {
+                active.value = '';
+                renderQueue();
+            }
+        });
 
         // Initialize App
         initDemoData();
