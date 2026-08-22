@@ -653,6 +653,19 @@
                 Comprehensive walk-in analytics, round progression milestones, and final recruitment conversion metrics for today.
             </p>
             
+            <div class="control-panel" style="margin-bottom: 16px; padding: 14px;">
+                <div class="form-row" style="justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 800;">📅 Report Date</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                            Select any date represented by candidate interview data.
+                        </div>
+                    </div>
+                    <select id="eodReportDate" onchange="renderEodReport()" style="min-width: 220px;"></select>
+                </div>
+                <div id="eodHistoryHint" style="margin-top: 8px; font-size: 11px; color: var(--text-muted);"></div>
+            </div>
+
             <div class="eod-kpi-grid">
                 <div class="eod-kpi-card">
                     <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Total Walk-ins</div>
@@ -684,10 +697,34 @@
                             <th style="padding: 10px;">Round 1 Status</th>
                             <th style="padding: 10px;">Round 2 Status</th>
                             <th style="padding: 10px;">Final Decision</th>
+                            <th style="padding: 10px;">Round 1 Panelist</th>
+                            <th style="padding: 10px;">Round 2 Panelist</th>
                         </tr>
                     </thead>
                     <tbody id="eodTableBody"></tbody>
                 </table>
+            </div>
+
+
+            <div style="margin-top: 24px;">
+                <h3 style="font-size: 15px; margin-bottom: 8px;">👥 Panelist Interview Audit</h3>
+                <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                        <thead>
+                            <tr style="background: #f8fafc; border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+                                <th style="padding: 10px;">Round</th>
+                                <th style="padding: 10px;">Panelist</th>
+                                <th style="padding: 10px;">Candidate</th>
+                                <th style="padding: 10px;">Skill</th>
+                                <th style="padding: 10px;">Started</th>
+                                <th style="padding: 10px;">Completed</th>
+                                <th style="padding: 10px;">Decision</th>
+                                <th style="padding: 10px;">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eodPanelistAuditBody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div style="margin-top: 20px; text-align: right;">
@@ -703,6 +740,7 @@
         let panelists = [];
         let localIdCounter = 100;
         let activeEvalContext = null; // Stores evaluation context during panelist completion
+        let interviewHistory = []; // Audit trail: one record per candidate-panelist-round interview
         
         const ALL_SKILL_DOMAINS = ["Android", "Backend", "Frontend", "DevOps", "DataScience", "UIUX", "General"];
         let recruiterAssignedSkills = ["Android", "Backend"];
@@ -730,12 +768,13 @@
             const todayDateStr = getTodayFormattedDate();
 
             queue = [
-                { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", currentRound: 1 },
+                { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", round1PanelistId: null, round2PanelistId: null, currentRound: 1 },
                 { id: "c2", name: "John Wick", skill: "Android", interviewDate: todayDateStr, checkInTime: "10:30 AM", status: "IN_PROGRESS", r1: "Pending", r2: "Pending", final: "In Progress" },
                 { id: "c3", name: "Bruce Wayne", skill: "Backend", interviewDate: todayDateStr, checkInTime: "10:15 AM", status: "IN_PROGRESS", r1: "Cleared", r2: "Pending", final: "In Progress" },
                 { id: "c4", name: "Clark Kent", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "09:45 AM", status: "COMPLETED", r1: "Cleared", r2: "Cleared", final: "Selected" },
                 { id: "c5", name: "Peter Parker", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "11:00 AM", status: "ON_HOLD", r1: "On Hold", r2: "Pending", final: "On Hold", currentRound: 1 }
             ];
+
 
             panelists = [
                 { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 2 },
@@ -747,6 +786,87 @@
             
             migrateCandidateAndPanelistState();
             renderAll();
+        }
+
+
+        function getInterviewHistoryId() {
+            return `ih_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        }
+
+        function getPanelistInterviewHistory(panelistId, dateFilter = null) {
+            return interviewHistory.filter(h =>
+                h.panelistId === panelistId &&
+                (!dateFilter || h.interviewDate === dateFilter)
+            );
+        }
+
+        function getCandidateInterviewHistory(candidateId) {
+            return interviewHistory.filter(h => h.candidateId === candidateId);
+        }
+
+        function createInterviewHistoryRecord(panelist, candidate) {
+            // Keep candidate-level round ownership synchronized with the audit record.
+            const historyRound = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            if (historyRound === 1) candidate.round1PanelistId = panelist.id;
+            if (historyRound === 2) candidate.round2PanelistId = panelist.id;
+
+            const record = {
+                id: getInterviewHistoryId(),
+                candidateId: candidate.id,
+                candidateName: candidate.name,
+                skill: candidate.skill,
+                panelistId: panelist.id,
+                panelistName: panelist.name,
+                round: candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1),
+                interviewDate: candidate.interviewDate || getTodayFormattedDate(),
+                startedAt: new Date().toISOString(),
+                completedAt: null,
+                decision: 'IN_PROGRESS',
+                notes: ''
+            };
+            interviewHistory.push(record);
+            panelist.activeInterviewId = record.id;
+            return record;
+        }
+
+        function completeInterviewHistoryRecord(panelist, candidate, decision, notes) {
+            const activeId = panelist && panelist.activeInterviewId;
+            let record = activeId
+                ? interviewHistory.find(h => h.id === activeId)
+                : null;
+
+            // Safety fallback for legacy/inconsistent state.
+            if (!record) {
+                record = interviewHistory
+                    .slice()
+                    .reverse()
+                    .find(h => h.panelistId === panelist.id &&
+                              h.candidateId === candidate.id &&
+                              h.round === (candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1)) &&
+                              h.decision === 'IN_PROGRESS');
+            }
+
+            if (!record) {
+                record = createInterviewHistoryRecord(panelist, candidate);
+            }
+
+            record.completedAt = new Date().toISOString();
+            record.decision = decision;
+            record.notes = notes || '';
+            record.round = record.round || candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            record.interviewDate = candidate.interviewDate || record.interviewDate || getTodayFormattedDate();
+
+            if (panelist) panelist.activeInterviewId = null;
+            return record;
+        }
+
+        function getRoundActivitySummaryForPanelist(panelistId, dateFilter = null) {
+            const records = getPanelistInterviewHistory(panelistId, dateFilter)
+                .filter(h => h.completedAt);
+
+            const r1 = records.filter(h => h.round === 1).length;
+            const r2 = records.filter(h => h.round === 2).length;
+            return { r1, r2, total: r1 + r2 };
         }
 
         // View Switcher Navigation
@@ -828,7 +948,10 @@
                     <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">📍 ${p.location}</div>
                     <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Interviewer: <strong>${p.name}</strong> <span class="level-badge">${p.level}</span> [${p.skill}]</div>
                     <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">Status: ${statusText}</div>
-                    ${p.status === 'BUSY' ? `<div style="font-size: 12px; margin-top: 4px;"><strong>Current:</strong> ${p.currentCandidate}</div>` : ''}
+                    ${p.status === 'BUSY' ? `
+                        <div style="font-size: 12px; margin-top: 4px;"><strong>Current:</strong> ${p.currentCandidate}</div>
+                        <div style="font-size: 12px; margin-top: 2px; color: var(--primary);"><strong>Round:</strong> ${getPanelistCurrentRound(p)}</div>
+                    ` : ''}
                     ${p.nextCandidate ? `<div style="font-size: 12px; margin-top: 4px; color: var(--primary);"><strong>Next in Line:</strong> ${p.nextCandidate}</div>` : ''}
                     <div style="font-size: 12px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-weight: 600; color: #1e293b;">
                         ⏳ Est. Free Time: ${freeTimeStr}
@@ -839,41 +962,127 @@
         }
 
         // EOD Report Renderer
+        function getAvailableEodDates() {
+            const dates = [...new Set(
+                queue.map(c => c.interviewDate).filter(Boolean)
+            )];
+            const today = getTodayFormattedDate();
+            if (!dates.includes(today)) dates.push(today);
+            return dates.sort((a, b) => b.localeCompare(a));
+        }
+
+        function populateEodDateSelector() {
+            const select = document.getElementById('eodReportDate');
+            if (!select) return;
+
+            const dates = getAvailableEodDates();
+            const current = select.value || getTodayFormattedDate();
+
+            select.innerHTML = dates.map(date => {
+                const label = new Date(date + 'T00:00:00').toLocaleDateString(undefined, {
+                    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+                });
+                return `<option value="${date}">${label}</option>`;
+            }).join('');
+
+            select.value = dates.includes(current) ? current : dates[0];
+
+            const hint = document.getElementById('eodHistoryHint');
+            if (hint) {
+                hint.innerText = `${dates.length} report date${dates.length === 1 ? '' : 's'} available from candidate data.`;
+            }
+        }
+
         function renderEodReport() {
-            const todayDateStr = getTodayFormattedDate();
-            const totalWalkins = queue.length;
-            const clearedR1 = queue.filter(c => c.r1 === 'Cleared').length;
-            const clearedR2 = queue.filter(c => c.r2 === 'Cleared').length;
-            const selected = queue.filter(c => c.final === 'Selected').length;
+            populateEodDateSelector();
+
+            const dateSelect = document.getElementById('eodReportDate');
+            const selectedDate = dateSelect && dateSelect.value
+                ? dateSelect.value
+                : getTodayFormattedDate();
+
+            const reportCandidates = queue.filter(c =>
+                (c.interviewDate || getTodayFormattedDate()) === selectedDate
+            );
+
+            const totalWalkins = reportCandidates.length;
+            const clearedR1 = reportCandidates.filter(c => c.r1 === 'Cleared').length;
+            const clearedR2 = reportCandidates.filter(c => c.r2 === 'Cleared').length;
+            const selected = reportCandidates.filter(c => c.final === 'Selected').length;
+            const rejected = reportCandidates.filter(c =>
+                c.r1 === 'Rejected' || c.r2 === 'Rejected' || c.final === 'Rejected'
+            ).length;
 
             document.getElementById('eodTotalWalkins').innerText = totalWalkins;
             document.getElementById('eodClearedR1').innerText = clearedR1;
             document.getElementById('eodClearedR2').innerText = clearedR2;
             document.getElementById('eodSelected').innerText = selected;
 
+            const kpiGrid = document.querySelector('.eod-kpi-grid');
+            if (kpiGrid && !document.getElementById('eodRejected')) {
+                kpiGrid.insertAdjacentHTML('beforeend', `
+                    <div class="eod-kpi-card">
+                        <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Rejected</div>
+                        <div class="eod-kpi-number" id="eodRejected" style="color: var(--danger);">0</div>
+                    </div>
+                `);
+            }
+            if (document.getElementById('eodRejected')) {
+                document.getElementById('eodRejected').innerText = rejected;
+            }
+
+            const title = document.querySelector('#eodModal .modal-header h2');
+            if (title) {
+                const friendlyDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString(undefined, {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                title.innerText = `📈 End of Day Interview Summary — ${friendlyDate}`;
+            }
+
             const tbody = document.getElementById('eodTableBody');
-            if (queue.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">No candidate walk-ins recorded yet.</td></tr>`;
+            if (!reportCandidates.length) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted);font-style:italic;">No candidate records found for ${selectedDate}.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = queue.map(c => `
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 10px; font-weight: 600; color: var(--text-muted);">${c.interviewDate || todayDateStr}</td>
-                    <td style="padding: 10px; font-weight: 600;">${c.name}</td>
-                    <td style="padding: 10px;"><span class="badge badge-${(c.skill || 'General').toLowerCase()}">${c.skill || 'General'}</span></td>
-                    <td style="padding: 10px; color: var(--text-muted);">${c.checkInTime || 'Just now'}</td>
-                    <td style="padding: 10px;">
-                        <span style="font-weight: 700; color: ${c.r1 === 'Cleared' ? 'var(--success)' : (c.r1 === 'Rejected' ? 'var(--danger)' : (c.r1 === 'On Hold' ? 'var(--warning)' : 'var(--text-muted)'))}">${c.r1 || 'Pending'}</span>
-                    </td>
-                    <td style="padding: 10px;">
-                        <span style="font-weight: 700; color: ${c.r2 === 'Cleared' ? 'var(--success)' : (c.r2 === 'Rejected' ? 'var(--danger)' : (c.r2 === 'On Hold' ? 'var(--warning)' : 'var(--text-muted)'))}">${c.r2 || 'Pending'}</span>
-                    </td>
-                    <td style="padding: 10px;">
-                        <span style="font-weight: 700; color: ${c.final === 'Selected' ? 'var(--success)' : (c.final === 'Rejected' ? 'var(--danger)' : 'var(--primary)')}">${c.final || 'Pending'}</span>
-                    </td>
+            tbody.innerHTML = reportCandidates.map(c => `
+                <tr style="border-bottom:1px solid var(--border-color);">
+                    <td style="padding:10px;">${c.interviewDate || selectedDate}</td>
+                    <td style="padding:10px;font-weight:600;">${c.name}</td>
+                    <td style="padding:10px;"><span class="badge badge-${(c.skill || 'General').toLowerCase()}">${c.skill || 'General'}</span></td>
+                    <td style="padding:10px;color:var(--text-muted);">${c.checkInTime || 'Just now'}</td>
+                    <td style="padding:10px;">${c.r1 || 'Pending'}</td>
+                    <td style="padding:10px;">${c.r2 || 'Pending'}</td>
+                    <td style="padding:10px;">${c.final || 'Pending'}</td>
+                    <td style="padding:10px;">${getCandidatePanelistName(c, 1)}</td>
+                    <td style="padding:10px;">${getCandidatePanelistName(c, 2)}</td>
                 </tr>
             `).join('');
+
+            const auditBody = document.getElementById('eodPanelistAuditBody');
+            if (auditBody) {
+                const dayAudit = interviewHistory
+                    .filter(h => h.interviewDate === selectedDate)
+                    .sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
+
+                if (!dayAudit.length) {
+                    auditBody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--text-muted);font-style:italic;">No panelist interview records for ${selectedDate}.</td></tr>`;
+                } else {
+                    auditBody.innerHTML = dayAudit.map(h => `
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:10px;font-weight:700;color:var(--primary);">Round ${h.round}</td>
+                            <td style="padding:10px;font-weight:600;">${h.panelistName}</td>
+                            <td style="padding:10px;">${h.candidateName}</td>
+                            <td style="padding:10px;">${h.skill || 'General'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.startedAt ? new Date(h.startedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.completedAt ? new Date(h.completedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                            <td style="padding:10px;font-weight:700;">${h.decision || 'IN_PROGRESS'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.notes || ''}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
         }
 
         function calculatePanelistFreeTime(p) {
@@ -909,9 +1118,13 @@
         // Excel Export/Import
         function exportToExcel() {
             const wb = XLSX.utils.book_new();
-            const exportDate = getTodayFormattedDate();
+            const reportDateEl = document.getElementById('eodReportDate');
+            const exportDate = reportDateEl && reportDateEl.value ? reportDateEl.value : getTodayFormattedDate();
+            const candidatesForExport = queue.filter(c =>
+                (c.interviewDate || getTodayFormattedDate()) === exportDate
+            );
 
-            const candidatesData = queue.map((c, index) => ({
+            const candidatesData = candidatesForExport.map((c, index) => ({
                 "No.": index + 1,
                 "Interview Date": c.interviewDate || exportDate,
                 "Candidate Name": c.name,
@@ -944,6 +1157,23 @@
             }));
             const wsPanelists = XLSX.utils.json_to_sheet(panelistsData);
             XLSX.utils.book_append_sheet(wb, wsPanelists, "Panelist Audit Log");
+
+            const panelistRoundAuditData = interviewHistory
+                .filter(h => h.interviewDate === exportDate)
+                .map((h, index) => ({
+                    "No.": index + 1,
+                    "Interview Date": h.interviewDate,
+                    "Round": h.round,
+                    "Panelist": h.panelistName,
+                    "Candidate": h.candidateName,
+                    "Skill": h.skill,
+                    "Started At": h.startedAt ? new Date(h.startedAt).toLocaleString() : "",
+                    "Completed At": h.completedAt ? new Date(h.completedAt).toLocaleString() : "",
+                    "Decision": h.decision,
+                    "Notes": h.notes || ""
+                }));
+            const wsPanelistRoundAudit = XLSX.utils.json_to_sheet(panelistRoundAuditData);
+            XLSX.utils.book_append_sheet(wb, wsPanelistRoundAudit, "Panelist Round Audit");
 
             XLSX.writeFile(wb, `Interview_EOD_Report_${exportDate}.xlsx`);
         }
@@ -1022,7 +1252,7 @@
             queue.push({ 
                 id: `local_c_${localIdCounter++}`, 
                 name, skill, interviewDate, checkInTime, 
-                status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", currentRound: 1, assignedPanelistId: null, queuedPanelistId: null, evaluationNotes: [], rejectedRound: null
+                status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", round1PanelistId: null, round2PanelistId: null, currentRound: 1, assignedPanelistId: null, queuedPanelistId: null, evaluationNotes: [], rejectedRound: null
             });
             nameInput.value = "";
             checkRoutingMode();
@@ -1044,7 +1274,7 @@
                 id: `local_p_${localIdCounter++}`,
                 name, location, level, skill, status: "AVAILABLE",
                 currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null,
-                startTime: null, completed: 0
+                startTime: null, completed: 0, activeInterviewId: null
             });
 
             nameInput.value = "";
@@ -1068,8 +1298,10 @@
             }
             if (!Array.isArray(candidate.evaluationNotes)) candidate.evaluationNotes = [];
             if (!Object.prototype.hasOwnProperty.call(candidate, 'rejectedRound')) candidate.rejectedRound = null;
-            if (!candidate.assignedPanelistId) candidate.assignedPanelistId = null;
-            if (!candidate.queuedPanelistId) candidate.queuedPanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'assignedPanelistId')) candidate.assignedPanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'queuedPanelistId')) candidate.queuedPanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'round1PanelistId')) candidate.round1PanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'round2PanelistId')) candidate.round2PanelistId = null;
         }
 
         function candidateRoundLabel(candidate) {
@@ -1141,11 +1373,22 @@
         function startCandidateForPanelist(panelist, candidate) {
             if (!panelist || !candidate) return false;
             ensureCandidateWorkflow(candidate);
+
+            // Record exactly which panelist is conducting this candidate's round.
+            const roundNumber = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            candidate.currentRound = roundNumber;
+            if (roundNumber === 1) {
+                candidate.round1PanelistId = panelist.id;
+            } else if (roundNumber === 2) {
+                candidate.round2PanelistId = panelist.id;
+            }
+
             panelist.status = 'BUSY';
             panelist.currentCandidate = `${candidate.name} (${candidate.skill})`;
             panelist.currentCandidateId = candidate.id;
             panelist.startTime = Date.now();
             setCandidateInProgress(candidate, panelist.id);
+            createInterviewHistoryRecord(panelist, candidate);
             return true;
         }
 
@@ -1165,10 +1408,22 @@
 
         function migrateCandidateAndPanelistState() {
             queue.forEach(ensureCandidateWorkflow);
+
+            // Backfill candidate round-panelist fields from interview history so older records
+            // are displayed correctly after upgrading the application.
+            queue.forEach(candidate => {
+                const history = getCandidateInterviewHistory(candidate.id);
+                const r1 = history.slice().reverse().find(h => h.round === 1 && h.panelistId);
+                const r2 = history.slice().reverse().find(h => h.round === 2 && h.panelistId);
+                if (!candidate.round1PanelistId && r1) candidate.round1PanelistId = r1.panelistId;
+                if (!candidate.round2PanelistId && r2) candidate.round2PanelistId = r2.panelistId;
+            });
+
             panelists.forEach(p => {
                 if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null;
                 if (!Object.prototype.hasOwnProperty.call(p, 'startTime')) p.startTime = null;
                 if (!Object.prototype.hasOwnProperty.call(p, 'completed')) p.completed = 0;
+                if (!Object.prototype.hasOwnProperty.call(p, 'activeInterviewId')) p.activeInterviewId = null;
             });
 
             // Repair/derive queued candidate IDs from legacy display-only state where possible.
@@ -1179,7 +1434,18 @@
                 }
                 if (p.currentCandidateId) {
                     const current = queue.find(c => c.id === p.currentCandidateId);
-                    if (current) setCandidateInProgress(current, p.id);
+                    if (current) {
+                        setCandidateInProgress(current, p.id);
+                        if (!p.activeInterviewId) {
+                            const existing = interviewHistory.find(h => h.panelistId === p.id && h.candidateId === current.id && h.decision === 'IN_PROGRESS');
+                            if (existing) {
+                                p.activeInterviewId = existing.id;
+                            } else {
+                                const record = createInterviewHistoryRecord(p, current);
+                                if (p.startTime) record.startedAt = new Date(p.startTime).toISOString();
+                            }
+                        }
+                    }
                 }
                 const queued = getQueuedCandidate(p);
                 if (queued) setCandidateQueued(queued, p.id);
@@ -1439,6 +1705,19 @@
                     finalizeCandidate(candidate, 'Rejected');
                 }
             }
+
+            // Persist the panelist who actually conducted this round on the candidate itself.
+            if (activeRound === 1) {
+                candidate.round1PanelistId = panelist.id;
+            } else if (activeRound === 2) {
+                candidate.round2PanelistId = panelist.id;
+            }
+
+            const historyDecision =
+                decision === 'SELECT' ? 'SELECTED' :
+                decision === 'HOLD' ? 'ON_HOLD' :
+                'REJECTED';
+            completeInterviewHistoryRecord(panelist, candidate, historyDecision, notes);
 
             panelist.completed = (Number(panelist.completed) || 0) + 1;
             panelist.currentCandidate = null;
@@ -1748,12 +2027,12 @@
                                 </div>
                                 <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
                             </div>
+                            <div style="font-size: 11px; color: var(--purple); font-weight: 700; margin-top: 4px;">
+                                R1 Done: ${getRoundActivitySummaryForPanelist(p.id).r1} · R2 Done: ${getRoundActivitySummaryForPanelist(p.id).r2}
+                            </div>
                             <div style="margin: 12px 0 6px 0; font-size: 13px;">
                                 ${p.status === 'BUSY' ? `
                                     <div class="status-busy">🎙️ Interviewing: ${p.currentCandidate}</div>
-                                    <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
-                                        📋 Current Round: ${getPanelistCurrentRound(p)}
-                                    </div>
                                     <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
                                         📋 Current Round: ${getPanelistCurrentRound(p)}
                                     </div>
@@ -1776,7 +2055,7 @@
         // Global Render Engine
         function renderAll() {
             queue.forEach(ensureCandidateWorkflow);
-            panelists.forEach(p => { if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null; });
+            panelists.forEach(p => { if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null; if (!Object.prototype.hasOwnProperty.call(p, 'activeInterviewId')) p.activeInterviewId = null; });
             renderQueue();
             renderPanelists();
             renderTelemetryStats();
@@ -1792,6 +2071,23 @@
             const query = input ? input.value.trim().toLowerCase() : "";
             if (!query) return true;
             return String(candidate.name || "").toLowerCase().includes(query);
+        }
+
+
+        function getCandidatePanelistName(candidate, roundNumber) {
+            const panelistId = roundNumber === 1 ? candidate.round1PanelistId : candidate.round2PanelistId;
+            if (!panelistId) return "Not assigned";
+            const panelist = panelists.find(p => p.id === panelistId);
+            return panelist ? panelist.name : "Panelist unavailable";
+        }
+
+        function getCandidateRoundPanelistMarkup(candidate) {
+            return `
+                <div style="margin-top: 8px; padding: 7px 9px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
+                    <div><strong>Round 1 Panelist:</strong> ${getCandidatePanelistName(candidate, 1)}</div>
+                    <div style="margin-top: 3px;"><strong>Round 2 Panelist:</strong> ${getCandidatePanelistName(candidate, 2)}</div>
+                </div>
+            `;
         }
 
         function renderQueue() {
@@ -1852,17 +2148,8 @@
                             <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
                         </div>
 
-                        <div class="round-status-row">
-                            <div class="round-group">
-                                <span>R1:</span>
-                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r1', this.value)">
-                                    <option value="Pending" ${c.r1 === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="Cleared" ${c.r1 === 'Cleared' ? 'selected' : ''}>Cleared</option>
-                                    <option value="On Hold" ${c.r1 === 'On Hold' ? 'selected' : ''}>On Hold</option>
-                                    <option value="Rejected" ${c.r1 === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                </select>
-                            </div>
-                            <div class="round-group">
+                        ${getCandidateRoundPanelistMarkup(c)}
+<div class="round-group">
                                 <span>R2:</span>
                                 <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r2', this.value)" ${!isR1Cleared ? 'disabled' : ''}>
                                     <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
@@ -1950,12 +2237,8 @@
                             </div>
                             <span class="badge" style="background: #fee2e2; color: var(--danger);">❌ Rejected</span>
                         </div>
-                        <div class="round-status-row">
-                            <span>R1: <strong>${c.r1 || 'Pending'}</strong></span>
-                            <span>R2: <strong>${c.r2 || 'Pending'}</strong></span>
-                            <span>Final: <strong>${c.final || 'Rejected'}</strong></span>
-                        </div>
-                    </div>
+                        ${getCandidateRoundPanelistMarkup(c)}
+</div>
                 `).join('');
             }
         }
@@ -2006,6 +2289,8 @@
                         <div style="margin: 12px 0 6px 0; font-size: 13px;">
                             <div style="margin-bottom: 4px; color: var(--text-muted); font-size: 12px; display: flex; justify-content: space-between;">
                                 <span>Completed Today: <strong>${p.completed}</strong></span>
+                                <!-- <span style="color: var(--purple);">R1: <strong>${getRoundActivitySummaryForPanelist(p.id).r1}</strong> · R2: <strong>${getRoundActivitySummaryForPanelist(p.id).r2}</strong></span> -->
+                                 <!-- <span style="color: var(--purple);">R1: <strong>${getRoundActivitySummaryForPanelist(p.id).r1}</strong> · R2: <strong>${getRoundActivitySummaryForPanelist(p.id).r2}</strong></span> -->
                                 <span style="color: var(--primary);">Est. Free: <strong>${freeTimeStr}</strong></span>
                             </div>
                             ${p.status === 'BUSY' ? `
