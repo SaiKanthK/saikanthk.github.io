@@ -5,14 +5,391 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Interview Mapping & Room Management</title>
     <!-- Include SheetJS (xlsx) for Excel Import/Export Support -->
-    
-    
-    <link rel="stylesheet" href="./css/app.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --warning-bg: #f59e0b;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --purple: #7c3aed;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Header Box */
+        header {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            background: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left h1 { margin: 0 0 4px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+        
+        #current-date-display {
+            font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;
+        }
+
+        #connection-status {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 12px; font-weight: 600; background: #fef3c7; color: var(--warning);
+        }
+
+        .top-shortcuts {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        }
+        .header-shortcut-btn {
+            background-color: #ffffff;
+            color: #0f172a !important;
+            border: 1.5px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+        }
+        .header-shortcut-btn:hover {
+            background-color: var(--primary);
+            color: #ffffff !important;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* View Switcher Bar */
+        .view-switcher {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: center;
+            background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;
+        }
+        .view-btn {
+            flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 14px;
+            border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .view-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Controls Grid */
+        .controls-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            max-width: 1400px; margin: 0 auto 20px auto;
+        }
+
+        .control-panel {
+            background: var(--card-bg); padding: 18px; border-radius: 10px;
+            border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .control-panel h3 { margin: 0 0 12px 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        
+        .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        input[type="text"], select, button, textarea {
+            padding: 9px 12px; font-size: 13px; border-radius: 6px;
+            border: 1px solid var(--border-color); outline: none; transition: border 0.2s;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus { border-color: var(--primary); }
+        input[type="text"] { flex: 1; min-width: 120px; }
+
+        button {
+            background-color: var(--primary); color: white; border: none;
+            cursor: pointer; font-weight: 600; transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:active { transform: scale(0.98); }
+
+        .btn-secondary { background-color: #475569; }
+        .btn-secondary:hover { background-color: #334155; }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #15803d; }
+        .btn-warning { background-color: var(--warning); }
+        .btn-warning:hover { background-color: #b45309; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #b91c1c; }
+        .btn-purple { background-color: var(--purple); }
+        .btn-purple:hover { background-color: #6d28d9; }
+
+        /* Global Toolbar */
+        .global-toolbar {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
+            align-items: center; background: var(--card-bg); padding: 12px 18px;
+            border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;
+        }
+        .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        /* Mode Bar */
+        .mode-bar {
+            max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between;
+            align-items: center; background: var(--card-bg); padding: 10px 18px;
+            border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; font-weight: 600;
+        }
+        .toggle-label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); }
+        .toggle-label input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
+
+        /* Dashboard Columns */
+        .dashboard {
+            display: grid; grid-template-columns: 480px 1fr; gap: 20px;
+            max-width: 1400px; margin: 0 auto; align-items: start;
+        }
+
+        .column {
+            background: var(--card-bg); border-radius: 10px; padding: 20px;
+            border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .column-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--bg-color); padding-bottom: 12px; margin-bottom: 12px;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .column-header h2 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+
+        .filter-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: normal; }
+        .filter-bar select { padding: 4px 8px; font-size: 12px; border-radius: 4px; }
+
+        .stats-bar { display: flex; gap: 8px; font-size: 12px; font-weight: 600; }
+        .stat-pill { padding: 4px 8px; border-radius: 6px; background: var(--bg-color); }
+        .stat-avail { color: var(--success); background: #dcfce7; }
+        .stat-busy { color: var(--danger); background: #fee2e2; }
+        .stat-break { color: var(--warning); background: #fef3c7; }
+
+        #panelistList, #recruiterPanelistList {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;
+        }
+
+        #panelistPortalView, #recruiterViewContainer {
+            max-width: 1400px; margin: 0 auto; display: none;
+        }
+        .portal-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;
+        }
+
+        .recruiter-config-panel {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .skill-chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .skill-chip {
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            border: 1px solid var(--border-color); cursor: pointer; user-select: none;
+            background: #f8fafc; color: var(--text-muted); transition: all 0.2s;
+        }
+        .skill-chip.active {
+            background: var(--purple); color: #ffffff; border-color: var(--purple);
+            box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
+        }
+
+        /* Cards */
+        .card {
+            background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 15px; transition: box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+        .meta-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+        .location-badge {
+            background: #f1f5f9; color: #334155; font-size: 11px; font-weight: 600;
+            padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1;
+            display: inline-flex; align-items: center; gap: 3px;
+        }
+        .level-badge {
+            background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 700;
+            padding: 2px 6px; border-radius: 4px; border: 1px solid #bae6fd;
+        }
+
+        /* Skill Badges */
+        .badge {
+            padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-android { background: #dcfce7; color: #15803d; }
+        .badge-backend { background: #fef3c7; color: #b45309; }
+        .badge-frontend { background: #e0f2fe; color: #0369a1; }
+        .badge-devops { background: #f3e8ff; color: #6b21a8; }
+        .badge-datascience { background: #fce7f3; color: #be185d; }
+        .badge-uiux { background: #ffedd5; color: #c2410c; }
+        .badge-general { background: #f1f5f9; color: #475569; }
+
+        .status-available { color: var(--success); font-weight: 700; font-size: 13px; }
+        .status-busy { color: var(--danger); font-weight: 700; font-size: 13px; }
+        .status-break { color: var(--warning); font-weight: 700; font-size: 13px; }
+
+        .timer-box {
+            margin-top: 8px; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .timer-normal { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+        .timer-warning { 
+            background: #fef3c7; color: #b45309; border: 1px solid #f59e0b;
+            animation: pulse 1.5s infinite; 
+        }
+        .timer-overtime { 
+            background: #fee2e2; color: #dc2626; border: 1px solid #ef4444;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .btn-ff {
+            background: transparent; border: 1px solid #cbd5e1; color: #64748b;
+            padding: 2px 6px; border-radius: 4px; font-size: 11px; cursor: pointer;
+        }
+        .btn-ff:hover { background: #e2e8f0; color: #0f172a; }
+
+        .manual-assign-box {
+            margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);
+            display: flex; flex-direction: column; gap: 6px; width: 100%;
+        }
+        .manual-assign-row { display: flex; gap: 6px; width: 100%; }
+        .manual-assign-box select { flex: 1; font-size: 12px; padding: 6px; border-color: #cbd5e1; width: 100%; min-width: 0; }
+        .btn-assign { background-color: var(--primary); padding: 6px 12px; font-size: 12px; border-radius: 4px; flex-shrink: 0; }
+
+        .next-queue-badge {
+            margin-top: 8px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 10px;
+            border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .round-status-row {
+            margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; font-size: 12px; flex-wrap: wrap; gap: 6px;
+        }
+        .round-group { display: flex; align-items: center; gap: 4px; }
+        .round-select { font-size: 11px; padding: 3px 6px; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; }
+        .round-select:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+
+        .action-buttons {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;
+            border-top: 1px solid var(--border-color); padding-top: 12px;
+        }
+        .btn-sm { flex: 1; padding: 6px 10px; font-size: 12px; border-radius: 4px; text-align: center; }
+        .btn-ready { background-color: var(--success); }
+        .btn-ready:hover { background-color: #15803d; }
+        .btn-break { background-color: var(--warning-bg); }
+        .btn-break:hover { background-color: #b45309; }
+        .btn-remove { background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); flex: 0 0 auto; }
+        .btn-remove:hover { background-color: #fee2e2; color: var(--danger); border-color: #fecaca; }
+
+        .empty-state {
+            grid-column: 1 / -1; text-align: center; color: var(--text-muted);
+            padding: 30px 20px; font-style: italic; border: 2px dashed var(--border-color); border-radius: 8px;
+        }
+
+        /* Modal Overlays */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-card {
+            background: var(--card-bg); width: 90%; max-width: 920px; border-radius: 12px;
+            padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color);
+            position: relative; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid var(--bg-color); padding-bottom: 10px; }
+        .modal-header h2 { margin: 0; font-size: 20px; }
+        .modal-close { background: transparent; color: var(--text-muted); border: none; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+        .modal-close:hover { color: var(--danger); background: #fee2e2; border-radius: 4px; }
+        
+        .floor-map-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 15px;
+        }
+        .map-room-card {
+            border: 2px solid var(--border-color); border-radius: 8px; padding: 14px; background: #f8fafc;
+        }
+        .map-room-card.occupied { border-color: var(--danger); background: #fef2f2; }
+        .map-room-card.available { border-color: var(--success); background: #f0fdf4; }
+        .map-room-card.on-break { border-color: var(--warning-bg); background: #fffbeb; }
+
+        .eod-kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px;
+        }
+        .eod-kpi-card {
+            background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; text-align: center;
+        }
+        .eod-kpi-number { font-size: 28px; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+        /* Evaluation Modal Decision Box */
+        .eval-option-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0;
+        }
+        .eval-btn-card {
+            border: 2px solid var(--border-color); border-radius: 8px; padding: 14px; text-align: center;
+            cursor: pointer; background: #f8fafc; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .eval-btn-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.08); }
+        .eval-btn-card.selected-btn { border-color: var(--success); background: #f0fdf4; }
+        .eval-btn-card.hold-btn { border-color: var(--warning); background: #fffbeb; }
+        .eval-btn-card.reject-btn { border-color: var(--danger); background: #fef2f2; }
+
+        .on-hold-badge {
+            background: #fef3c7; color: #b45309; border: 1px solid #f59e0b;
+            font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+            display: inline-block; margin-top: 4px;
+        }
+        .cleared-badge {
+            background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+            font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+            display: inline-block; margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
-    
 
-<!-- ================= VIEW 1: ENTERPRISE ADMIN & RECEPTION ================= -->
+    <header>
+        <div class="header-left">
+            <h1>In-Person Interview Mapping & Room Engine</h1>
+            <div id="current-date-display">📅 Loading live date...</div>
+            <div id="connection-status">🟡 Offline Demo Mode: Runs Instantly Without Server or Cloud Setup</div>
+        </div>
+        
+        <div class="top-shortcuts">
+            <button class="header-shortcut-btn" onclick="openEodModal()">
+                📈 End of Day Report
+            </button>
+            <button class="header-shortcut-btn" onclick="openFloorMapModal()">
+                🗺️ Office Floor Map
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation Switcher -->
+    <div class="view-switcher">
+        <button id="navAdminBtn" class="view-btn active" onclick="switchView('admin')">🏢 Enterprise Admin & Reception View</button>
+        <button id="navRecruiterBtn" class="view-btn" onclick="switchView('recruiter')">🎯 Recruiter View (Track Coordinator)</button>
+        <button id="navPortalBtn" class="view-btn" onclick="switchView('portal')">👨‍💻 Panelist Portal (Self-Service)</button>
+    </div>
+
+    <!-- ================= VIEW 1: ENTERPRISE ADMIN & RECEPTION ================= -->
     <div id="adminViewContainer">
         <div class="global-toolbar">
             <div class="toolbar-group">
@@ -30,29 +407,38 @@
         <div class="controls-grid">
             <div class="control-panel">
                 <h3>🏢 Reception Desk: Candidate Check-in</h3>
-                <div style="font-size:11px;color:var(--text-muted);margin:-5px 0 10px;">
-                    New candidate will be enrolled for interview date <strong id="candidateEntryDateLabel"></strong>.
-                </div>
                 <div class="form-row">
                     <input type="text" id="candidateNameInput" placeholder="Candidate Name (e.g., Alex Smith)" />
-                    <select id="candidateSkill"><option value="">Loading skills...</option></select>
+                    <select id="candidateSkill">
+                        <option value="Android">Android</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="DataScience">Data Science</option>
+                        <option value="UIUX">UI/UX</option>
+                        <option value="General">Generalist</option>
+                    </select>
                     <button id="addCandidateBtn">+ Add to Queue</button>
                 </div>
             </div>
 
             <div class="control-panel">
                 <h3>👨‍💼 HR Admin: Onboard Interview Panelist & Room</h3>
-                <div style="font-size:11px;color:var(--text-muted);margin:-5px 0 10px;">
-                    New panelist entry will be created for interview date <strong id="panelistEntryDateLabel"></strong>.
-                </div>
                 <div class="form-row">
                     <input type="text" id="panelistNameInput" placeholder="Name" style="flex: 1.2;" />
                     <input type="text" id="panelistLocationInput" placeholder="Room/Desk" style="flex: 1;" />
                     <input type="text" id="panelistLevelInput" placeholder="Level (e.g. L4)" style="flex: 0.8;" />
-                    <select id="panelistSkill" style="flex: 1;"><option value="">Loading skills...</option></select>
+                    <select id="panelistSkill" style="flex: 1;">
+                        <option value="Android">Android</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="DataScience">Data Science</option>
+                        <option value="UIUX">UI/UX</option>
+                        <option value="General">Generalist</option>
+                    </select>
                     <button id="addPanelistBtn" style="background-color: #0f172a;">+ Add</button>
                 </div>
-                <div id="skillSourceHint" style="margin-top:8px;font-size:11px;color:var(--text-muted);">Skills are managed centrally and loaded from Demo.</div>
             </div>
         </div>
 
@@ -74,7 +460,16 @@
                         <label for="searchQueueCandidate">Search:</label>
                         <input type="text" id="searchQueueCandidate" placeholder="Candidate name..." oninput="renderQueue()" style="width: 150px; flex: 0 1 150px;">
                         <label for="filterCandidateSkill">Filter:</label>
-                        <select id="filterCandidateSkill" onchange="renderQueue()"><option value="">All Skills</option></select>
+                        <select id="filterCandidateSkill" onchange="renderQueue()">
+                            <option value="">All Skills</option>
+                            <option value="Android">Android</option>
+                            <option value="Backend">Backend</option>
+                            <option value="Frontend">Frontend</option>
+                            <option value="DevOps">DevOps</option>
+                            <option value="DataScience">Data Science</option>
+                            <option value="UIUX">UI/UX</option>
+                            <option value="General">Generalist</option>
+                        </select>
                     </div>
                 </div>
 
@@ -247,101 +642,6 @@
         </div>
     </div>
 
-
-
-    <!-- ================= ADMIN USER MANAGEMENT MODAL ================= -->
-    <div id="userManagerModal" class="modal-overlay" onclick="closeOnOutsideClick(event, 'userManagerModal')">
-        <div class="modal-card" style="max-width: 720px;">
-            <div class="modal-header">
-                <h2>👤 Create Staff User</h2>
-                <button class="modal-close" onclick="closeUserManager()">✕</button>
-            </div>
-
-            <p style="font-size:13px;color:var(--text-muted);margin-top:0;">
-                Only an authenticated Admin can create Admin, Recruiter, or Panelist accounts.
-                Auth creation happens server-side. A database trigger automatically creates the
-                matching <code>public.profiles</code> row.
-            </p>
-
-            <div class="control-panel" style="margin-bottom:16px;">
-                <div class="form-row">
-                    <input id="newStaffFullName" type="text" placeholder="Full name" style="flex:1;" maxlength="120">
-                    <input id="newStaffEmail" type="email" placeholder="Email address" style="flex:1;" maxlength="254" autocomplete="off">
-                </div>
-
-                <div class="form-row" style="margin-top:10px;">
-                    <select id="newStaffRole" style="flex:0.8;" onchange="toggleStaffRoleFields()">
-                        <option value="RECRUITER">Recruiter</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="PANELIST">Panelist</option>
-                    </select>
-
-                    <input id="newStaffPassword" type="password" placeholder="Temporary password (optional — blank = generate)" style="flex:1.8;" autocomplete="new-password">
-                    <button type="button" class="btn-secondary" onclick="generateStaffPassword()">Generate Password</button>
-                </div>
-
-                <div id="panelistStaffFields" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;background:#f8fafc;">
-                    <div style="font-size:12px;font-weight:800;margin-bottom:8px;">🧑‍💻 Panelist Roster Details</div>
-
-                    <div class="form-row">
-                        <input id="newPanelistLocation" type="text" placeholder="Room / Desk" style="flex:1;">
-                        <input id="newPanelistLevel" type="text" placeholder="Level (e.g. L4)" style="flex:0.7;">
-                    </div>
-
-                    <div class="form-row" style="margin-top:8px;">
-                        <select id="newPanelistSkill" style="flex:1;">
-                            <option value="">Loading skills...</option>
-                        </select>
-                        <input id="newPanelistInterviewDate" type="date" style="flex:0.8;" title="Interview session date">
-                    </div>
-
-                    <div style="margin-top:6px;font-size:11px;color:var(--text-muted);">
-                        The panelist roster entry is created for the selected interview session date and linked automatically to the user's profile.
-                    </div>
-                </div>
-
-                <div style="margin-top:10px;padding:9px 10px;border-radius:7px;background:#eff6ff;color:#1e3a8a;font-size:12px;">
-                    <strong>Temporary password:</strong> The generated password is shown only after creation.
-                    Ask the user to change it after first sign-in.
-                </div>
-
-                <div id="userManagerError" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#fee2e2;color:#991b1b;font-size:12px;"></div>
-                <div id="userManagerSuccess" style="display:none;margin-top:10px;padding:10px;border-radius:6px;background:#dcfce7;color:#166534;font-size:12px;"></div>
-
-                <div id="userManagerProgress" style="display:none;margin-top:10px;padding:10px;border-radius:7px;background:#eef6ff;color:#1d4ed8;font-size:12px;">
-                    <span style="display:inline-block;width:10px;height:10px;border:2px solid #93c5fd;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:7px;vertical-align:-1px;"></span>
-                    <strong id="userManagerProgressText">Creating user… please wait.</strong>
-                </div>
-
-                <div style="margin-top:12px;text-align:right;">
-                    <button type="button" class="btn-secondary" onclick="closeUserManager()">Cancel</button>
-                    <button type="button" id="createStaffUserBtn" class="btn-success" onclick="handleCreateStaffUser()">Create User</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= SKILL MANAGEMENT MODAL ================= -->
-    <div id="skillManagerModal" class="modal-overlay" onclick="closeOnOutsideClick(event, 'skillManagerModal')">
-        <div class="modal-card" style="max-width: 640px;">
-            <div class="modal-header">
-                <h2>⚙️ Manage Interview Skills</h2>
-                <button class="modal-close" onclick="closeSkillManager()">✕</button>
-            </div>
-            <p style="font-size:13px;color:var(--text-muted);margin-top:0;">
-                Add and activate/deactivate skills used for candidate check-in, recruiter tracks, and panelist assignment. Panelists cannot manage this list.
-            </p>
-            <div class="control-panel" style="margin-bottom:16px;">
-                <div class="form-row">
-                    <input id="newSkillName" type="text" placeholder="e.g. Machine Learning" style="flex:1;" maxlength="100">
-                    <button onclick="addSkill()">+ Add Skill</button>
-                </div>
-                <div id="skillManagerError" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#fee2e2;color:#991b1b;font-size:12px;"></div>
-            </div>
-            <div id="skillManagerList"></div>
-        </div>
-    </div>
-
     <!-- ================= EOD REPORT MODAL ================= -->
     <div id="eodModal" class="modal-overlay" onclick="closeOnOutsideClick(event, 'eodModal')">
         <div class="modal-card">
@@ -434,11 +734,1685 @@
     </div>
 
     <!-- JavaScript Application Logic -->
-    <script src="./js/00-demo-state.js"></script>
-    <script src="./js/01-core-data-auth.js"></script>
-    <script src="./js/02-navigation.js"></script>
-    <script src="./js/03-candidates-admin.js"></script>
-    <script src="./js/04-interviews.js"></script>
-    <script src="./js/05-views-and-startup.js"></script>
+    <script>
+        // Global State Memory
+        let queue = [];
+        let panelists = [];
+        let localIdCounter = 100;
+        let activeEvalContext = null; // Stores evaluation context during panelist completion
+        let interviewHistory = []; // Audit trail: one record per candidate-panelist-round interview
+        
+        const ALL_SKILL_DOMAINS = ["Android", "Backend", "Frontend", "DevOps", "DataScience", "UIUX", "General"];
+        let recruiterAssignedSkills = ["Android", "Backend"];
+
+        const SLA_DURATION_SECONDS = 45 * 60; // 45 Minutes Interview Duration
+        const BREAK_BUFFER_SECONDS = 10 * 60; // 10 Minutes Buffer Between Interviews
+
+        function getTodayFormattedDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateHeaderDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString(undefined, options);
+            document.getElementById('current-date-display').innerText = `📅 Current Date: ${todayStr}`;
+        }
+
+        function initDemoData() {
+            updateHeaderDate();
+            const now = Date.now();
+            const todayDateStr = getTodayFormattedDate();
+
+            queue = [
+                { id: "c1", name: "Tony Stark", skill: "DevOps", interviewDate: todayDateStr, checkInTime: "10:35 AM", status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", round1PanelistId: null, round2PanelistId: null, currentRound: 1 },
+                { id: "c2", name: "John Wick", skill: "Android", interviewDate: todayDateStr, checkInTime: "10:30 AM", status: "IN_PROGRESS", r1: "Pending", r2: "Pending", final: "In Progress" },
+                { id: "c3", name: "Bruce Wayne", skill: "Backend", interviewDate: todayDateStr, checkInTime: "10:15 AM", status: "IN_PROGRESS", r1: "Cleared", r2: "Pending", final: "In Progress" },
+                { id: "c4", name: "Clark Kent", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "09:45 AM", status: "COMPLETED", r1: "Cleared", r2: "Cleared", final: "Selected" },
+                { id: "c5", name: "Peter Parker", skill: "Frontend", interviewDate: todayDateStr, checkInTime: "11:00 AM", status: "ON_HOLD", r1: "On Hold", r2: "Pending", final: "On Hold", currentRound: 1 }
+            ];
+
+
+            panelists = [
+                { id: "p1", name: "Jane Doe", location: "Room 3A", level: "L5", skill: "Android", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 2 },
+                { id: "p2", name: "Marcus Vance", location: "Desk 12", level: "L4", skill: "Backend", status: "AVAILABLE", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 1 },
+                { id: "p3", name: "Elena Rostova", location: "Room 4B", level: "L6 (Principal)", skill: "Frontend", status: "BUSY", currentCandidate: "John Wick (Android)", currentCandidateId: "c2", nextCandidate: null, nextCandidateId: null, startTime: now - (41 * 60 * 1000), completed: 3 },
+                { id: "p4", name: "David K.", location: "Pod 6", level: "L4", skill: "DevOps", status: "BREAK", currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null, startTime: null, completed: 0 },
+                { id: "p5", name: "Sarah Jenkins", location: "Main Conf", level: "L5", skill: "General", status: "BUSY", currentCandidate: "Bruce Wayne (Backend)", currentCandidateId: "c3", nextCandidate: null, startTime: now - (12 * 60 * 1000), completed: 4 }
+            ];
+            
+            migrateCandidateAndPanelistState();
+            renderAll();
+        }
+
+
+        function getInterviewHistoryId() {
+            return `ih_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        }
+
+        function getPanelistInterviewHistory(panelistId, dateFilter = null) {
+            return interviewHistory.filter(h =>
+                h.panelistId === panelistId &&
+                (!dateFilter || h.interviewDate === dateFilter)
+            );
+        }
+
+        function getCandidateInterviewHistory(candidateId) {
+            return interviewHistory.filter(h => h.candidateId === candidateId);
+        }
+
+        function createInterviewHistoryRecord(panelist, candidate) {
+            // Keep candidate-level round ownership synchronized with the audit record.
+            const historyRound = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            if (historyRound === 1) candidate.round1PanelistId = panelist.id;
+            if (historyRound === 2) candidate.round2PanelistId = panelist.id;
+
+            const record = {
+                id: getInterviewHistoryId(),
+                candidateId: candidate.id,
+                candidateName: candidate.name,
+                skill: candidate.skill,
+                panelistId: panelist.id,
+                panelistName: panelist.name,
+                round: candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1),
+                interviewDate: candidate.interviewDate || getTodayFormattedDate(),
+                startedAt: new Date().toISOString(),
+                completedAt: null,
+                decision: 'IN_PROGRESS',
+                notes: ''
+            };
+            interviewHistory.push(record);
+            panelist.activeInterviewId = record.id;
+            return record;
+        }
+
+        function completeInterviewHistoryRecord(panelist, candidate, decision, notes) {
+            const activeId = panelist && panelist.activeInterviewId;
+            let record = activeId
+                ? interviewHistory.find(h => h.id === activeId)
+                : null;
+
+            // Safety fallback for legacy/inconsistent state.
+            if (!record) {
+                record = interviewHistory
+                    .slice()
+                    .reverse()
+                    .find(h => h.panelistId === panelist.id &&
+                              h.candidateId === candidate.id &&
+                              h.round === (candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1)) &&
+                              h.decision === 'IN_PROGRESS');
+            }
+
+            if (!record) {
+                record = createInterviewHistoryRecord(panelist, candidate);
+            }
+
+            record.completedAt = new Date().toISOString();
+            record.decision = decision;
+            record.notes = notes || '';
+            record.round = record.round || candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            record.interviewDate = candidate.interviewDate || record.interviewDate || getTodayFormattedDate();
+
+            if (panelist) panelist.activeInterviewId = null;
+            return record;
+        }
+
+        function getRoundActivitySummaryForPanelist(panelistId, dateFilter = null) {
+            const records = getPanelistInterviewHistory(panelistId, dateFilter)
+                .filter(h => h.completedAt);
+
+            const r1 = records.filter(h => h.round === 1).length;
+            const r2 = records.filter(h => h.round === 2).length;
+            return { r1, r2, total: r1 + r2 };
+        }
+
+        // View Switcher Navigation
+        function switchView(viewName) {
+            const adminBtn = document.getElementById('navAdminBtn');
+            const recruiterBtn = document.getElementById('navRecruiterBtn');
+            const portalBtn = document.getElementById('navPortalBtn');
+            
+            const adminContainer = document.getElementById('adminViewContainer');
+            const recruiterContainer = document.getElementById('recruiterViewContainer');
+            const portalContainer = document.getElementById('panelistPortalView');
+
+            adminBtn.className = "view-btn";
+            recruiterBtn.className = "view-btn";
+            portalBtn.className = "view-btn";
+
+            adminContainer.style.display = "none";
+            recruiterContainer.style.display = "none";
+            portalContainer.style.display = "none";
+
+            if (viewName === 'admin') {
+                adminBtn.className = "view-btn active";
+                adminContainer.style.display = "block";
+            } else if (viewName === 'recruiter') {
+                recruiterBtn.className = "view-btn active";
+                recruiterContainer.style.display = "block";
+                renderRecruiterView();
+            } else {
+                portalBtn.className = "view-btn active";
+                portalContainer.style.display = "block";
+                renderPanelistPortal();
+            }
+        }
+
+        // Modals Controller
+        function openFloorMapModal() {
+            renderFloorMap();
+            document.getElementById('floorMapModal').style.display = 'flex';
+        }
+        function closeFloorMapModal() {
+            document.getElementById('floorMapModal').style.display = 'none';
+        }
+        function openEodModal() {
+            renderEodReport();
+            document.getElementById('eodModal').style.display = 'flex';
+        }
+        function closeEodModal() {
+            document.getElementById('eodModal').style.display = 'none';
+        }
+        function closeOnOutsideClick(e, modalId) {
+            if (e.target === document.getElementById(modalId)) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+        }
+
+        // Floor Map Renderer
+        function renderFloorMap() {
+            const mapContainer = document.getElementById('floorMapContainer');
+            if (panelists.length === 0) {
+                mapContainer.innerHTML = `<div class="empty-state">No interviewers/rooms onboarded yet.</div>`;
+                return;
+            }
+
+            mapContainer.innerHTML = panelists.map(p => {
+                let statusClass = 'available';
+                let statusText = '✅ Available';
+                if (p.status === 'BUSY') {
+                    statusClass = 'occupied';
+                    statusText = '🎙️ Occupied (Busy)';
+                } else if (p.status === 'BREAK') {
+                    statusClass = 'on-break';
+                    statusText = '☕ On Break';
+                }
+
+                const freeTimeStr = calculatePanelistFreeTime(p);
+
+                return `
+                <div class="map-room-card ${statusClass}">
+                    <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">📍 ${p.location}</div>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Interviewer: <strong>${p.name}</strong> <span class="level-badge">${p.level}</span> [${p.skill}]</div>
+                    <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">Status: ${statusText}</div>
+                    ${p.status === 'BUSY' ? `
+                        <div style="font-size: 12px; margin-top: 4px;"><strong>Current:</strong> ${p.currentCandidate}</div>
+                        <div style="font-size: 12px; margin-top: 2px; color: var(--primary);"><strong>Round:</strong> ${getPanelistCurrentRound(p)}</div>
+                    ` : ''}
+                    ${p.nextCandidate ? `<div style="font-size: 12px; margin-top: 4px; color: var(--primary);"><strong>Next in Line:</strong> ${p.nextCandidate}</div>` : ''}
+                    <div style="font-size: 12px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-weight: 600; color: #1e293b;">
+                        ⏳ Est. Free Time: ${freeTimeStr}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // EOD Report Renderer
+        function getAvailableEodDates() {
+            const dates = [...new Set(
+                queue.map(c => c.interviewDate).filter(Boolean)
+            )];
+            const today = getTodayFormattedDate();
+            if (!dates.includes(today)) dates.push(today);
+            return dates.sort((a, b) => b.localeCompare(a));
+        }
+
+        function populateEodDateSelector() {
+            const select = document.getElementById('eodReportDate');
+            if (!select) return;
+
+            const dates = getAvailableEodDates();
+            const current = select.value || getTodayFormattedDate();
+
+            select.innerHTML = dates.map(date => {
+                const label = new Date(date + 'T00:00:00').toLocaleDateString(undefined, {
+                    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+                });
+                return `<option value="${date}">${label}</option>`;
+            }).join('');
+
+            select.value = dates.includes(current) ? current : dates[0];
+
+            const hint = document.getElementById('eodHistoryHint');
+            if (hint) {
+                hint.innerText = `${dates.length} report date${dates.length === 1 ? '' : 's'} available from candidate data.`;
+            }
+        }
+
+        function renderEodReport() {
+            populateEodDateSelector();
+
+            const dateSelect = document.getElementById('eodReportDate');
+            const selectedDate = dateSelect && dateSelect.value
+                ? dateSelect.value
+                : getTodayFormattedDate();
+
+            const reportCandidates = queue.filter(c =>
+                (c.interviewDate || getTodayFormattedDate()) === selectedDate
+            );
+
+            const totalWalkins = reportCandidates.length;
+            const clearedR1 = reportCandidates.filter(c => c.r1 === 'Cleared').length;
+            const clearedR2 = reportCandidates.filter(c => c.r2 === 'Cleared').length;
+            const selected = reportCandidates.filter(c => c.final === 'Selected').length;
+            const rejected = reportCandidates.filter(c =>
+                c.r1 === 'Rejected' || c.r2 === 'Rejected' || c.final === 'Rejected'
+            ).length;
+
+            document.getElementById('eodTotalWalkins').innerText = totalWalkins;
+            document.getElementById('eodClearedR1').innerText = clearedR1;
+            document.getElementById('eodClearedR2').innerText = clearedR2;
+            document.getElementById('eodSelected').innerText = selected;
+
+            const kpiGrid = document.querySelector('.eod-kpi-grid');
+            if (kpiGrid && !document.getElementById('eodRejected')) {
+                kpiGrid.insertAdjacentHTML('beforeend', `
+                    <div class="eod-kpi-card">
+                        <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Rejected</div>
+                        <div class="eod-kpi-number" id="eodRejected" style="color: var(--danger);">0</div>
+                    </div>
+                `);
+            }
+            if (document.getElementById('eodRejected')) {
+                document.getElementById('eodRejected').innerText = rejected;
+            }
+
+            const title = document.querySelector('#eodModal .modal-header h2');
+            if (title) {
+                const friendlyDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString(undefined, {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                title.innerText = `📈 End of Day Interview Summary — ${friendlyDate}`;
+            }
+
+            const tbody = document.getElementById('eodTableBody');
+            if (!reportCandidates.length) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted);font-style:italic;">No candidate records found for ${selectedDate}.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = reportCandidates.map(c => `
+                <tr style="border-bottom:1px solid var(--border-color);">
+                    <td style="padding:10px;">${c.interviewDate || selectedDate}</td>
+                    <td style="padding:10px;font-weight:600;">${c.name}</td>
+                    <td style="padding:10px;"><span class="badge badge-${(c.skill || 'General').toLowerCase()}">${c.skill || 'General'}</span></td>
+                    <td style="padding:10px;color:var(--text-muted);">${c.checkInTime || 'Just now'}</td>
+                    <td style="padding:10px;">${c.r1 || 'Pending'}</td>
+                    <td style="padding:10px;">${c.r2 || 'Pending'}</td>
+                    <td style="padding:10px;">${c.final || 'Pending'}</td>
+                    <td style="padding:10px;">${getCandidatePanelistName(c, 1)}</td>
+                    <td style="padding:10px;">${getCandidatePanelistName(c, 2)}</td>
+                </tr>
+            `).join('');
+
+            const auditBody = document.getElementById('eodPanelistAuditBody');
+            if (auditBody) {
+                const dayAudit = interviewHistory
+                    .filter(h => h.interviewDate === selectedDate)
+                    .sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
+
+                if (!dayAudit.length) {
+                    auditBody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--text-muted);font-style:italic;">No panelist interview records for ${selectedDate}.</td></tr>`;
+                } else {
+                    auditBody.innerHTML = dayAudit.map(h => `
+                        <tr style="border-bottom:1px solid var(--border-color);">
+                            <td style="padding:10px;font-weight:700;color:var(--primary);">Round ${h.round}</td>
+                            <td style="padding:10px;font-weight:600;">${h.panelistName}</td>
+                            <td style="padding:10px;">${h.candidateName}</td>
+                            <td style="padding:10px;">${h.skill || 'General'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.startedAt ? new Date(h.startedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.completedAt ? new Date(h.completedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                            <td style="padding:10px;font-weight:700;">${h.decision || 'IN_PROGRESS'}</td>
+                            <td style="padding:10px;color:var(--text-muted);">${h.notes || ''}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+        }
+
+        function calculatePanelistFreeTime(p) {
+            if (p.status === 'AVAILABLE') return "Right Now (Available)";
+            let totalSecondsRemaining = 0;
+
+            if (p.status === 'BUSY' && p.startTime) {
+                const elapsedSeconds = Math.floor((Date.now() - p.startTime) / 1000);
+                const currentInterviewRemaining = Math.max(0, SLA_DURATION_SECONDS - elapsedSeconds);
+                totalSecondsRemaining += currentInterviewRemaining;
+            } else if (p.status === 'BREAK') {
+                totalSecondsRemaining += (15 * 60); 
+            }
+
+            if (p.nextCandidate) {
+                totalSecondsRemaining += SLA_DURATION_SECONDS + BREAK_BUFFER_SECONDS;
+            }
+
+            const freeTimestamp = new Date(Date.now() + (totalSecondsRemaining * 1000));
+            return freeTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function sortPanelistsByAvailability(list) {
+            const weight = { "AVAILABLE": 1, "BUSY": 2, "BREAK": 3 };
+            return [...list].sort((a, b) => {
+                const wA = weight[a.status] || 4;
+                const wB = weight[b.status] || 4;
+                if (wA !== wB) return wA - wB;
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        // Excel Export/Import
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            const reportDateEl = document.getElementById('eodReportDate');
+            const exportDate = reportDateEl && reportDateEl.value ? reportDateEl.value : getTodayFormattedDate();
+            const candidatesForExport = queue.filter(c =>
+                (c.interviewDate || getTodayFormattedDate()) === exportDate
+            );
+
+            const candidatesData = candidatesForExport.map((c, index) => ({
+                "No.": index + 1,
+                "Interview Date": c.interviewDate || exportDate,
+                "Candidate Name": c.name,
+                "Skill Tag": c.skill,
+                "Check-in Time": c.checkInTime,
+                "Round 1 Status": c.r1,
+                "Round 2 Status": c.r2,
+                "Final Decision": c.final,
+                "Rejected Round": c.rejectedRound || "",
+                "Current Queue Status": c.status,
+                "Current Round": c.currentRound || (c.r1 === "Cleared" ? 2 : 1),
+                "Assigned Interviewer": c.assignedPanelistId ? ((panelists.find(p => p.id === c.assignedPanelistId) || {}).name || "") : "",
+                "Queued With Interviewer": c.queuedPanelistId ? ((panelists.find(p => p.id === c.queuedPanelistId) || {}).name || "") : "",
+                "Evaluation Notes": (c.evaluationNotes || []).map(n => `[${n.round === 1 ? "R1" : "R2"}] ${n.interviewer}: ${n.note}`).join(" | ")
+            }));
+            const wsCandidates = XLSX.utils.json_to_sheet(candidatesData);
+            XLSX.utils.book_append_sheet(wb, wsCandidates, "Candidate Assessment Report");
+
+            const panelistsData = panelists.map((p, index) => ({
+                "No.": index + 1,
+                "Report Date": exportDate,
+                "Interviewer Name": p.name,
+                "Room / Location": p.location,
+                "Level": p.level,
+                "Skill Tag": p.skill,
+                "Live Status": p.status,
+                "Current Candidate": p.currentCandidate || "None",
+                "Next in Line": p.nextCandidate || "None",
+                "Interviews Completed Today": p.completed
+            }));
+            const wsPanelists = XLSX.utils.json_to_sheet(panelistsData);
+            XLSX.utils.book_append_sheet(wb, wsPanelists, "Panelist Audit Log");
+
+            const panelistRoundAuditData = interviewHistory
+                .filter(h => h.interviewDate === exportDate)
+                .map((h, index) => ({
+                    "No.": index + 1,
+                    "Interview Date": h.interviewDate,
+                    "Round": h.round,
+                    "Panelist": h.panelistName,
+                    "Candidate": h.candidateName,
+                    "Skill": h.skill,
+                    "Started At": h.startedAt ? new Date(h.startedAt).toLocaleString() : "",
+                    "Completed At": h.completedAt ? new Date(h.completedAt).toLocaleString() : "",
+                    "Decision": h.decision,
+                    "Notes": h.notes || ""
+                }));
+            const wsPanelistRoundAudit = XLSX.utils.json_to_sheet(panelistRoundAuditData);
+            XLSX.utils.book_append_sheet(wb, wsPanelistRoundAudit, "Panelist Round Audit");
+
+            XLSX.writeFile(wb, `Interview_EOD_Report_${exportDate}.xlsx`);
+        }
+
+        function downloadSampleExcel() {
+            const sampleData = [
+                { "Name": "Alice Smith", "Location": "Room 101", "Level": "L5", "Skill": "Frontend" },
+                { "Name": "Bob Jones", "Location": "Desk 4B", "Level": "L4", "Skill": "Backend" },
+                { "Name": "Charlie Brown", "Location": "Conf Room B", "Level": "L6", "Skill": "DevOps" }
+            ];
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            XLSX.utils.book_append_sheet(wb, ws, "PanelistsTemplate");
+            XLSX.writeFile(wb, "Panelist_Import_Template.xlsx");
+        }
+
+        function importPanelistsFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet);
+
+                    let importedCount = 0;
+                    jsonRows.forEach(row => {
+                        const name = row["Name"] || row["Interviewer Name"] || row["name"];
+                        const location = row["Location"] || row["Room / Location"] || row["location"] || "Main Office";
+                        const level = row["Level"] || row["level"] || "L4";
+                        const skill = row["Skill"] || row["Skill Tag"] || row["skill"] || "General";
+
+                        if (name) {
+                            panelists.push({
+                                id: `imported_p_${localIdCounter++}`,
+                                name: String(name).trim(),
+                                location: String(location).trim(),
+                                level: String(level).trim(),
+                                skill: String(skill).trim(),
+                                status: "AVAILABLE",
+                                currentCandidate: null,
+                                currentCandidateId: null,
+                                nextCandidate: null,
+                                nextCandidateId: null,
+                                startTime: null,
+                                completed: 0
+                            });
+                            importedCount++;
+                        }
+                    });
+
+                    alert(`Successfully imported ${importedCount} panelists from Excel!`);
+                    document.getElementById('excelUploadInput').value = "";
+                    checkRoutingMode();
+                    renderAll();
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to parse Excel file. Please ensure it matches the sample template columns.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Actions: Reception & HR
+        function addCandidate() {
+            const nameInput = document.getElementById('candidateNameInput');
+            const name = nameInput.value.trim() || "Anonymous Candidate";
+            const skill = document.getElementById('candidateSkill').value;
+            const checkInTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const interviewDate = getTodayFormattedDate();
+            
+            queue.push({ 
+                id: `local_c_${localIdCounter++}`, 
+                name, skill, interviewDate, checkInTime, 
+                status: "WAITING", currentRound: 1, r1: "Pending", r2: "Pending", final: "Pending", round1PanelistId: null, round2PanelistId: null, currentRound: 1, assignedPanelistId: null, queuedPanelistId: null, evaluationNotes: [], rejectedRound: null
+            });
+            nameInput.value = "";
+            checkRoutingMode();
+            renderAll();
+        }
+
+        function addPanelist() {
+            const nameInput = document.getElementById('panelistNameInput');
+            const locationInput = document.getElementById('panelistLocationInput');
+            const levelInput = document.getElementById('panelistLevelInput');
+            const name = nameInput.value.trim();
+            const location = locationInput.value.trim() || "Main Desk";
+            const level = levelInput.value.trim() || "L4";
+            const skill = document.getElementById('panelistSkill').value;
+            
+            if (!name) { alert("Please enter an interviewer name first."); return; }
+
+            panelists.push({
+                id: `local_p_${localIdCounter++}`,
+                name, location, level, skill, status: "AVAILABLE",
+                currentCandidate: null, currentCandidateId: null, nextCandidate: null, nextCandidateId: null,
+                startTime: null, completed: 0, activeInterviewId: null
+            });
+
+            nameInput.value = "";
+            locationInput.value = "";
+            levelInput.value = "";
+            checkRoutingMode();
+            renderAll();
+        }
+
+        document.getElementById('addCandidateBtn').addEventListener('click', addCandidate);
+        document.getElementById('addPanelistBtn').addEventListener('click', addPanelist);
+
+        document.getElementById('candidateNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addCandidate(); });
+        document.getElementById('panelistNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') addPanelist(); });
+
+        // Candidate workflow helpers
+        function ensureCandidateWorkflow(candidate) {
+            if (!candidate) return;
+            if (![1, 2].includes(candidate.currentRound)) {
+                candidate.currentRound = candidate.r1 === 'Cleared' ? 2 : 1;
+            }
+            if (!Array.isArray(candidate.evaluationNotes)) candidate.evaluationNotes = [];
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'rejectedRound')) candidate.rejectedRound = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'assignedPanelistId')) candidate.assignedPanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'queuedPanelistId')) candidate.queuedPanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'round1PanelistId')) candidate.round1PanelistId = null;
+            if (!Object.prototype.hasOwnProperty.call(candidate, 'round2PanelistId')) candidate.round2PanelistId = null;
+        }
+
+        function candidateRoundLabel(candidate) {
+            ensureCandidateWorkflow(candidate);
+            return candidate.currentRound === 2 ? 'Round 2' : 'Round 1';
+        }
+
+        function setCandidateWaiting(candidate, roundNumber = null) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            const round = roundNumber || candidate.currentRound;
+            candidate.currentRound = round;
+            candidate.status = 'WAITING';
+            candidate.assignedPanelistId = null;
+            candidate.queuedPanelistId = null;
+            candidate.final = round === 2 ? 'In Progress' : (candidate.final === 'Selected' ? 'Pending' : candidate.final || 'Pending');
+        }
+
+        function setCandidateQueued(candidate, panelistId) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.status = 'QUEUED';
+            candidate.queuedPanelistId = panelistId;
+            candidate.assignedPanelistId = null;
+        }
+
+        function setCandidateInProgress(candidate, panelistId) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.status = 'IN_PROGRESS';
+            candidate.assignedPanelistId = panelistId;
+            candidate.queuedPanelistId = null;
+        }
+
+        function finalizeCandidate(candidate, decision) {
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+            candidate.assignedPanelistId = null;
+            candidate.queuedPanelistId = null;
+            if (decision === 'SELECT' || decision === 'Selected') {
+                candidate.final = 'Selected';
+                candidate.status = 'COMPLETED';
+                candidate.rejectedRound = null;
+            } else if (decision === 'REJECT' || decision === 'Rejected') {
+                candidate.final = 'Rejected';
+                candidate.status = 'COMPLETED';
+                candidate.rejectedRound = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            }
+        }
+
+        function isRejectedCandidate(candidate) {
+            return !!candidate && (candidate.final === 'Rejected' || candidate.r1 === 'Rejected' || candidate.r2 === 'Rejected');
+        }
+
+        function rejectedRoundLabel(candidate) {
+            if (candidate && candidate.rejectedRound === 2) return 'Round 2';
+            if (candidate && candidate.rejectedRound === 1) return 'Round 1';
+            if (candidate && candidate.r2 === 'Rejected') return 'Round 2';
+            if (candidate && candidate.r1 === 'Rejected') return 'Round 1';
+            return 'Final';
+        }
+
+        function getQueuedCandidate(panelist) {
+            if (!panelist || !panelist.nextCandidateId) return null;
+            const candidate = queue.find(c => c.id === panelist.nextCandidateId);
+            return candidate && candidate.status === 'QUEUED' ? candidate : null;
+        }
+
+        function startCandidateForPanelist(panelist, candidate) {
+            if (!panelist || !candidate) return false;
+            ensureCandidateWorkflow(candidate);
+
+            // Record exactly which panelist is conducting this candidate's round.
+            const roundNumber = candidate.currentRound || (candidate.r1 === 'Cleared' ? 2 : 1);
+            candidate.currentRound = roundNumber;
+            if (roundNumber === 1) {
+                candidate.round1PanelistId = panelist.id;
+            } else if (roundNumber === 2) {
+                candidate.round2PanelistId = panelist.id;
+            }
+
+            panelist.status = 'BUSY';
+            panelist.currentCandidate = `${candidate.name} (${candidate.skill})`;
+            panelist.currentCandidateId = candidate.id;
+            panelist.startTime = Date.now();
+            setCandidateInProgress(candidate, panelist.id);
+            createInterviewHistoryRecord(panelist, candidate);
+            return true;
+        }
+
+        function startNextCandidateIfAvailable(panelist) {
+            const nextCandidate = getQueuedCandidate(panelist);
+            if (!nextCandidate) {
+                if (panelist) {
+                    panelist.nextCandidate = null;
+                    panelist.nextCandidateId = null;
+                }
+                return false;
+            }
+            panelist.nextCandidate = null;
+            panelist.nextCandidateId = null;
+            return startCandidateForPanelist(panelist, nextCandidate);
+        }
+
+        function migrateCandidateAndPanelistState() {
+            queue.forEach(ensureCandidateWorkflow);
+
+            // Backfill candidate round-panelist fields from interview history so older records
+            // are displayed correctly after upgrading the application.
+            queue.forEach(candidate => {
+                const history = getCandidateInterviewHistory(candidate.id);
+                const r1 = history.slice().reverse().find(h => h.round === 1 && h.panelistId);
+                const r2 = history.slice().reverse().find(h => h.round === 2 && h.panelistId);
+                if (!candidate.round1PanelistId && r1) candidate.round1PanelistId = r1.panelistId;
+                if (!candidate.round2PanelistId && r2) candidate.round2PanelistId = r2.panelistId;
+            });
+
+            panelists.forEach(p => {
+                if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null;
+                if (!Object.prototype.hasOwnProperty.call(p, 'startTime')) p.startTime = null;
+                if (!Object.prototype.hasOwnProperty.call(p, 'completed')) p.completed = 0;
+                if (!Object.prototype.hasOwnProperty.call(p, 'activeInterviewId')) p.activeInterviewId = null;
+            });
+
+            // Repair/derive queued candidate IDs from legacy display-only state where possible.
+            panelists.forEach(p => {
+                if (!p.nextCandidateId && p.nextCandidate) {
+                    const match = queue.find(c => c.status === 'QUEUED' && p.nextCandidate.includes(c.name));
+                    if (match) p.nextCandidateId = match.id;
+                }
+                if (p.currentCandidateId) {
+                    const current = queue.find(c => c.id === p.currentCandidateId);
+                    if (current) {
+                        setCandidateInProgress(current, p.id);
+                        if (!p.activeInterviewId) {
+                            const existing = interviewHistory.find(h => h.panelistId === p.id && h.candidateId === current.id && h.decision === 'IN_PROGRESS');
+                            if (existing) {
+                                p.activeInterviewId = existing.id;
+                            } else {
+                                const record = createInterviewHistoryRecord(p, current);
+                                if (p.startTime) record.startedAt = new Date(p.startTime).toISOString();
+                            }
+                        }
+                    }
+                }
+                const queued = getQueuedCandidate(p);
+                if (queued) setCandidateQueued(queued, p.id);
+            });
+        }
+
+        // Update Round Manual Actions
+        function updateCandidateRound(candidateId, roundKey, value) {
+            const candidate = queue.find(c => c.id === candidateId);
+            if (!candidate) return;
+            ensureCandidateWorkflow(candidate);
+
+            if (roundKey === 'r2' && value !== 'Pending' && candidate.r1 !== 'Cleared') {
+                alert(`⚠️ PREREQUISITE REQUIRED: Candidate "${candidate.name}" must clear Round 1 before taking Round 2.`);
+                renderAll();
+                return;
+            }
+
+            const roundLabel = roundKey === 'r1' ? 'Round 1' : (roundKey === 'r2' ? 'Round 2' : 'Final Decision');
+            if (!confirm(`Are you sure you want to set ${roundLabel} to "${value}" for "${candidate.name}"?`)) {
+                renderAll();
+                return;
+            }
+
+            candidate[roundKey] = value;
+
+            if (roundKey === 'r1') {
+                if (value === 'Cleared') {
+                    candidate.r2 = candidate.r2 === 'Rejected' ? 'Pending' : candidate.r2;
+                    candidate.currentRound = 2;
+                    candidate.status = 'WAITING';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'In Progress';
+                } else if (value === 'On Hold') {
+                    candidate.currentRound = 1;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (value === 'Rejected') {
+                    candidate.currentRound = 1;
+                    candidate.rejectedRound = 1;
+                    candidate.r2 = 'Pending';
+                    finalizeCandidate(candidate, 'Rejected');
+                } else if (value === 'Pending') {
+                    candidate.currentRound = 1;
+                    candidate.r2 = 'Pending';
+                    candidate.final = 'Pending';
+                    setCandidateWaiting(candidate, 1);
+                }
+            } else if (roundKey === 'r2') {
+                if (value === 'Cleared') {
+                    candidate.currentRound = 2;
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (value === 'Rejected') {
+                    candidate.currentRound = 2;
+                    candidate.rejectedRound = 2;
+                    finalizeCandidate(candidate, 'Rejected');
+                } else if (value === 'On Hold') {
+                    candidate.currentRound = 2;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (value === 'Pending') {
+                    candidate.currentRound = 2;
+                    candidate.r2 = 'Pending';
+                    candidate.final = 'In Progress';
+                    setCandidateWaiting(candidate, 2);
+                }
+            } else if (roundKey === 'final') {
+                if (value === 'Selected') {
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (value === 'Rejected') {
+                    finalizeCandidate(candidate, 'Rejected');
+                } else if (value === 'On Hold') {
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                } else if (value === 'In Progress') {
+                    const round = candidate.r1 === 'Cleared' ? 2 : 1;
+                    setCandidateWaiting(candidate, round);
+                    candidate.final = 'In Progress';
+                } else if (value === 'Pending') {
+                    const round = candidate.r1 === 'Cleared' ? 2 : 1;
+                    setCandidateWaiting(candidate, round);
+                    candidate.final = 'Pending';
+                }
+            }
+
+            checkRoutingMode();
+            renderAll();
+        }
+
+        // ================= FEATURE: EVALUATION MODAL & WORKFLOW =================
+        function changePanelistStatus(panelistId, newStatus, completedCount) {
+            const panelist = panelists.find(p => p.id === panelistId);
+            if (!panelist) return;
+
+            if (panelist.status === 'BUSY' && panelist.currentCandidate) {
+                openEvalModal(panelist, newStatus, panelist.completed);
+                return;
+            }
+
+            const confirmationMessage = newStatus === 'BREAK'
+                ? `Put ${panelist.name} ON BREAK?`
+                : `Set ${panelist.name} as READY / AVAILABLE?`;
+
+            if (!confirm(confirmationMessage)) return;
+
+            if (newStatus === 'AVAILABLE') {
+                panelist.status = 'AVAILABLE';
+                if (!startNextCandidateIfAvailable(panelist)) {
+                    checkRoutingMode();
+                }
+            } else if (newStatus === 'BREAK') {
+                panelist.status = 'BREAK';
+            } else {
+                panelist.status = newStatus;
+            }
+            renderAll();
+        }
+
+        function openEvalModal(panelist, targetNextStatus, completedCount) {
+            const candidate = queue.find(c => c.id === panelist.currentCandidateId);
+            if (!candidate) {
+                alert(`Unable to find the active candidate for ${panelist.name}. The interview cannot be completed safely.`);
+                return;
+            }
+            ensureCandidateWorkflow(candidate);
+
+            const candidateName = candidate.name;
+            const activeRound = candidateRoundLabel(candidate);
+
+            activeEvalContext = {
+                panelistId: panelist.id,
+                candidateId: candidate.id,
+                candidateName,
+                activeRound,
+                targetNextStatus,
+                completedCount: Number.isFinite(completedCount) ? completedCount : panelist.completed,
+                roundNumber: candidate.currentRound
+            };
+
+            const evalModalBody = document.getElementById('evalModalBody');
+            const isRound2 = candidate.currentRound === 2;
+            evalModalBody.innerHTML = `
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">👤 Candidate: ${candidateName}</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                        Interviewer: <strong>${panelist.name}</strong> (${panelist.location}) | Evaluating: <strong style="color: var(--primary);">${activeRound}</strong>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600;">
+                    Please select the evaluation outcome for ${activeRound}:
+                </p>
+
+                <div class="eval-option-grid">
+                    <div class="eval-btn-card selected-btn" onclick="submitCandidateEvaluation('SELECT')">
+                        <span style="font-size: 22px;">✅</span>
+                        <strong style="font-size: 13px; color: var(--success);">${isRound2 ? 'Select / Finalize' : 'Select / Pass'}</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">${isRound2 ? 'Complete the interview track' : 'Clear Round 1 and queue for Round 2'}</span>
+                    </div>
+
+                    <div class="eval-btn-card hold-btn" onclick="submitCandidateEvaluation('HOLD')">
+                        <span style="font-size: 22px;">⏸️</span>
+                        <strong style="font-size: 13px; color: var(--warning);">Put On Hold</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">Admin will decide whether to advance</span>
+                    </div>
+
+                    <div class="eval-btn-card reject-btn" onclick="submitCandidateEvaluation('REJECT')">
+                        <span style="font-size: 22px;">❌</span>
+                        <strong style="font-size: 13px; color: var(--danger);">Reject</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">End interview track for candidate</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Feedback / Notes (Optional):</label>
+                    <textarea id="evalNotesInput" rows="3" style="width: 100%; margin-top: 4px;" placeholder="Add quick interviewer evaluation notes..."></textarea>
+                </div>
+            `;
+
+            document.getElementById('evalModal').style.display = 'flex';
+        }
+
+        function closeEvalModal() {
+            document.getElementById('evalModal').style.display = 'none';
+            activeEvalContext = null;
+        }
+
+        function submitCandidateEvaluation(decision) {
+            if (!activeEvalContext) return;
+
+            const ctx = activeEvalContext;
+            const panelist = panelists.find(p => p.id === ctx.panelistId);
+            const candidate = queue.find(c => c.id === ctx.candidateId);
+            if (!panelist || !candidate) {
+                closeEvalModal();
+                renderAll();
+                return;
+            }
+
+            ensureCandidateWorkflow(candidate);
+            const notesInput = document.getElementById('evalNotesInput');
+            const notes = notesInput ? notesInput.value.trim() : '';
+            if (notes) {
+                candidate.evaluationNotes.push({
+                    round: ctx.roundNumber,
+                    interviewerId: panelist.id,
+                    interviewer: panelist.name,
+                    timestamp: new Date().toISOString(),
+                    note: notes
+                });
+            }
+
+            const activeRound = ctx.roundNumber;
+            if (activeRound === 1) {
+                if (decision === 'SELECT') {
+                    candidate.r1 = 'Cleared';
+                    candidate.r2 = 'Pending';
+                    candidate.currentRound = 2;
+                    candidate.final = 'In Progress';
+                    setCandidateWaiting(candidate, 2);
+                } else if (decision === 'HOLD') {
+                    candidate.r1 = 'On Hold';
+                    candidate.currentRound = 1;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (decision === 'REJECT') {
+                    candidate.r1 = 'Rejected';
+                    candidate.r2 = 'Pending';
+                    candidate.currentRound = 1;
+                    candidate.rejectedRound = 1;
+                    finalizeCandidate(candidate, 'Rejected');
+                }
+            } else {
+                if (decision === 'SELECT') {
+                    candidate.r2 = 'Cleared';
+                    candidate.currentRound = 2;
+                    finalizeCandidate(candidate, 'Selected');
+                } else if (decision === 'HOLD') {
+                    candidate.r2 = 'On Hold';
+                    candidate.currentRound = 2;
+                    candidate.status = 'ON_HOLD';
+                    candidate.assignedPanelistId = null;
+                    candidate.queuedPanelistId = null;
+                    candidate.final = 'On Hold';
+                } else if (decision === 'REJECT') {
+                    candidate.r2 = 'Rejected';
+                    candidate.currentRound = 2;
+                    candidate.rejectedRound = 2;
+                    finalizeCandidate(candidate, 'Rejected');
+                }
+            }
+
+            // Persist the panelist who actually conducted this round on the candidate itself.
+            if (activeRound === 1) {
+                candidate.round1PanelistId = panelist.id;
+            } else if (activeRound === 2) {
+                candidate.round2PanelistId = panelist.id;
+            }
+
+            const historyDecision =
+                decision === 'SELECT' ? 'SELECTED' :
+                decision === 'HOLD' ? 'ON_HOLD' :
+                'REJECTED';
+            completeInterviewHistoryRecord(panelist, candidate, historyDecision, notes);
+
+            panelist.completed = (Number(panelist.completed) || 0) + 1;
+            panelist.currentCandidate = null;
+            panelist.currentCandidateId = null;
+            panelist.startTime = null;
+
+            // If the interviewer is returning to AVAILABLE, immediately start the
+            // reserved next candidate. If taking a break, keep the reservation intact.
+            if (ctx.targetNextStatus === 'AVAILABLE') {
+                panelist.status = 'AVAILABLE';
+                if (!startNextCandidateIfAvailable(panelist)) {
+                    checkRoutingMode();
+                }
+            } else {
+                panelist.status = ctx.targetNextStatus;
+            }
+
+            closeEvalModal();
+            renderAll();
+        }
+
+        // Admin Decision Controls for On-Hold Candidates
+        function adminApproveHold(candidateId) {
+            const c = queue.find(x => x.id === candidateId);
+            if (!c) return;
+            ensureCandidateWorkflow(c);
+
+            if (!confirm(`Approve "${c.name}" and advance the candidate?`)) return;
+
+            if (c.r1 === 'On Hold') {
+                c.r1 = 'Cleared';
+                c.r2 = 'Pending';
+                c.currentRound = 2;
+                c.final = 'In Progress';
+                setCandidateWaiting(c, 2);
+            } else if (c.r2 === 'On Hold') {
+                // Round 2 is the final interview round in this application.
+                // Approval therefore completes the candidate instead of sending them back to R2.
+                c.r2 = 'Cleared';
+                c.currentRound = 2;
+                finalizeCandidate(c, 'Selected');
+            } else {
+                return;
+            }
+
+            checkRoutingMode();
+            renderAll();
+        }
+
+        function adminRejectHold(candidateId) {
+            const c = queue.find(x => x.id === candidateId);
+            if (!c) return;
+
+            if (confirm(`Reject candidate "${c.name}"?`)) {
+                ensureCandidateWorkflow(c);
+                if (c.r1 === 'On Hold') c.r1 = 'Rejected';
+                if (c.r2 === 'On Hold') c.r2 = 'Rejected';
+                finalizeCandidate(c, 'Rejected');
+                renderAll();
+            }
+        }
+
+        // Manual Assignment & Fast-Forward Controls
+        function assignManually(candidateId) {
+            const selectEl = document.getElementById(`select_assign_${candidateId}`);
+            const panelistId = selectEl ? selectEl.value : null;
+            if (!panelistId) { alert("Please select an interviewer from the dropdown first."); return; }
+
+            const candidate = queue.find(c => c.id === candidateId);
+            const panelist = panelists.find(p => p.id === panelistId);
+            if (!candidate || !panelist) return;
+            ensureCandidateWorkflow(candidate);
+
+            if (candidate.status !== 'WAITING') {
+                alert(`Candidate "${candidate.name}" is not currently available for assignment.`);
+                return;
+            }
+
+            if (panelist.status === 'BREAK') {
+                alert(`${panelist.name} is on break. Resume the shift before assigning a candidate.`);
+                return;
+            }
+
+            if (panelist.status === 'BUSY') {
+                if (panelist.nextCandidateId) {
+                    const queued = getQueuedCandidate(panelist);
+                    alert(`${panelist.name} already has ${queued ? `"${queued.name}"` : 'a candidate'} queued next. Complete or remove that candidate first.`);
+                    return;
+                }
+                if (!confirm(`Queue "${candidate.name}" as NEXT IN LINE for ${panelist.name}?`)) return;
+                panelist.nextCandidate = `${candidate.name} (${candidate.skill})`;
+                panelist.nextCandidateId = candidate.id;
+                setCandidateQueued(candidate, panelist.id);
+                renderAll();
+                return;
+            }
+
+            if (!confirm(`Start the interview immediately with ${panelist.name}?`)) return;
+            startCandidateForPanelist(panelist, candidate);
+            renderAll();
+        }
+
+        function removeNextQueue(panelistId) {
+            const p = panelists.find(x => x.id === panelistId);
+            if (!p || !p.nextCandidateId) return;
+            const queuedCandidate = queue.find(c => c.id === p.nextCandidateId);
+            const queuedName = queuedCandidate ? queuedCandidate.name : p.nextCandidate;
+            if (confirm(`Are you sure you want to remove "${queuedName}" from ${p.name}'s next-in-line queue?`)) {
+                if (queuedCandidate) setCandidateWaiting(queuedCandidate, queuedCandidate.currentRound);
+                p.nextCandidate = null;
+                p.nextCandidateId = null;
+                checkRoutingMode();
+                renderAll();
+            }
+        }
+
+        function fastForwardTimer(panelistId) {
+            const p = panelists.find(x => x.id === panelistId);
+            if (p && p.startTime) {
+                p.startTime -= (10 * 60 * 1000);
+                updateTimersDOM();
+            }
+        }
+
+        function removePanelist(panelistId) {
+            const p = panelists.find(x => x.id === panelistId);
+            if (!p) return;
+            if (!confirm(`Are you sure you want to remove ${p.name}? Any active or queued candidates will be returned to the waiting queue.`)) return;
+
+            const current = p.currentCandidateId ? queue.find(c => c.id === p.currentCandidateId) : null;
+            const queued = p.nextCandidateId ? queue.find(c => c.id === p.nextCandidateId) : null;
+            if (current) setCandidateWaiting(current, current.currentRound);
+            if (queued) setCandidateWaiting(queued, queued.currentRound);
+
+            panelists = panelists.filter(x => x.id !== panelistId);
+            checkRoutingMode();
+            renderAll();
+        }
+
+        // Automatic Skill-Weighted Routing
+        document.getElementById('autoRouteToggle').addEventListener('change', () => {
+            checkRoutingMode();
+            renderAll();
+        });
+
+        function checkRoutingMode() {
+            if (document.getElementById('autoRouteToggle').checked) attemptAutoRouting();
+        }
+
+        function attemptAutoRouting() {
+            let madeAssignment = false;
+            let availablePanelists = panelists
+                .filter(p => p.status === 'AVAILABLE')
+                .sort((a, b) => (Number(a.completed) || 0) - (Number(b.completed) || 0) || a.name.localeCompare(b.name));
+
+            // First honor explicit next-in-line reservations.
+            for (const panelist of availablePanelists) {
+                if (startNextCandidateIfAvailable(panelist)) madeAssignment = true;
+            }
+
+            availablePanelists = panelists
+                .filter(p => p.status === 'AVAILABLE')
+                .sort((a, b) => (Number(a.completed) || 0) - (Number(b.completed) || 0) || a.name.localeCompare(b.name));
+
+            for (const panelist of availablePanelists) {
+                while (panelist.status === 'AVAILABLE') {
+                    const candidateIndex = queue.findIndex(c => {
+                        ensureCandidateWorkflow(c);
+                        return c.status === 'WAITING' && (c.skill === panelist.skill || panelist.skill === 'General');
+                    });
+                    if (candidateIndex === -1) break;
+                    const candidate = queue[candidateIndex];
+                    startCandidateForPanelist(panelist, candidate);
+                    madeAssignment = true;
+                }
+            }
+
+            return madeAssignment;
+        }
+
+        // Live SLA Timer Loop
+        setInterval(updateTimersDOM, 1000);
+
+        function updateTimersDOM() {
+            panelists.forEach(p => {
+                if (p.status === 'BUSY' && p.startTime) {
+                    const el = document.getElementById(`timer_val_${p.id}`);
+                    const boxEl = document.getElementById(`timer_box_${p.id}`);
+                    if (el && boxEl) {
+                        const elapsedSeconds = Math.floor((Date.now() - p.startTime) / 1000);
+                        const remainingSeconds = SLA_DURATION_SECONDS - elapsedSeconds;
+                        
+                        if (remainingSeconds > 300) {
+                            const mins = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                            const secs = (remainingSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `⏱️ ${mins}:${secs} left`;
+                            boxEl.className = "timer-box timer-normal";
+                        } else if (remainingSeconds >= 0) {
+                            const mins = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                            const secs = (remainingSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `⚠️ ${mins}:${secs} left (Expiring Soon)`;
+                            boxEl.className = "timer-box timer-warning";
+                        } else {
+                            const overSeconds = Math.abs(remainingSeconds);
+                            const mins = Math.floor(overSeconds / 60).toString().padStart(2, '0');
+                            const secs = (overSeconds % 60).toString().padStart(2, '0');
+                            el.innerText = `🚨 +${mins}:${secs} OVERTIME`;
+                            boxEl.className = "timer-box timer-overtime";
+                        }
+                    }
+                }
+            });
+        }
+
+        // Recruiter View Logic
+        function toggleRecruiterSkill(skillName) {
+            if (recruiterAssignedSkills.includes(skillName)) {
+                if (recruiterAssignedSkills.length === 1) { alert("Please keep at least one skill track active."); return; }
+                recruiterAssignedSkills = recruiterAssignedSkills.filter(s => s !== skillName);
+            } else {
+                recruiterAssignedSkills.push(skillName);
+            }
+            renderRecruiterView();
+        }
+
+        function renderRecruiterView() {
+            const chipContainer = document.getElementById('recruiterSkillChips');
+            chipContainer.innerHTML = ALL_SKILL_DOMAINS.map(skill => {
+                const isActive = recruiterAssignedSkills.includes(skill);
+                return `<div class="skill-chip ${isActive ? 'active' : ''}" onclick="toggleRecruiterSkill('${skill}')">${isActive ? '✓ ' : '+ '}${skill}</div>`;
+            }).join('');
+
+            document.getElementById('recruiterTrackSummary').innerText = `${recruiterAssignedSkills.length} Tracks Active (${recruiterAssignedSkills.join(', ')})`;
+
+            const trackQueue = queue.filter(c => c.status === 'WAITING' && recruiterAssignedSkills.includes(c.skill));
+            document.getElementById('recruiterQueueCount').innerText = trackQueue.length;
+
+            const recruiterQueueEl = document.getElementById('recruiterQueueList');
+            if (trackQueue.length === 0) {
+                recruiterQueueEl.innerHTML = `<div class="empty-state">No candidates waiting in active tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
+            } else {
+                const matchedPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
+
+                recruiterQueueEl.innerHTML = trackQueue.map(c => {
+                    const sortedOptions = [...matchedPanelists].sort((a, b) => {
+                        const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
+                        const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
+                        return aMatch - bMatch;
+                    });
+
+                    const dropdownOptions = sortedOptions.map(p => {
+                        const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
+                        const statusTag = p.status === 'AVAILABLE' ? 'Ready' : (p.status === 'BUSY' ? 'Busy' : 'Break');
+                        return `<option value="${p.id}">${matchStar}${p.name} [${p.level}] (${statusTag}) - ${p.location}</option>`;
+                    }).join('');
+
+                    const dropdownHtml = matchedPanelists.length > 0
+                        ? `<div class="manual-assign-box">
+                             <div class="manual-assign-row">
+                                 <select id="select_assign_${c.id}">
+                                     <option value="">-- Assign Panelist in Track --</option>
+                                     ${dropdownOptions}
+                                 </select>
+                                 <button class="btn-assign btn-purple" onclick="assignManually('${c.id}')">Assign ➔</button>
+                             </div>
+                           </div>`
+                        : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No track panelists available</div>`;
+
+                    return `
+                    <div class="card" style="margin-bottom: 12px;">
+                        <div class="card-top" style="margin-bottom: 0;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">Check-in: ${c.checkInTime} · Next: ${c.r1 === 'Cleared' ? 'Round 2' : 'Round 1'}</div>
+                                ${c.r1 === 'Cleared' ? `<span class="cleared-badge">🟢 Round 1 Cleared — Ready for R2</span>` : ''}
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                        </div>
+                        ${dropdownHtml}
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            let trackPanelists = panelists.filter(p => recruiterAssignedSkills.includes(p.skill) || p.skill === 'General');
+            trackPanelists = sortPanelistsByAvailability(trackPanelists);
+
+            document.getElementById('recruiterStatAvail').innerText = `${trackPanelists.filter(p => p.status === 'AVAILABLE').length} Avail`;
+            document.getElementById('recruiterStatBusy').innerText = `${trackPanelists.filter(p => p.status === 'BUSY').length} Busy`;
+
+            const recruiterPanelistEl = document.getElementById('recruiterPanelistList');
+            if (trackPanelists.length === 0) {
+                recruiterPanelistEl.innerHTML = `<div class="empty-state">No interviewers assigned to tracks [${recruiterAssignedSkills.join(', ')}].</div>`;
+            } else {
+                recruiterPanelistEl.innerHTML = trackPanelists.map(p => {
+                    let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
+                    return `
+                    <div class="card" style="border-left: 5px solid ${borderLeftColor};">
+                        <div>
+                            <div class="card-top">
+                                <div>
+                                    <div class="card-title">${p.name}</div>
+                                    <div class="meta-badges">
+                                        <span class="level-badge">${p.level}</span>
+                                        <span class="location-badge">📍 ${p.location}</span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--purple); font-weight: 700; margin-top: 4px;">
+                                R1 Done: ${getRoundActivitySummaryForPanelist(p.id).r1} · R2 Done: ${getRoundActivitySummaryForPanelist(p.id).r2}
+                            </div>
+                            <div style="margin: 12px 0 6px 0; font-size: 13px;">
+                                ${p.status === 'BUSY' ? `
+                                    <div class="status-busy">🎙️ Interviewing: ${p.currentCandidate}</div>
+                                    <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
+                                        📋 Current Round: ${getPanelistCurrentRound(p)}
+                                    </div>
+                                ` : ''}
+                                ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
+                                ${p.status === 'BREAK' ? `<div class="status-break">☕ On Break</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            ${p.status === 'BUSY' ? `<button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>` : ''}
+                            ${p.status === 'AVAILABLE' ? `<button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>` : ''}
+                            ${p.status === 'BREAK' ? `<button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>` : ''}
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Global Render Engine
+        function renderAll() {
+            queue.forEach(ensureCandidateWorkflow);
+            panelists.forEach(p => { if (!Object.prototype.hasOwnProperty.call(p, 'nextCandidateId')) p.nextCandidateId = null; if (!Object.prototype.hasOwnProperty.call(p, 'activeInterviewId')) p.activeInterviewId = null; });
+            renderQueue();
+            renderPanelists();
+            renderTelemetryStats();
+            renderPanelistPortal();
+            if (document.getElementById('recruiterViewContainer').style.display === 'block') renderRecruiterView();
+            updateTimersDOM();
+            if (document.getElementById('floorMapModal').style.display === 'flex') renderFloorMap();
+            if (document.getElementById('eodModal').style.display === 'flex') renderEodReport();
+        }
+
+        function candidateNameMatches(candidate, searchInputId) {
+            const input = document.getElementById(searchInputId);
+            const query = input ? input.value.trim().toLowerCase() : "";
+            if (!query) return true;
+            return String(candidate.name || "").toLowerCase().includes(query);
+        }
+
+
+        function getCandidatePanelistName(candidate, roundNumber) {
+            const panelistId = roundNumber === 1 ? candidate.round1PanelistId : candidate.round2PanelistId;
+            if (!panelistId) return "Not assigned";
+            const panelist = panelists.find(p => p.id === panelistId);
+            return panelist ? panelist.name : "Panelist unavailable";
+        }
+
+        function getCandidateRoundPanelistMarkup(candidate) {
+            return `
+                <div style="margin-top: 8px; padding: 7px 9px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
+                    <div><strong>Round 1 Panelist:</strong> ${getCandidatePanelistName(candidate, 1)}</div>
+                    <div style="margin-top: 3px;"><strong>Round 2 Panelist:</strong> ${getCandidatePanelistName(candidate, 2)}</div>
+                </div>
+            `;
+        }
+
+        function renderQueue() {
+            const skillFilter = document.getElementById('filterCandidateSkill').value;
+            const waitingQueue = queue.filter(c => c.status === 'WAITING' && (!skillFilter || c.skill === skillFilter) && candidateNameMatches(c, 'searchQueueCandidate'));
+            const holdSearch = document.getElementById('searchHoldCandidate')?.value.trim().toLowerCase() || "";
+            const holdQueue = queue.filter(c => c.status === 'ON_HOLD' && (!holdSearch || String(c.name || '').toLowerCase().includes(holdSearch)));
+
+            document.getElementById('queueCount').innerText = `${waitingQueue.length} ${skillFilter ? `(${skillFilter})` : ''}`;
+            document.getElementById('holdQueueCount').innerText = holdQueue.length;
+
+            const list = document.getElementById('queueList');
+            const holdList = document.getElementById('holdQueueList');
+            const isAuto = document.getElementById('autoRouteToggle').checked;
+            
+            // Render Waiting Queue
+            if (waitingQueue.length === 0) {
+                list.innerHTML = `<div class="empty-state">No candidates waiting for assignment.</div>`;
+            } else {
+                list.innerHTML = waitingQueue.map(c => {
+                    let dropdownHtml = '';
+                    if (!isAuto) {
+                        const sortedOptions = [...panelists].sort((a, b) => {
+                            const aMatch = (a.skill === c.skill || a.skill === 'General') ? -1 : 1;
+                            const bMatch = (b.skill === c.skill || b.skill === 'General') ? -1 : 1;
+                            return aMatch - bMatch;
+                        });
+
+                        const dropdownOptions = sortedOptions.map(p => {
+                            const matchStar = (p.skill === c.skill || p.skill === 'General') ? "★ " : "";
+                            const statusTag = p.status === 'AVAILABLE' ? 'Ready' : (p.status === 'BUSY' ? 'Busy' : 'Break');
+                            return `<option value="${p.id}">${matchStar}${p.name} [${p.level}] (${statusTag}) - ${p.location}</option>`;
+                        }).join('');
+
+                        dropdownHtml = panelists.length > 0
+                            ? `<div class="manual-assign-box">
+                                 <div class="manual-assign-row">
+                                     <select id="select_assign_${c.id}">
+                                         <option value="">-- Assign / Queue for Panelist --</option>
+                                         ${dropdownOptions}
+                                     </select>
+                                     <button class="btn-assign" onclick="assignManually('${c.id}')">Assign ➔</button>
+                                 </div>
+                               </div>`
+                            : `<div style="font-size: 11px; color: var(--danger); font-style: italic; margin-top: 6px;">No interviewers available</div>`;
+                    }
+
+                    const isR1Cleared = (c.r1 === 'Cleared');
+
+                    return `
+                    <div class="card" style="margin-bottom: 12px;">
+                        <div class="card-top" style="margin-bottom: 0;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">📅 ${c.interviewDate || getTodayFormattedDate()} | Check-in: ${c.checkInTime}</div>
+                                ${isR1Cleared ? `<span class="cleared-badge">🟢 Round 1 Cleared — Ready for Round 2</span>` : ''}
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                        </div>
+
+                        ${getCandidateRoundPanelistMarkup(c)}
+<div class="round-group">
+                                <span>R2:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'r2', this.value)" ${!isR1Cleared ? 'disabled' : ''}>
+                                    <option value="Pending" ${c.r2 === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Cleared" ${c.r2 === 'Cleared' ? 'selected' : ''}>Cleared</option>
+                                    <option value="On Hold" ${c.r2 === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                    <option value="Rejected" ${c.r2 === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="round-group">
+                                <span>Final:</span>
+                                <select class="round-select" onchange="updateCandidateRound('${c.id}', 'final', this.value)">
+                                    <option value="Pending" ${c.final === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="In Progress" ${c.final === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                    <option value="On Hold" ${c.final === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                    <option value="Selected" ${c.final === 'Selected' ? 'selected' : ''}>Selected</option>
+                                    <option value="Rejected" ${c.final === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        ${dropdownHtml}
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            // Render On-Hold Review Queue
+            if (holdQueue.length === 0) {
+                holdList.innerHTML = `<div class="empty-state" style="padding: 15px;">No candidates currently on hold.</div>`;
+            } else {
+                holdList.innerHTML = holdQueue.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--warning); background: #fffbeb;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <span class="on-hold-badge">⏸️ On Hold (${c.r1 === 'On Hold' ? 'Round 1' : 'Round 2'})</span>
+                            </div>
+                            <span class="badge badge-${c.skill.toLowerCase()}">${c.skill}</span>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="btn-sm btn-success" onclick="adminApproveHold('${c.id}')">✅ Move Ahead</button>
+                            <button class="btn-sm btn-danger" onclick="adminRejectHold('${c.id}')">❌ Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Completed / selected history. These candidates intentionally leave the active
+            // waiting queue, but remain visible here so R2 completion never looks like data loss.
+            const completedCandidates = queue.filter(c => c.status === 'COMPLETED' && c.final === 'Selected' && !isRejectedCandidate(c) && candidateNameMatches(c, 'searchCompletedCandidate'));
+            const completedList = document.getElementById('completedQueueList');
+            const completedCount = document.getElementById('completedQueueCount');
+            completedCount.innerText = completedCandidates.length;
+            if (completedCandidates.length === 0) {
+                completedList.innerHTML = `<div class="empty-state" style="padding: 15px;">No completed / selected candidates yet.</div>`;
+            } else {
+                completedList.innerHTML = completedCandidates.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--success); background: #f0fdf4;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">${c.skill} · R1: ${c.r1} · R2: ${c.r2}</div>
+                            </div>
+                            <span class="cleared-badge">✅ Selected</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Rejected history across every round. Rejected candidates are never put back into
+            // the waiting queue, but their record remains available for audit/review.
+            const rejectedCandidates = queue.filter(c => isRejectedCandidate(c) && candidateNameMatches(c, 'searchRejectedCandidate'));
+            const rejectedList = document.getElementById('rejectedQueueList');
+            const rejectedCount = document.getElementById('rejectedQueueCount');
+            rejectedCount.innerText = rejectedCandidates.length;
+            if (rejectedCandidates.length === 0) {
+                rejectedList.innerHTML = `<div class="empty-state" style="padding: 15px;">No rejected candidates yet.</div>`;
+            } else {
+                rejectedList.innerHTML = rejectedCandidates.map(c => `
+                    <div class="card" style="margin-bottom: 10px; border-left: 4px solid var(--danger); background: #fef2f2;">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <div>
+                                <div class="card-title">👤 ${c.name}</div>
+                                <div class="card-subtitle">${c.skill} · Rejected in ${rejectedRoundLabel(c)}</div>
+                            </div>
+                            <span class="badge" style="background: #fee2e2; color: var(--danger);">❌ Rejected</span>
+                        </div>
+                        ${getCandidateRoundPanelistMarkup(c)}
+</div>
+                `).join('');
+            }
+        }
+
+
+        function getCandidateRoundDisplay(candidate) {
+            if (!candidate) return "Round 1";
+            return (candidate.currentRound === 2 || candidate.r1 === 'Cleared') ? "Round 2" : "Round 1";
+        }
+
+        function getPanelistCurrentRound(panelist) {
+            const candidate = panelist && panelist.currentCandidateId
+                ? queue.find(c => c.id === panelist.currentCandidateId)
+                : null;
+            return getCandidateRoundDisplay(candidate);
+        }
+
+        function renderPanelists() {
+            const statusFilter = document.getElementById('filterPanelistStatus').value;
+            let filteredPanelists = panelists.filter(p => !statusFilter || p.status === statusFilter);
+            
+            filteredPanelists = sortPanelistsByAvailability(filteredPanelists);
+            const list = document.getElementById('panelistList');
+            
+            if (filteredPanelists.length === 0) {
+                list.innerHTML = `<div class="empty-state">No interviewers matching status "${statusFilter || 'All'}".</div>`;
+                return;
+            }
+
+            list.innerHTML = filteredPanelists.map(p => {
+                let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
+                const freeTimeStr = calculatePanelistFreeTime(p);
+
+                return `
+                <div class="card" style="border-left: 5px solid ${borderLeftColor};">
+                    <div>
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title">${p.name}</div>
+                                <div class="meta-badges">
+                                    <span class="level-badge">${p.level}</span>
+                                    <span class="location-badge">📍 ${p.location}</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                        </div>
+                        
+                        <div style="margin: 12px 0 6px 0; font-size: 13px;">
+                            <div style="margin-bottom: 4px; color: var(--text-muted); font-size: 12px; display: flex; justify-content: space-between;">
+                                <span>Completed Today: <strong>${p.completed}</strong></span>
+                                <!-- <span style="color: var(--purple);">R1: <strong>${getRoundActivitySummaryForPanelist(p.id).r1}</strong> · R2: <strong>${getRoundActivitySummaryForPanelist(p.id).r2}</strong></span> -->
+                                 <!-- <span style="color: var(--purple);">R1: <strong>${getRoundActivitySummaryForPanelist(p.id).r1}</strong> · R2: <strong>${getRoundActivitySummaryForPanelist(p.id).r2}</strong></span> -->
+                                <span style="color: var(--primary);">Est. Free: <strong>${freeTimeStr}</strong></span>
+                            </div>
+                            ${p.status === 'BUSY' ? `
+                                <div class="status-busy">🎙️ Interviewing: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                                <div style="margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--primary);">
+                                    📋 Current Round: ${getPanelistCurrentRound(p)}
+                                </div>
+                                <div id="timer_box_${p.id}" class="timer-box timer-normal">
+                                    <span id="timer_val_${p.id}">⏱️ Calculating...</span>
+                                    <button class="btn-ff" onclick="fastForwardTimer('${p.id}')" title="Test: Fast-forward 10 mins">⏩ +10m</button>
+                                </div>
+                                ${p.nextCandidate ? `
+                                    <div class="next-queue-badge">
+                                        <span>⏳ <strong>Next in Line:</strong> ${p.nextCandidate}</span>
+                                        <button class="btn-ff" onclick="removeNextQueue('${p.id}')" title="Remove next-in-line">✕</button>
+                                    </div>
+                                ` : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic;">No candidate queued next.</div>`}
+                            ` : ''}
+                            ${p.status === 'AVAILABLE' ? `<div class="status-available">✅ Available in ${p.location}</div>` : ''}
+                            ${p.status === 'BREAK' ? `<div class="status-break">☕ Temporarily On Break</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        ${p.status === 'BUSY' ? `
+                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>
+                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Take Break</button>
+                        ` : ''}
+                        ${p.status === 'AVAILABLE' ? `
+                            <button class="btn-sm btn-break" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Pause for Break</button>
+                        ` : ''}
+                        ${p.status === 'BREAK' ? `
+                            <button class="btn-sm btn-ready" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Resume Shifts</button>
+                        ` : ''}
+                        <button class="btn-sm btn-remove" title="Remove interviewer" onclick="removePanelist('${p.id}')">✕</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderPanelistPortal() {
+            const portalList = document.getElementById('panelistPortalCards');
+            if (panelists.length === 0) {
+                portalList.innerHTML = `<div class="empty-state">No interviewers registered in the system yet. Ask an HR Admin to onboard panelists first.</div>`;
+                return;
+            }
+
+            const sortedPanelists = sortPanelistsByAvailability(panelists);
+
+            portalList.innerHTML = sortedPanelists.map(p => {
+                let borderLeftColor = p.status === 'BUSY' ? 'var(--danger)' : (p.status === 'BREAK' ? 'var(--warning-bg)' : 'var(--success)');
+                const freeTimeStr = calculatePanelistFreeTime(p);
+
+                return `
+                <div class="card" style="border-left: 5px solid ${borderLeftColor}; background: #fafafa;">
+                    <div>
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title" style="font-size: 17px;">${p.name}</div>
+                                <div class="meta-badges" style="margin-top: 4px;">
+                                    <span class="level-badge">${p.level}</span>
+                                    <span class="location-badge">📍 ${p.location}</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-${p.skill.toLowerCase()}">${p.skill}</span>
+                        </div>
+                        
+                        <div style="margin: 14px 0 10px 0; font-size: 14px;">
+                            <div style="margin-bottom: 6px; color: var(--text-muted); display: flex; justify-content: space-between;">
+                                <span>Interviews Completed: <strong>${p.completed}</strong></span>
+                                <span style="color: var(--primary);">Est. Free: <strong>${freeTimeStr}</strong></span>
+                            </div>
+                            ${p.status === 'BUSY' ? `
+                                <div class="status-busy" style="font-size: 14px;">🎙️ Active Interview: <span style="color:var(--text-main); font-weight:normal;">${p.currentCandidate}</span></div>
+                                ${p.nextCandidate ? `
+                                    <div class="next-queue-badge" style="margin-top: 8px;">
+                                        <span>⏳ <strong>Queued Next:</strong> ${p.nextCandidate}</span>
+                                    </div>
+                                ` : ''}
+                            ` : ''}
+                            ${p.status === 'AVAILABLE' ? `<div class="status-available" style="font-size: 14px;">✅ Status: Ready to receive candidates</div>` : ''}
+                            ${p.status === 'BREAK' ? `<div class="status-break" style="font-size: 14px;">☕ Status: On Break</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons" style="margin-top: 15px;">
+                        ${p.status === 'BUSY' ? `
+                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">Finish Interview & Evaluate</button>
+                            <button class="btn-sm btn-break" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">Finish & Take Break</button>
+                        ` : ''}
+                        ${p.status === 'AVAILABLE' ? `
+                            <button class="btn-sm btn-break" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'BREAK', ${p.completed})">☕ Take a Break</button>
+                        ` : ''}
+                        ${p.status === 'BREAK' ? `
+                            <button class="btn-sm btn-ready" style="padding: 10px; font-size: 13px;" onclick="changePanelistStatus('${p.id}', 'AVAILABLE', ${p.completed})">✅ I'm Back & Ready</button>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderTelemetryStats() {
+            document.getElementById('statAvail').innerText = `${panelists.filter(p => p.status === 'AVAILABLE').length} Avail`;
+            document.getElementById('statBusy').innerText = `${panelists.filter(p => p.status === 'BUSY').length} Busy`;
+            document.getElementById('statBreak').innerText = `${panelists.filter(p => p.status === 'BREAK').length} On Break`;
+        }
+
+
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            const ids = ['searchQueueCandidate', 'searchHoldCandidate', 'searchCompletedCandidate', 'searchRejectedCandidate'];
+            const active = document.activeElement;
+            if (active && ids.includes(active.id)) {
+                active.value = '';
+                renderQueue();
+            }
+        });
+
+        // Initialize App
+        initDemoData();
+    </script>
 </body>
 </html>
